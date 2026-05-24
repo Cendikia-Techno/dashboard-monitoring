@@ -1,103 +1,407 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Project</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QA Project Dashboard</title>
 
   <style>
-    body{
+
+    *{
       margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
       font-family:Arial, sans-serif;
-      background:#f4f6f9;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-    }
-
-    .container{
-      text-align:center;
-    }
-
-    h1{
-      margin-bottom:40px;
-      color:#1f2937;
-    }
-
-    .card-wrapper{
-      display:flex;
-      gap:30px;
-      justify-content:center;
-      flex-wrap:wrap;
-    }
-
-    .card{
-      width:250px;
-      padding:30px;
-      border-radius:15px;
-      background:white;
-      box-shadow:0 4px 10px rgba(0,0,0,0.1);
-      transition:0.3s;
-      cursor:pointer;
-      text-decoration:none;
-      color:#111827;
-    }
-
-    .card:hover{
-      transform:translateY(-5px);
-      background:#2563eb;
+      background:
+      linear-gradient(rgba(15,23,42,0.92), rgba(15,23,42,0.96)),
+      url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1600&auto=format&fit=crop');
+      background-size:cover;
+      background-position:center;
+      min-height:100vh;
       color:white;
     }
 
-    .project-title{
+    /* HEADER */
+
+    .header{
+      width:100%;
+      padding:25px 60px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      backdrop-filter:blur(10px);
+    }
+
+    .logo-area{
+      display:flex;
+      align-items:center;
+      gap:15px;
+    }
+
+    .logo{
+      width:55px;
+      height:55px;
+      border-radius:14px;
+      background:#2563eb;
+      display:flex;
+      justify-content:center;
+      align-items:center;
       font-size:24px;
       font-weight:bold;
-      margin-bottom:10px;
+      box-shadow:0 4px 15px rgba(37,99,235,0.4);
     }
 
-    .desc{
-      font-size:14px;
-      opacity:0.8;
+    .company-text h2{
+      font-size:22px;
+      letter-spacing:1px;
     }
+
+    .company-text p{
+      font-size:13px;
+      opacity:0.7;
+      margin-top:3px;
+    }
+
+    /* MAIN */
+
+    .main{
+      max-width:1300px;
+      margin:auto;
+      padding:50px 20px 80px;
+    }
+
+    .title{
+      text-align:center;
+      margin-bottom:50px;
+    }
+
+    .title h1{
+      font-size:46px;
+      margin-bottom:12px;
+    }
+
+    .title p{
+      font-size:17px;
+      opacity:0.75;
+    }
+
+    /* SECTION */
+
+    .section-box{
+      margin-bottom:50px;
+    }
+
+    .section-title{
+      font-size:26px;
+      font-weight:bold;
+      margin-bottom:25px;
+      padding-left:5px;
+    }
+
+    /* CARD */
+
+    .card-wrapper{
+      display:flex;
+      flex-wrap:wrap;
+      gap:22px;
+    }
+
+    .card{
+      width:220px;
+      height:180px;
+      border-radius:24px;
+      text-decoration:none;
+      color:white;
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.08);
+      backdrop-filter:blur(10px);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      transition:0.3s ease;
+      box-shadow:0 8px 25px rgba(0,0,0,0.25);
+    }
+
+    .card:hover{
+      transform:translateY(-8px);
+      background:rgba(37,99,235,0.25);
+      border:1px solid rgba(255,255,255,0.18);
+    }
+
+    .icon{
+      font-size:52px;
+      margin-bottom:18px;
+    }
+
+    .project-title{
+      font-size:20px;
+      font-weight:bold;
+      text-align:center;
+      padding:0 10px;
+      line-height:1.4;
+    }
+
+    /* FOOTER */
 
     footer{
-    position:fixed;
-    bottom:15px;
-    width:100%;
-    text-align:center;
-    font-size:14px;
-    color:#6b7280;
-    font-weight:500;
+      text-align:center;
+      padding:22px;
+      font-size:14px;
+      color:rgba(255,255,255,0.7);
+      border-top:1px solid rgba(255,255,255,0.08);
+      backdrop-filter:blur(6px);
     }
+
+    footer span{
+      color:#60a5fa;
+      font-weight:bold;
+    }
+
+    /* RESPONSIVE */
+
+    @media(max-width:768px){
+
+      .header{
+        padding:20px;
+      }
+
+      .title h1{
+        font-size:34px;
+      }
+
+      .card-wrapper{
+        justify-content:center;
+      }
+
+      .card{
+        width:160px;
+        height:150px;
+      }
+
+      .icon{
+        font-size:40px;
+      }
+
+      .project-title{
+        font-size:16px;
+      }
+
+    }
+
   </style>
 </head>
 
 <body>
 
-  <div class="container">
-    <h1>QA DASHBOARD</h1>
+  <!-- HEADER -->
 
-    <div class="card-wrapper">
+  <div class="header">
 
-      <a href="frigate1.html" class="card">
-        <div class="project-title">FRIGATE</div>
-        <div class="desc">
-          Dashboard monitoring proyek frigate
-        </div>
-      </a>
+    <div class="logo-area">
 
-      <a href="ldp1.html" class="card">
-        <div class="project-title">LDP</div>
-        <div class="desc">
-          Dashboard monitoring proyek LDP
-        </div>
-      </a>
+      <div class="logo">
+        QA
+      </div>
+
+      <div class="company-text">
+        <h2>QA PROJECT PORTAL</h2>
+        <p>Integrated Monitoring Dashboard</p>
+      </div>
 
     </div>
+
   </div>
+
+  <!-- MAIN -->
+
+  <div class="main">
+
+    <!-- TITLE -->
+
+    <div class="title">
+
+      <h1>Quality Assurance Dashboard</h1>
+
+      <p>
+        Centralized monitoring system for dashboard and database management
+      </p>
+
+    </div>
+
+    <!-- DASHBOARD -->
+
+    <div class="section-box">
+
+      <div class="section-title">
+        Project Dashboard
+      </div>
+
+      <div class="card-wrapper">
+
+        <a href="frigate1.html" class="card">
+
+          <div class="icon">🚢</div>
+
+          <div class="project-title">
+            FMP #1
+          </div>
+
+        </a>
+
+        <a href="create.html" class="card">
+
+          <div class="icon">🚢</div>
+
+          <div class="project-title">
+            FMP #2
+          </div>
+
+        </a>
+
+        <a href="ldp1.html" class="card">
+
+          <div class="icon">🚢</div>
+
+          <div class="project-title">
+            LDP #1
+          </div>
+
+        </a>
+
+        <a href="create.html" class="card">
+
+          <div class="icon">🚢</div>
+
+          <div class="project-title">
+            LDP #2
+          </div>
+
+        </a>
+
+        <a href="create.html" class="card">
+
+          <div class="icon">🚢</div>
+
+          <div class="project-title">
+            LD UEA
+          </div>
+
+        </a>
+        <a href="create.html" class="card">
+
+          <div class="icon">🛠️</div>
+
+          <div class="project-title">
+            kapal harkan
+          </div>
+
+        </a>
+        <a href="create.html" class="card">
+
+          <div class="icon">🏗️</div>
+
+          <div class="project-title">
+            Conductor Support Frame
+          </div>
+
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- DATABASE -->
+
+    <div class="section-box">
+
+      <div class="section-title">
+        Link Inspeksi Status
+      </div>
+
+      <div class="card-wrapper">
+
+        <a href="https://docs.google.com/spreadsheets/d/1DJyypuUsLk0J38j_1vMar0orzBlEevug/edit?gid=61200208#gid=61200208"
+           target="_blank"
+           class="card">
+
+          <div class="icon">📊</div>
+
+          <div class="project-title">
+            FMP #1
+          </div>
+
+        </a>
+
+        <a href="https://docs.google.com/spreadsheets/d/1vol3ZONC76fljCUwhUsFjr7u8-1IF1Tf/edit?gid=89082007#gid=89082007"
+           target="_blank"
+           class="card">
+
+          <div class="icon">📊</div>
+
+          <div class="project-title">
+            FMP #2
+          </div>
+
+        </a>
+        <a href="https://docs.google.com/spreadsheets/d/1nhKyxq6DbXIScC5vHQ65E5i60lhsmc3f/edit?gid=5623554#gid=5623554"
+           target="_blank"
+           class="card">
+
+          <div class="icon">📊</div>
+
+          <div class="project-title">
+            LDP #1
+          </div>
+
+        </a>
+        <a href="https://docs.google.com/spreadsheets/d/1XXlIGTCKq5QSTAvOBQQQd-n7cFoaIwZ3/edit?gid=417136588#gid=417136588"
+           target="_blank"
+           class="card">
+
+          <div class="icon">📊</div>
+
+          <div class="project-title">
+            LDP #2
+          </div>
+
+        </a>
+        <a href="https://docs.google.com/spreadsheets/d/1qN5kFDfWSJnzxHZFBvJZo2uAd35YQq0l/edit?gid=301492703#gid=301492703"
+           target="_blank"
+           class="card">
+
+          <div class="icon">📊</div>
+
+          <div class="project-title">
+            LD UEA Almaryah
+          </div>
+
+        </a>
+        <a href=""
+           target="_blank"
+           class="card">
+
+          <div class="icon">📊</div>
+
+          <div class="project-title">
+             Harkan / GE
+          </div>
+
+        </a>
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+
   <footer>
-    Created by Quality Engineer - Allif C
+    © 2026 QA Project Dashboard |
+    Created by <span>Biro Quality Engineer - Allif C</span>
   </footer>
 
 </body>
