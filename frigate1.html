@@ -147,6 +147,17 @@
         <span>Loading dashboard...</span>
         </div>
     </div>
+    <div id="overallSummaryTitle" class="hidden mb-4">
+
+        <h2 class="text-2xl font-bold text-slate-100">
+            Overall Status Summary Inspeksi
+        </h2>
+
+        <p class="text-sm text-slate-400 mt-1">
+            Monitoring progress pekerjaan seluruh kategori
+        </p>
+
+    </div>
     <div 
       class="hidden grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" 
       id="summaryStatsContainer"
@@ -297,6 +308,10 @@
     function renderSummaryDashboard() {
       const container = document.getElementById('categoriesContainer');
       container.innerHTML = '';
+      // Tampilkan judul Overall Status Summary
+      document
+          .getElementById('overallSummaryTitle')
+          .classList.remove('hidden');
       const statContainer = document.getElementById('summaryStatsContainer');
       statContainer.classList.remove('hidden');
       statContainer.classList.add('grid');
@@ -319,6 +334,64 @@
       document.getElementById('totalFinish').textContent = totalFinish.toLocaleString('id-ID');
       document.getElementById('overallProgress').textContent = overallProgress + '%';
       document.getElementById('totalRemaining').textContent = totalRemaining.toLocaleString('id-ID');
+      const categorySummaryHtml = `
+      <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4 mb-8">
+
+      ${Object.keys(grouped).map(kategori => {
+
+          const items = grouped[kategori];
+
+          let total = 0;
+          let finish = 0;
+
+          items.forEach(item => {
+
+              total += Number(item.totalTask) || 0;
+              finish += Number(item.finish) || 0;
+
+          });
+
+          const progress =
+              total > 0
+                  ? ((finish / total) * 100).toFixed(1)
+                  : 0;
+
+          return `
+
+              <div class="stat-box">
+
+                  <div class="flex justify-between mb-2">
+
+                      <span class="text-xs text-slate-300">
+                          ${kategori}
+                      </span>
+
+                      <span class="text-xs font-bold ${getProgressColor(progress)}">
+                          ${progress}%
+                      </span>
+
+                  </div>
+
+                  <div class="progress-bar mb-2">
+                      <div
+                          class="progress-fill"
+                          style="width:${progress}%"
+                      ></div>
+                  </div>
+
+                  <div class="text-xs text-slate-500">
+                      ${finish}/${total}
+                  </div>
+
+              </div>
+
+          `;
+
+      }).join('')}
+
+      </div>
+      `;
+      container.innerHTML = categorySummaryHtml;
 
       Object.keys(grouped).forEach((kategori, idx) => {
         const items = grouped[kategori];
@@ -381,6 +454,7 @@
     function renderHatsatDashboard() {
       const container = document.getElementById('categoriesContainer');
       container.innerHTML = '';
+      document.getElementById('overallSummaryTitle').classList.add('hidden');
       const statContainer = document.getElementById('summaryStatsContainer');
       statContainer.classList.add('hidden');
       document.getElementById('filtersContainer').classList.remove('hidden');
@@ -408,11 +482,84 @@
         return acc;
       }, {});
 
+      let summaryKategoriHtml = `
+      <div class="flex items-center justify-between mb-4">
+
+          <div>
+              <h2 class="text-2xl font-bold text-slate-100">
+                  Summary Function Test
+              </h2>
+
+              <p class="text-slate-400 text-sm">
+                  Ringkasan status Function Test berdasarkan kategori
+              </p>
+          </div>
+
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
+
+      ${Object.keys(grouped).map(kategori => {
+
+          const items = grouped[kategori];
+
+          const closed =
+              items.filter(i =>
+                  i.statusFungsi === 'Close'
+              ).length;
+
+          const total =
+              items.length;
+
+          const progress =
+              total > 0
+                  ? ((closed / total) * 100).toFixed(1)
+                  : 0;
+
+          return `
+
+              <div class="stat-box">
+
+                  <div class="text-slate-300 text-sm font-semibold mb-2">
+                      ${kategori}
+                  </div>
+
+                  <div class="
+                      text-2xl font-bold
+                      ${getProgressColor(progress)}
+                  ">
+                      ${progress}%
+                  </div>
+
+                  <div class="text-xs text-slate-500 mt-1">
+                      ${closed}/${total} Close
+                  </div>
+
+                  <div class="progress-bar mt-3">
+
+                      <div
+                          class="progress-fill"
+                          style="width:${progress}%"
+                      ></div>
+
+                  </div>
+
+              </div>
+
+          `;
+
+      }).join('')}
+
+      </div>
+
+      `;  
+
       // If no results, show message
       if (Object.keys(grouped).length === 0) {
         container.innerHTML = '<div class="text-center py-12 text-slate-400"><p class="text-lg">Tidak ada data yang sesuai dengan filter yang dipilih</p></div>';
         return;
-      }
+      }   
+
+      container.innerHTML = summaryKategoriHtml;
 
       Object.keys(grouped).forEach((kategori, idx) => {
         const items = grouped[kategori];
@@ -447,7 +594,7 @@
                 </div>
                 <div>
                   <span class="text-slate-400">Rencana:</span>
-                  <span class="text-slate-200 ml-1">${new Date(item.planDate).toLocaleDateString('id-ID')}</span>
+                  <span class="text-slate-200 ml-1">${item.planDate}</span>
                 </div>
                 <div>
                   <span class="text-slate-400">Material:</span>
@@ -474,6 +621,7 @@
         const container = document.getElementById('categoriesContainer');
 
         container.innerHTML = '';
+        document.getElementById('overallSummaryTitle').classList.add('hidden');
 
         document.getElementById('summaryStatsContainer').classList.add('hidden');
 
@@ -500,6 +648,17 @@
             ).toFixed(1);
 
         let html = `
+            <div class="mb-4">
+
+                <h2 class="text-2xl font-bold text-slate-100">
+                    Overall Status ITP
+                </h2>
+
+                <p class="text-sm text-slate-400 mt-1">
+                    Monitoring progress approval Inspection Test Plan
+                </p>
+
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 
                 <div class="stat-box">
@@ -608,6 +767,7 @@
         const container = document.getElementById('categoriesContainer');
 
         container.innerHTML = '';
+        document.getElementById('overallSummaryTitle').classList.add('hidden');
 
         document.getElementById('summaryStatsContainer').classList.add('hidden');
 
@@ -636,6 +796,17 @@
 
         // SUMMARY CARD
         let html = `
+            <div class="mb-4">
+
+                <h2 class="text-2xl font-bold text-slate-100">
+                    Overall Status Quality Plan
+                </h2>
+
+                <p class="text-sm text-slate-400 mt-1">
+                    Monitoring progress approval Quality Plan
+                </p>
+
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 
                 <div class="stat-box">
@@ -783,6 +954,7 @@
         const container = document.getElementById('categoriesContainer');
 
         container.innerHTML = '';
+        document.getElementById('overallSummaryTitle').classList.add('hidden');
 
         document.getElementById('summaryStatsContainer').classList.add('hidden');
 
@@ -851,6 +1023,17 @@
         }, {});
 
         let html = `
+            <div class="mb-4">
+
+                <h2 class="text-2xl font-bold text-slate-100">
+                    Overall Status TPTR
+                </h2>
+
+                <p class="text-sm text-slate-400 mt-1">
+                    Monitoring progress approval TPTR
+                </p>
+
+            </div>
 
             <!-- TOP SUMMARY -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -1105,6 +1288,7 @@
             document.getElementById('categoriesContainer');
 
         container.innerHTML = '';
+        document.getElementById('overallSummaryTitle').classList.add('hidden');
 
         document.getElementById('summaryStatsContainer')
             .classList.add('hidden');
@@ -1153,6 +1337,17 @@
             ((arrivedCount / totalMaterial) * 100).toFixed(1);
 
         let html = `
+            <div class="mb-4">
+
+                <h2 class="text-2xl font-bold text-slate-100">
+                    Overall Status Material
+                </h2>
+
+                <p class="text-sm text-slate-400 mt-1">
+                    Monitoring progress Material
+                </p>
+
+            </div>
 
             <!-- TOP SUMMARY -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -1381,6 +1576,7 @@
             document.getElementById('categoriesContainer');
 
         container.innerHTML = '';
+        document.getElementById('overallSummaryTitle').classList.add('hidden');
 
         document.getElementById('summaryStatsContainer')
             .classList.add('hidden');
@@ -1409,6 +1605,17 @@
                 .reduce((a, b) => a + b, 0);
 
         let html = `
+            <div class="mb-4">
+
+                <h2 class="text-2xl font-bold text-slate-100">
+                    Overall Status Launching
+                </h2>
+
+                <p class="text-sm text-slate-400 mt-1">
+                    Monitoring progress Launching
+                </p>
+
+            </div>
 
             <!-- TOP SUMMARY -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
