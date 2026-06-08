@@ -230,193 +230,7 @@
 
     </div>
 
-    <!-- DASHBOARD -->
-
-    <div class="section-box">
-
-      <div class="section-title">
-        Project Dashboard
-      </div>
-
-      <div class="card-wrapper">
-
-        <a href="frigate1.html" class="card">
-
-          <div class="icon">🚢</div>
-
-          <div class="project-title">
-            FMP #1
-          </div>
-
-        </a>
-
-        <a href="frigate2.html" class="card">
-
-          <div class="icon">🚢</div>
-
-          <div class="project-title">
-            FMP #2
-          </div>
-
-        </a>
-
-        <a href="ldp1.html" class="card">
-
-          <div class="icon">🚢</div>
-
-          <div class="project-title">
-            LDP #1
-          </div>
-
-        </a>
-
-        <a href="create.html" class="card">
-
-          <div class="icon">🚢</div>
-
-          <div class="project-title">
-            LDP #2
-          </div>
-
-        </a>
-
-        <a href="create.html" class="card">
-
-          <div class="icon">🚢</div>
-
-          <div class="project-title">
-            LD UEA
-          </div>
-
-        </a>
-        <a href="create.html" class="card">
-
-          <div class="icon">🛠️</div>
-
-          <div class="project-title">
-            kapal harkan
-          </div>
-
-        </a>
-        <a href="create.html" class="card">
-
-          <div class="icon">🏗️</div>
-
-          <div class="project-title">
-            Conductor Support Frame
-          </div>
-
-        </a>
-
-      </div>
-
-    </div>
-    <!-- NON PROJECT DASHBOARD -->
-
-    <div class="section-box">
-
-      <div class="section-title">
-       Non-  Project Dashboard
-      </div>
-
-      <div class="card-wrapper">
-
-        <a href="standart.html" class="card">
-
-          <div class="icon">📊</div>
-
-          <div class="project-title">
-            Monitor Dokumen Standarisasi
-          </div>
-
-        </a>
-
-      </div>
-
-    </div>
-
-    <!-- DATABASE -->
-
-    <div class="section-box">
-
-      <div class="section-title">
-        Link Inspeksi Status
-      </div>
-
-      <div class="card-wrapper">
-
-        <a href="https://docs.google.com/spreadsheets/d/1DJyypuUsLk0J38j_1vMar0orzBlEevug/edit?gid=61200208#gid=61200208"
-           target="_blank"
-           class="card">
-
-          <div class="icon">📊</div>
-
-          <div class="project-title">
-            FMP #1
-          </div>
-
-        </a>
-
-        <a href="https://docs.google.com/spreadsheets/d/1vol3ZONC76fljCUwhUsFjr7u8-1IF1Tf/edit?gid=89082007#gid=89082007"
-           target="_blank"
-           class="card">
-
-          <div class="icon">📊</div>
-
-          <div class="project-title">
-            FMP #2
-          </div>
-
-        </a>
-        <a href="https://docs.google.com/spreadsheets/d/1nhKyxq6DbXIScC5vHQ65E5i60lhsmc3f/edit?gid=5623554#gid=5623554"
-           target="_blank"
-           class="card">
-
-          <div class="icon">📊</div>
-
-          <div class="project-title">
-            LDP #1
-          </div>
-
-        </a>
-        <a href="https://docs.google.com/spreadsheets/d/1XXlIGTCKq5QSTAvOBQQQd-n7cFoaIwZ3/edit?gid=417136588#gid=417136588"
-           target="_blank"
-           class="card">
-
-          <div class="icon">📊</div>
-
-          <div class="project-title">
-            LDP #2
-          </div>
-
-        </a>
-        <a href="https://docs.google.com/spreadsheets/d/1qN5kFDfWSJnzxHZFBvJZo2uAd35YQq0l/edit?gid=301492703#gid=301492703"
-           target="_blank"
-           class="card">
-
-          <div class="icon">📊</div>
-
-          <div class="project-title">
-            LD UEA Almaryah
-          </div>
-
-        </a>
-        <a href=""
-           target="_blank"
-           class="card">
-
-          <div class="icon">📊</div>
-
-          <div class="project-title">
-             Harkan / GE
-          </div>
-
-        </a>
-
-
-      </div>
-
-    </div>
+    <div id="dashboardContainer"></div>
 
   </div>
 
@@ -426,6 +240,163 @@
     © 2026 QA Project Dashboard |
     Created by <span>Biro Quality Engineer - Allif C</span>
   </footer>
+
+  <script>
+
+    const sections = [
+
+    {
+        title: "Project Kapal Baru",
+        icon: "🚢",
+        cards: [
+        {name:"FMP #1", link:"frigate1.html"},
+        {name:"FMP #2", link:"create.html"},
+        {name:"LDP #1", link:"ldp1.html"},
+        {name:"LDP #2", link:"create.html"},
+        {name:"LD UEA", link:"create.html"},
+        {name:"PHINISI", link:"create.html"},
+        {name:"GEOMARIN V", link:"create.html"},
+        {name:"KSSR", link:"create.html"}
+        ]
+    },
+
+    {
+        title: "Project Kapal Selam",
+        icon: "⚓",
+        cards: [
+        {name:"KSOT", link:"create.html"},
+        {name:"Torpedo", link:"create.html"}
+        ]
+    },
+
+    {
+        title: "Project Rekayasa Umum",
+        icon: "🏭",
+        cards: [
+        {name:"CSF", link:"create.html"},
+        {name:"PLTAL", link:"create.html"},
+        {name:"Dan Lain-lain", link:"create.html"}
+        ]
+    },
+
+    {
+        title: "Project Harkan",
+        icon: "🔧",
+        cards: [
+        {name:"Kapal Umsini", link:"create.html"},
+        {name:"KRI XXX", link:"create.html"},
+        {name:"Dan Lain-lain", link:"create.html"}
+        ]
+    },
+
+    {
+        title: "Project Warranty",
+        icon: "🛡️",
+        cards: [
+        {name:"BMPP Nusantara 2", link:"create.html"},
+        {name:"KRI REM", link:"create.html"},
+        {name:"Dan Lain-lain", link:"create.html"}
+        ]
+    },
+    {
+        title: "Non - Project/Administrasi",
+        icon: "📝",
+        cards: [
+        {name:"Monitoring Pengajuan Dokumen Standarisasi", link:"create.html"},
+        {name:"DT & NDT", link:"create.html"},
+        {name:"Dan Lain-lain", link:"create.html"}
+        ]
+    },
+
+    {
+        title: "Link Inspeksi Status",
+        icon: "📊",
+        external: true,
+        cards: [
+        {
+            name:"FMP #1",
+            link:"https://docs.google.com/spreadsheets/d/1DJyypuUsLk0J38j_1vMar0orzBlEevug/edit?gid=61200208#gid=61200208"
+        },
+        {
+            name:"FMP #2",
+            link:"https://docs.google.com/spreadsheets/d/1vol3ZONC76fljCUwhUsFjr7u8-1IF1Tf/edit?gid=89082007#gid=89082007"
+        },
+        {
+            name:"LDP #1",
+            link:"https://docs.google.com/spreadsheets/d/1nhKyxq6DbXIScC5vHQ65E5i60lhsmc3f/edit?gid=5623554#gid=5623554"
+        },
+        {
+            name:"LDP #2",
+            link:"https://docs.google.com/spreadsheets/d/1XXlIGTCKq5QSTAvOBQQQd-n7cFoaIwZ3/edit?gid=417136588#gid=417136588"
+        },
+        {
+            name:"LD UEA Almaryah",
+            link:"https://docs.google.com/spreadsheets/d/1qN5kFDfWSJnzxHZFBvJZo2uAd35YQq0l/edit?gid=301492703#gid=301492703"
+        },
+        {
+            name:"Harkan / GE",
+            link:"#"
+        }
+        ]
+    }
+
+    ];
+
+    const container = document.getElementById("dashboardContainer");
+
+    function createDashboard(){
+
+    let html = "";
+
+    sections.forEach(section => {
+
+        html += `
+        <div class="section-box">
+
+            <div class="section-title">
+            ${section.title}
+            </div>
+
+            <div class="card-wrapper">
+        `;
+
+        section.cards.forEach(card => {
+
+        html += `
+            <a
+            href="${card.link}"
+            class="card"
+            ${section.external ? 'target="_blank"' : ''}
+            >
+
+            <div class="icon">
+                ${section.icon}
+            </div>
+
+            <div class="project-title">
+                ${card.name}
+            </div>
+
+            </a>
+        `;
+
+        });
+
+        html += `
+            </div>
+
+        </div>
+        `;
+
+    });
+
+    container.innerHTML = html;
+
+    }
+
+    createDashboard();
+
+    </script>
 
 </body>
 </html>
