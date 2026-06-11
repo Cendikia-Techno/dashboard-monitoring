@@ -4,7 +4,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Landing Dock Philipina</title>
+  <title>Dashboard - LD Philipines</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <style>
@@ -115,11 +115,20 @@
    <div class="w-full px-6 py-8"><!-- Header with Dashboard Selector -->
     <div class="mb-8 flex items-start justify-between">
      <div>
-      <h1 class="header-title">QA Dashboard - LD Philipina 1</h1>
-      <p class="text-slate-400 text-lg mt-2">Monitoring progres inspeksi & Kesiapan Launching secara real-time</p>
+      <h1 class="header-title">QA Dashboard - LD Philipines 1</h1>
+      <p class="text-slate-400 text-lg mt-2">Monitoring Progres Inspeksi, TPTR, Launching dan Delivery secara real-time</p>
      </div>
      <div class="flex flex-col items-end gap-2">
-      <label class="text-slate-400 text-sm font-medium">Pilih Dashboard:</label> <select id="dashboardSelector" class="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 cursor-pointer hover:bg-slate-600 transition"> <option value="summary">Summary Inspeksi</option> <option value="launching">Kesiapan Launching</option> </select>
+      <label class="text-slate-400 text-sm font-medium">Pilih Dashboard:</label> 
+      <select id="dashboardSelector" class="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-100 cursor-pointer hover:bg-slate-600 transition">  
+        <option value="itp">ITP</option>
+        <option value="qualityplan">Quality Plan</option>
+        <option value="summary">Summary Inspeksi</option>
+        <option value="launching">Launching</option> 
+        <option value="tptr">Dokumen TPTR</option> 
+        <option value="material">Monitoring Material</option> 
+        <option value="hatsat">Kesiapan HAT/SAT Before Delivery</option>  
+      </select>
      </div>
     </div><!-- Filters for HAT/SAT Dashboard -->
     <div id="filtersContainer" class="hidden mb-6 p-4 bg-slate-800 border border-slate-700 rounded-lg">
@@ -132,7 +141,27 @@
       </div>
      </div><button id="resetFiltersBtn" class="mt-3 px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-sm hover:bg-slate-600 transition">Reset Filters</button>
     </div><!-- Summary Stats -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" id="summaryStatsContainer">
+    <div id="loading" class="text-center text-slate-400 py-10">
+        <div class="flex justify-center items-center gap-3">
+        <div class="w-5 h-5 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+        <span>Loading dashboard...</span>
+        </div>
+    </div>
+    <div id="overallSummaryTitle" class="hidden mb-4">
+
+        <h2 class="text-2xl font-bold text-slate-100">
+            Overall Status Summary Inspeksi
+        </h2>
+
+        <p class="text-sm text-slate-400 mt-1">
+            Monitoring progress pekerjaan seluruh kategori
+        </p>
+
+    </div>
+    <div 
+      class="hidden grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" 
+      id="summaryStatsContainer"
+    >
      <div class="stat-box">
       <div class="stat-label">
        Total Task
@@ -166,12 +195,6 @@
       </div>
      </div>
     </div><!-- Categories -->
-    <div id="loading" class="text-center text-slate-400 py-10">
-        <div class="flex justify-center items-center gap-3">
-        <div class="w-5 h-5 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
-        <span>Loading dashboard...</span>
-        </div>
-    </div>
 
     <div id="lastUpdate" class="text-slate-500 text-sm mb-4 text-right"></div>
     <div id="categoriesContainer" class="space-y-6"><!-- Content will be generated here -->
@@ -181,63 +204,82 @@
   
   <script>
     let summaryData = [];
+    let hatsatData = [];
+    let itpData = [];
+    let qplanData = [];
+    let tptrData = [];
+    let materialData = [];
     let launchingData = [];
     
     async function loadData() {
 
         try {
 
+            // SHOW LOADING
             document.getElementById('loading').style.display = 'block';
 
-            const response = await fetch(
-                "https://script.google.com/macros/s/AKfycbwV1hUD2HM1KuZ_M8drPLbzUxhriHR9Rb1H0qFWZCGJNLPBUUHZ6bufwb4XHUGz74Z16Q/exec"
-            );
+            const response = await fetch("https://script.google.com/macros/s/AKfycby-LLgoFRwN7RjxXyZV5oGu-O9elZwi08AY_4_SkFAxkOCjs4yVsv0br5ZnMV2ZfUFM/exec");
 
             const data = await response.json();
 
             summaryData = data.summaryData || [];
+            hatsatData = data.hatsatData || [];
+            itpData = data.itpData || [];
+            qplanData = data.qplanData || [];
+            tptrData = data.tptrData || [];
+            materialData = data.materialData || [];
+            launchingData = data.launchingData || [];
 
-            // fallback supaya aman
-            launchingData =
-                data.launchingData ||
-                data.hatsatData ||
-                [];
-
+            // LAST UPDATE
             document.getElementById('lastUpdate').textContent =
-                'Last Update: ' +
-                new Date().toLocaleString('id-ID');
+                'Last Update: ' + new Date().toLocaleString('id-ID');
 
+            // HIDE LOADING
             document.getElementById('loading').style.display = 'none';
 
             const selectedDashboard =
                 document.getElementById('dashboardSelector').value;
 
-            if (selectedDashboard === 'summary') {
+            switch (selectedDashboard) {
 
-                renderSummaryDashboard();
+                case 'summary':
+                    renderSummaryDashboard();
+                    break;
 
-            } else if (selectedDashboard === 'launching') {
+                case 'hatsat':
+                    renderHatsatDashboard();
+                    break;
+                
+                case 'qualityplan':
+                    renderQualityPlanDashboard();
+                    break;
 
-                renderLaunchingDashboard();
+                case 'tptr':
+                    renderTPTRDashboard();
+                    break;
+
+                case 'material':
+                    renderMaterialDashboard();
+                    break;
+
+                case 'launching':
+                    renderLaunchingDashboard();
+                    break;
+
+                default:
+                    renderITPDashboard();
             }
+
 
         } catch (error) {
 
-            console.error('LOAD ERROR:', error);
+            console.error(error);
 
             document.getElementById('loading').style.display = 'none';
 
             document.getElementById('categoriesContainer').innerHTML = `
-                <div class="text-center py-10">
-
-                    <div class="text-red-400 text-xl mb-2">
-                        Gagal mengambil data dashboard
-                    </div>
-
-                    <div class="text-slate-500 text-sm">
-                        ${error.message}
-                    </div>
-
+                <div class="text-red-400 text-center py-10">
+                    Gagal mengambil data dashboard
                 </div>
             `;
         }
@@ -250,8 +292,8 @@
     }, 30000);
 
     function getStatusColor(status) {
-      if (status === 'Closed') return 'bg-green-500/20 border-green-500 text-green-300';
-      if (status === 'Proses') return 'bg-yellow-500/20 border-yellow-500 text-yellow-300';
+      if (status === 'Close') return 'bg-green-500/20 border-green-500 text-green-300';
+      if (status === 'Open') return 'bg-yellow-500/20 border-yellow-500 text-yellow-300';
       return 'bg-blue-500/20 border-blue-500 text-blue-300';
     }
 
@@ -266,8 +308,13 @@
     function renderSummaryDashboard() {
       const container = document.getElementById('categoriesContainer');
       container.innerHTML = '';
+      // Tampilkan judul Overall Status Summary
+      document
+          .getElementById('overallSummaryTitle')
+          .classList.remove('hidden');
       const statContainer = document.getElementById('summaryStatsContainer');
-      statContainer.style.display = 'grid';
+      statContainer.classList.remove('hidden');
+      statContainer.classList.add('grid');
 
       const grouped = summaryData.reduce((acc, item) => {
         if (!acc[item.kategori]) acc[item.kategori] = [];
@@ -287,6 +334,64 @@
       document.getElementById('totalFinish').textContent = totalFinish.toLocaleString('id-ID');
       document.getElementById('overallProgress').textContent = overallProgress + '%';
       document.getElementById('totalRemaining').textContent = totalRemaining.toLocaleString('id-ID');
+      const categorySummaryHtml = `
+      <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-4 mb-8">
+
+      ${Object.keys(grouped).map(kategori => {
+
+          const items = grouped[kategori];
+
+          let total = 0;
+          let finish = 0;
+
+          items.forEach(item => {
+
+              total += Number(item.totalTask) || 0;
+              finish += Number(item.finish) || 0;
+
+          });
+
+          const progress =
+              total > 0
+                  ? ((finish / total) * 100).toFixed(1)
+                  : 0;
+
+          return `
+
+              <div class="stat-box">
+
+                  <div class="flex justify-between mb-2">
+
+                      <span class="text-xs text-slate-300">
+                          ${kategori}
+                      </span>
+
+                      <span class="text-xs font-bold ${getProgressColor(progress)}">
+                          ${progress}%
+                      </span>
+
+                  </div>
+
+                  <div class="progress-bar mb-2">
+                      <div
+                          class="progress-fill"
+                          style="width:${progress}%"
+                      ></div>
+                  </div>
+
+                  <div class="text-xs text-slate-500">
+                      ${finish}/${total}
+                  </div>
+
+              </div>
+
+          `;
+
+      }).join('')}
+
+      </div>
+      `;
+      container.innerHTML = categorySummaryHtml;
 
       Object.keys(grouped).forEach((kategori, idx) => {
         const items = grouped[kategori];
@@ -346,366 +451,1487 @@
       });
     }
 
-    function getProgressColor(progress) {
-  if (progress >= 75) return 'percentage-high';
-  if (progress >= 50) return 'percentage-medium';
-  return 'percentage-low';
-}
+    function renderHatsatDashboard() {
+      const container = document.getElementById('categoriesContainer');
+      container.innerHTML = '';
+      document.getElementById('overallSummaryTitle').classList.add('hidden');
+      const statContainer = document.getElementById('summaryStatsContainer');
+      statContainer.classList.add('hidden');
+      document.getElementById('filtersContainer').classList.remove('hidden');
 
-function safeStatus(value) {
-    return String(value || '').toLowerCase();
-}
+      // Get filter values
+      const urgensiFilter = document.getElementById('urgensiFilter').value;
+      const statusFilter = document.getElementById('statusFilter').value;
+      const materialFilter = document.getElementById('materialFilter').value;
 
-function renderLaunchingDashboard() {
+      // Filter data based on selected filters
+      let filteredData = hatsatData.filter(item => {
+        let matches = true;
+        if (urgensiFilter && item.urgensi !== urgensiFilter) matches = false;
+        if (statusFilter && item.statusTPTR !== statusFilter) matches = false;
+        if (materialFilter) {
+          const materialStatus = getMaterialStatus(item.statusMaterial);
+          if (materialStatus !== materialFilter) matches = false;
+        }
+        return matches;
+      });
 
-    const container = document.getElementById('categoriesContainer');
-    container.innerHTML = '';
+      const grouped = filteredData.reduce((acc, item) => {
+        if (!acc[item.kategori]) acc[item.kategori] = [];
+        acc[item.kategori].push(item);
+        return acc;
+      }, {});
 
-    document.getElementById('filtersContainer').classList.add('hidden');
+      let summaryKategoriHtml = `
+      <div class="flex items-center justify-between mb-4">
 
-    const statContainer = document.getElementById('summaryStatsContainer');
-    statContainer.style.display = 'none';
+          <div>
+              <h2 class="text-2xl font-bold text-slate-100">
+                  Summary Function Test HAT/SAT
+              </h2>
 
-    const totalTask = launchingData.length;
+              <p class="text-slate-400 text-sm">
+                  Ringkasan status Function Test berdasarkan kategori
+              </p>
+          </div>
 
-    // =========================
-    // KPI CALCULATION
-    // =========================
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
 
-    const selesai = launchingData.filter(item => {
+      ${Object.keys(grouped).map(kategori => {
 
-        const status = safeStatus(item.status);
+          const items = grouped[kategori];
 
-        return (
-            status.includes('ok') ||
-            status.includes('finish') ||
-            status.includes('selesai')
-        );
+          const closed =
+              items.filter(i =>
+                  i.statusFungsi === 'Close'
+              ).length;
 
-    }).length;
+          const total =
+              items.length;
 
-    const wip = launchingData.filter(item =>
-        safeStatus(item.status).includes('wip')
-    ).length;
+          const progress =
+              total > 0
+                  ? ((closed / total) * 100).toFixed(1)
+                  : 0;
 
-    const notStarted = totalTask - selesai - wip;
+          return `
 
-    const criticalItems = launchingData.filter(item => {
+              <div class="stat-box">
+
+                  <div class="text-slate-300 text-sm font-semibold mb-2">
+                      ${kategori}
+                  </div>
+
+                  <div class="
+                      text-2xl font-bold
+                      ${getProgressColor(progress)}
+                  ">
+                      ${progress}%
+                  </div>
+
+                  <div class="text-xs text-slate-500 mt-1">
+                      ${closed}/${total} Close
+                  </div>
+
+                  <div class="progress-bar mt-3">
+
+                      <div
+                          class="progress-fill"
+                          style="width:${progress}%"
+                      ></div>
+
+                  </div>
+
+              </div>
+
+          `;
+
+      }).join('')}
+
+      </div>
+
+      `;  
+
+      // If no results, show message
+      if (Object.keys(grouped).length === 0) {
+        container.innerHTML = '<div class="text-center py-12 text-slate-400"><p class="text-lg">Tidak ada data yang sesuai dengan filter yang dipilih</p></div>';
+        return;
+      }   
+
+      container.innerHTML = summaryKategoriHtml;
+
+      Object.keys(grouped).forEach((kategori, idx) => {
+        const items = grouped[kategori];
+        const closedCount = items.filter(i => i.statusFungsi === 'Close').length;
+        const openedCount = items.filter(i => i.statusFungsi === 'Open').length;
+
+        let html = `
+          <div class="category-card" style="animation-delay: ${idx * 0.1}s">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-bold text-slate-100">${kategori}</h2>
+              <div class="flex gap-2">
+                <span class="text-sm px-3 py-1 rounded-full bg-green-500/20 border border-green-500 text-green-300">✓ ${closedCount}</span>
+                <span class="text-sm px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-500 text-yellow-300">⚙ ${openedCount}</span>
+              </div>
+            </div>
+            <div class="space-y-3">`;
+
+        items.forEach((item, itemIdx) => {
+          html += `
+            <div class="item-row p-3 rounded-lg border border-slate-700 bg-slate-800/50" style="animation-delay: ${(idx * 0.1) + (itemIdx * 0.05)}s">
+              <div class="flex items-start justify-between mb-2">
+                <div class="flex-1">
+                  <div class="font-semibold text-slate-100">${item.sistem}</div>
+                  <div class="text-xs text-slate-400 mt-1">Inspeksi: ${item.inspeksi}</div>
+                </div>
+                <div class="text-xs text-slate-400 mt-1">Function Test :</div>/n
+                <span class="px-2 py-1 rounded text-xs font-semibold ${getStatusColor(item.statusFungsi)} border">${item.statusFungsi}</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 mt-2 text-xs">
+                <div>
+                  <span class="text-slate-400">Urgensi:</span>
+                  <span class="text-slate-200 ml-1 px-2 py-1 rounded inline-block ${item.urgensi === 'Prioritas' ? 'bg-red-500/20 text-red-300' : 'bg-blue-500/20 text-blue-300'}">${item.urgensi}</span>
+                </div>
+                <div>
+                  <span class="text-slate-400">Rencana:</span>
+                  <span class="text-slate-200 ml-1">${item.planDate}</span>
+                </div>
+                <div>
+                  <span class="text-slate-400">Material:</span>
+                  <span class="text-slate-200 ml-1 px-2 py-1 rounded inline-block bg-slate-700">${item.statusMaterial}</span>
+                </div>
+                <div>
+                  <span class="text-slate-400">Dokumen TPTR:</span>
+                  <span class="text-slate-200 ml-1 px-2 py-1 rounded inline-block bg-slate-700">${item.statusTPTR}</span>
+                </div>
+                <div>
+                  <span class="text-slate-400">Keterangan:</span>
+                  <span class="text-slate-200 ml-1">${item.keterangan}</span>
+                </div>
+              </div>
+            </div>`;
+        });
+        html += `</div></div>`;
+        container.innerHTML += html;
+      });
+    }
+
+    function renderITPDashboard() {
+
+        const container = document.getElementById('categoriesContainer');
+
+        container.innerHTML = '';
+        document.getElementById('overallSummaryTitle').classList.add('hidden');
+
+        document.getElementById('summaryStatsContainer').classList.add('hidden');
+
+        document.getElementById('filtersContainer').classList.add('hidden');
+
+        if (itpData.length === 0) {
+
+            container.innerHTML = `
+                <div class="text-center py-10 text-slate-400">
+                    Data ITP tidak tersedia
+                </div>
+            `;
+
+            return;
+        }
+
+        const approvedCount =
+            itpData.filter(i => i.status === 'Approved').length;
+
+        const progressAvg =
+            (
+                itpData.reduce((a, b) => a + Number(b.progressDokumen || 0), 0)
+                / itpData.length
+            ).toFixed(1);
+
+        let html = `
+            <div class="mb-4">
+
+                <h2 class="text-2xl font-bold text-slate-100">
+                    Overall Status ITP
+                </h2>
+
+                <p class="text-sm text-slate-400 mt-1">
+                    Monitoring progress approval Inspection Test Plan
+                </p>
+
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+                <div class="stat-box">
+                    <div class="stat-label">Total Task</div>
+                    <div class="stat-value">
+                        ${itpData.length}
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">Approved</div>
+                    <div class="stat-value percentage-high">
+                        ${approvedCount}
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">Average Progress</div>
+                    <div class="stat-value text-cyan-300">
+                        ${progressAvg}%
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="category-card">
+
+                <div class="flex items-center justify-between mb-6">
+
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-100">
+                            Inspection Test Plan (ITP)
+                        </h2>
+
+                        <p class="text-slate-400 text-sm mt-1">
+                            Monitoring progress approval dokumen inspeksi
+                        </p>
+                    </div>
+
+                    <div class="px-4 py-2 rounded-xl bg-cyan-500/20 border border-cyan-500 text-cyan-300 font-bold">
+                        ${progressAvg}%
+                    </div>
+
+                </div>
+
+                <div class="space-y-4">
+        `;
+
+        itpData.forEach((item, index) => {
+
+            const progress = Number(item.progressDokumen || 0);
+
+            html += `
+                <div class="item-row p-4 rounded-xl border border-slate-700 bg-slate-800/50">
+
+                    <div class="flex items-center justify-between mb-3">
+
+                        <div>
+                            <h3 class="text-slate-100 font-semibold">
+                                ${item.contents}
+                            </h3>
+
+                            <p class="text-xs text-slate-400 mt-1">
+                                Status Dokumen
+                            </p>
+                        </div>
+
+                        <div class="
+                            px-3 py-1 rounded-lg text-xs font-semibold
+                            ${item.status === 'Approved'
+                                ? 'bg-green-500/20 text-green-300 border border-green-500'
+                                : 'bg-yellow-500/20 text-yellow-300 border border-yellow-500'
+                            }
+                        ">
+                            ${item.status}
+                        </div>
+
+                    </div>
+
+                    <div class="progress-bar mb-2">
+                        <div
+                            class="progress-fill"
+                            style="width:${progress}%"
+                        ></div>
+                    </div>
+
+                    <div class="flex justify-between text-xs text-slate-400">
+                        <span>Progress Dokumen</span>
+                        <span>${progress}%</span>
+                    </div>
+
+                </div>
+            `;
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    function renderQualityPlanDashboard() {
+
+        const container = document.getElementById('categoriesContainer');
+
+        container.innerHTML = '';
+        document.getElementById('overallSummaryTitle').classList.add('hidden');
+
+        document.getElementById('summaryStatsContainer').classList.add('hidden');
+
+        document.getElementById('filtersContainer').classList.add('hidden');
+
+        if (qplanData.length === 0) {
+
+            container.innerHTML = `
+                <div class="text-center py-10 text-slate-400">
+                    Data Quality Plan tidak tersedia
+                </div>
+            `;
+
+            return;
+        }
+
+        const approvedCount =
+            qplanData.filter(i => i.status === 'Approved').length;
+
+        const avgProgress =
+            (
+                qplanData.reduce((a, b) =>
+                    a + Number(b.progressDokumen || 0), 0
+                ) / qplanData.length
+            ).toFixed(1);
+
+        // SUMMARY CARD
+        let html = `
+            <div class="mb-4">
+
+                <h2 class="text-2xl font-bold text-slate-100">
+                    Overall Status Quality Plan
+                </h2>
+
+                <p class="text-sm text-slate-400 mt-1">
+                    Monitoring progress approval Quality Plan
+                </p>
+
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+                <div class="stat-box">
+                    <div class="stat-label">Total Section</div>
+                    <div class="stat-value">
+                        ${qplanData.length}
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">Approved</div>
+                    <div class="stat-value percentage-high">
+                        ${approvedCount}
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">Average Progress</div>
+                    <div class="stat-value text-cyan-300">
+                        ${avgProgress}%
+                    </div>
+                </div>
+
+            </div>
+        `;
+
+        // GROUP BY CONTENTS
+        const grouped = qplanData.reduce((acc, item) => {
+
+            if (!acc[item.contents]) {
+                acc[item.contents] = [];
+            }
+
+            acc[item.contents].push(item);
+
+            return acc;
+
+        }, {});
+
+        Object.keys(grouped).forEach((section, index) => {
+
+            const items = grouped[section];
+
+            const sectionProgress =
+                (
+                    items.reduce((a, b) =>
+                        a + Number(b.progressDokumen || 0), 0
+                    ) / items.length
+                ).toFixed(1);
+
+            html += `
+                <div class="category-card mb-6">
+
+                    <div class="flex items-center justify-between mb-5">
+
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-100">
+                                ${section}
+                            </h2>
+
+                            <p class="text-slate-400 text-sm">
+                                ${items.length} Sub Section
+                            </p>
+                        </div>
+
+                        <div class="
+                            px-4 py-2 rounded-xl
+                            bg-cyan-500/20
+                            border border-cyan-500
+                            text-cyan-300 font-bold
+                        ">
+                            ${sectionProgress}%
+                        </div>
+
+                    </div>
+
+                    <div class="space-y-3">
+            `;
+
+            items.forEach(item => {
+
+                const progress =
+                    Number(item.progressDokumen || 0);
+
+                html += `
+                    <div class="
+                        p-4 rounded-xl
+                        border border-slate-700
+                        bg-slate-800/50
+                    ">
+
+                        <div class="flex justify-between items-start mb-3">
+
+                            <div>
+
+                                <div class="text-slate-100 font-semibold">
+                                    ${item.bab || '-'}
+                                </div>
+
+                                <div class="text-xs text-slate-400 mt-1">
+                                    ${item.subBab || '-'}
+                                </div>
+
+                            </div>
+
+                            <div class="
+                                px-3 py-1 rounded-lg text-xs font-semibold
+                                ${item.status === 'Approved'
+                                    ? 'bg-green-500/20 text-green-300 border border-green-500'
+                                    : 'bg-yellow-500/20 text-yellow-300 border border-yellow-500'
+                                }
+                            ">
+                                ${item.status}
+                            </div>
+
+                        </div>
+
+                        <div class="progress-bar mb-2">
+                            <div
+                                class="progress-fill"
+                                style="width:${progress}%"
+                            ></div>
+                        </div>
+
+                        <div class="flex justify-between text-xs text-slate-400">
+                            <span>Document Progress</span>
+                            <span>${progress}%</span>
+                        </div>
+
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    function renderTPTRDashboard() {
+
+        const container = document.getElementById('categoriesContainer');
+
+        container.innerHTML = '';
+        document.getElementById('overallSummaryTitle').classList.add('hidden');
+
+        document.getElementById('summaryStatsContainer').classList.add('hidden');
+
+        document.getElementById('filtersContainer').classList.add('hidden');
+
+        if (tptrData.length === 0) {
+
+            container.innerHTML = `
+                <div class="text-center py-10 text-slate-400">
+                    Data TPTR tidak tersedia
+                </div>
+            `;
+
+            return;
+        }
+
+        // SUMMARY
+        const totalDoc = tptrData.length;
+
+        const approvedDoc =
+            tptrData.filter(i =>
+                (Number(i.approvedDansatgas) || 0) >= 1
+            ).length;
+
+        const toPercent = (value) => {
+
+            if (
+                value === '-' ||
+                value === '' ||
+                value === null ||
+                value === undefined
+            ) {
+                return 0;
+            }
+
+            return (Number(value) || 0) * 100;
+        };
+
+        const progressAvg =
+            (
+                tptrData.reduce((acc, item) => {
+
+                    const total =
+                        toPercent(item.penyusunanPal) +
+                        toPercent(item.reviewPal) +
+                        toPercent(item.reviewClass) +
+                        toPercent(item.reviewSatgas) +
+                        toPercent(item.approvedDansatgas);
+
+                    return acc + (total / 5);
+
+                }, 0) / totalDoc
+            ).toFixed(1);
+
+        // GROUPING
+        const grouped = tptrData.reduce((acc, item) => {
+
+            if (!acc[item.kategori]) {
+                acc[item.kategori] = [];
+            }
+
+            acc[item.kategori].push(item);
+
+            return acc;
+
+        }, {});
+
+        let html = `
+            <div class="mb-4">
+
+                <h2 class="text-2xl font-bold text-slate-100">
+                    Overall Status TPTR
+                </h2>
+
+                <p class="text-sm text-slate-400 mt-1">
+                    Monitoring progress approval TPTR
+                </p>
+
+            </div>
+
+            <!-- TOP SUMMARY -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+
+                <div class="stat-box">
+                    <div class="stat-label">Total TPTR</div>
+                    <div class="stat-value">${totalDoc}</div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">Approved</div>
+                    <div class="stat-value percentage-high">
+                        ${approvedDoc}
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">Average Progress</div>
+                    <div class="stat-value text-cyan-300">
+                        ${progressAvg}%
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">Outstanding</div>
+                    <div class="stat-value percentage-low">
+                        ${totalDoc - approvedDoc}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CATEGORY SUMMARY -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-8">
+
+                ${Object.keys(grouped).map((kategori) => {
+
+                    const items = grouped[kategori];
+
+                    const avgKategori =
+                        (
+                            items.reduce((acc, item) => {
+
+                                const total =
+                                    toPercent(item.penyusunanPal) +
+                                    toPercent(item.reviewPal) +
+                                    toPercent(item.reviewClass) +
+                                    toPercent(item.reviewSatgas) +
+                                    toPercent(item.approvedDansatgas);
+
+                                return acc + (total / 5);
+
+                            }, 0) / items.length
+                        ).toFixed(1);
+
+                    const selesaiKategori =
+                        items.filter(i =>
+                            toPercent(i.approvedDansatgas) >= 100
+                        ).length;
+
+                    return `
+
+                        <div class="stat-box text-left">
+
+                            <div class="flex items-center justify-between mb-3">
+
+                                <div>
+                                    <div class="text-slate-200 font-semibold text-sm">
+                                        ${kategori}
+                                    </div>
+
+                                    <div class="text-slate-500 text-xs mt-1">
+                                        ${selesaiKategori}/${items.length} Approved
+                                    </div>
+                                </div>
+
+                                <div class="text-xl font-bold ${getProgressColor(avgKategori)}">
+                                    ${avgKategori}%
+                                </div>
+
+                            </div>
+
+                            <div class="progress-bar">
+                                <div
+                                    class="progress-fill"
+                                    style="width:${avgKategori}%"
+                                ></div>
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }).join('')}
+
+            </div>
+        `;
+
+        // CATEGORY LOOP
+        Object.keys(grouped).forEach((kategori, idx) => {
+
+            const items = grouped[kategori];
+
+           const selesai =
+              items.filter(i =>
+                  (Number(i.approvedDansatgas) || 0) >= 1
+              ).length;
+
+            const progressKategori =
+                (
+                    items.reduce((acc, item) => {
+
+                        const total =
+                            toPercent(item.penyusunanPal) +
+                            toPercent(item.reviewPal) +
+                            toPercent(item.reviewClass) +
+                            toPercent(item.reviewSatgas) +
+                            toPercent(item.approvedDansatgas);
+
+                        return acc + (total / 5);
+
+                    }, 0) / items.length
+                ).toFixed(1);
+
+            html += `
+                <div class="category-card mb-6">
+
+                    <div class="flex items-center justify-between mb-5">
+
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-100">
+                                ${kategori}
+                            </h2>
+
+                            <p class="text-slate-400 text-sm mt-1">
+                                ${selesai}/${items.length} dokumen selesai
+                            </p>
+                        </div>
+
+                        <div class="text-2xl font-bold ${getProgressColor(progressKategori)}">
+                            ${progressKategori}%
+                        </div>
+
+                    </div>
+
+                    <div class="space-y-4">
+            `;
+
+            items.forEach((item) => {
+
+                const penyusunan =
+                    (Number(item.penyusunanPal) || 0) * 100;
+
+                const reviewPal =
+                    (Number(item.reviewPal) || 0) * 100;
+
+                const reviewClass =
+                    (Number(item.reviewClass) || 0) * 100;
+
+                const reviewSatgas =
+                    (Number(item.reviewSatgas) || 0) * 100;
+
+                const approved =
+                    (Number(item.approvedDansatgas) || 0) * 100;
+
+                html += `
+
+                    <div class="p-4 rounded-xl border border-slate-700 bg-slate-800/50">
+
+                        <div class="flex justify-between items-start gap-4 mb-4">
+
+                            <div>
+                                <h3 class="text-slate-100 font-semibold text-sm md:text-base">
+                                    ${item.namaDokumen}
+                                </h3>
+
+                                <p class="text-xs text-slate-400 mt-2">
+                                    ${item.remark || '-'}
+                                </p>
+                            </div>
+
+                            <div class="
+                                px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap
+                                ${approved >= 100
+                                    ? 'bg-green-500/20 text-green-300 border border-green-500'
+                                    : approved > 0
+                                        ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500'
+                                        : 'bg-yellow-500/20 text-yellow-300 border border-yellow-500'
+                                }
+                            ">
+                                ${approved >= 100 ? 'APPROVED' : 'PROCESS'}
+                            </div>
+
+                        </div>
+
+                        <!-- STEP PROGRESS -->
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+
+                            <div class="stat-box">
+                                <div class="stat-label">PAL</div>
+                                <div class="stat-value text-base">
+                                    ${penyusunan}%
+                                </div>
+                            </div>
+
+                            <div class="stat-box">
+                                <div class="stat-label">Review PAL</div>
+                                <div class="stat-value text-base">
+                                    ${reviewPal}%
+                                </div>
+                            </div>
+
+                            <div class="stat-box">
+                                <div class="stat-label">Class</div>
+                                <div class="stat-value text-base">
+                                    ${reviewClass}%
+                                </div>
+                            </div>
+
+                            <div class="stat-box">
+                                <div class="stat-label">Satgas</div>
+                                <div class="stat-value text-base">
+                                    ${reviewSatgas}%
+                                </div>
+                            </div>
+
+                            <div class="stat-box">
+                                <div class="stat-label">Approved</div>
+                                <div class="stat-value text-base ${approved >= 100 ? 'percentage-high' : 'percentage-low'}">
+                                    ${approved}%
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    function renderMaterialDashboard() {
+
+        const container =
+            document.getElementById('categoriesContainer');
+
+        container.innerHTML = '';
+        document.getElementById('overallSummaryTitle').classList.add('hidden');
+
+        document.getElementById('summaryStatsContainer')
+            .classList.add('hidden');
+
+        document.getElementById('filtersContainer')
+            .classList.add('hidden');
+
+        if (materialData.length === 0) {
+
+            container.innerHTML = `
+                <div class="text-center py-10 text-slate-400">
+                    Data Material tidak tersedia
+                </div>
+            `;
+
+            return;
+        }
 
         const today = new Date();
 
-        const plan = new Date(item.planDate);
+        const totalMaterial =
+            materialData.length;
 
-        return (
-            plan < today &&
-            !safeStatus(item.status).includes('ok') &&
-            !safeStatus(item.status).includes('finish') &&
-            !safeStatus(item.status).includes('selesai')
-        );
+        const arrivedCount =
+            materialData.filter(i =>
+                (i.status || '').toLowerCase().includes('arrived')
+            ).length;
 
-    });
+        const poCount =
+            materialData.filter(i =>
+                (i.status || '').toLowerCase().includes('purchase')
+            ).length;
 
-    const critical = criticalItems.length;
+        const overdueCount =
+            materialData.filter(i => {
 
-    // =========================
-    // KPI CARD
-    // =========================
+                if (!i.usedDate || !i.arrivalDate)
+                    return false;
 
-    let html = `
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                return new Date(i.arrivalDate) >
+                      new Date(i.usedDate);
 
-        <div class="stat-box border border-cyan-500/20">
-            <div class="stat-label">TOTAL TASK</div>
-            <div class="stat-value text-cyan-300">${totalTask}</div>
-        </div>
-
-        <div class="stat-box border border-green-500/20">
-            <div class="stat-label">SELESAI</div>
-            <div class="stat-value text-green-300">${selesai}</div>
-        </div>
-
-        <div class="stat-box border border-yellow-500/20">
-            <div class="stat-label">WIP</div>
-            <div class="stat-value text-yellow-300">${wip}</div>
-        </div>
-
-        <div class="stat-box border border-red-500/20">
-            <div class="stat-label">BELUM START</div>
-            <div class="stat-value text-red-300">${notStarted}</div>
-        </div>
-
-        <div class="stat-box border border-orange-500/20">
-            <div class="stat-label">CRITICAL</div>
-            <div class="stat-value text-orange-300">${critical}</div>
-        </div>
-
-    </div>
-    `;
-
-    // =========================
-    // GROUP CATEGORY
-    // =========================
-
-    const grouped = launchingData.reduce((acc, item) => {
-
-        if (!acc[item.kategori]) {
-            acc[item.kategori] = [];
-        }
-
-        acc[item.kategori].push(item);
-
-        return acc;
-
-    }, {});
-
-    // =========================
-    // PROGRESS BY CATEGORY
-    // =========================
-
-    html += `
-    <div class="category-card mb-8">
-
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-slate-100">
-                Progress By Category
-            </h2>
-        </div>
-
-        <div class="space-y-5">
-    `;
-
-    Object.keys(grouped).forEach(kategori => {
-
-        const items = grouped[kategori];
-
-        const done = items.filter(item => {
-
-            const status = safeStatus(item.status);
-
-            return (
-                status.includes('ok') ||
-                status.includes('finish') ||
-                status.includes('selesai')
-            );
-
-        }).length;
+            }).length;
 
         const progress =
-            ((done / items.length) * 100).toFixed(0);
+            ((arrivedCount / totalMaterial) * 100).toFixed(1);
 
-        html += `
-        <div>
+        let html = `
+            <div class="mb-4">
 
-            <div class="flex justify-between mb-2">
+                <h2 class="text-2xl font-bold text-slate-100">
+                    Overall Status Material
+                </h2>
 
-                <span class="text-slate-200 font-medium">
-                    ${kategori}
-                </span>
-
-                <span class="${getProgressColor(progress)} font-bold">
-                    ${progress}%
-                </span>
+                <p class="text-sm text-slate-400 mt-1">
+                    Monitoring progress Material
+                </p>
 
             </div>
 
-            <div class="progress-bar">
+            <!-- TOP SUMMARY -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 
-                <div class="progress-fill"
-                     style="width:${progress}%">
+                <div class="stat-box">
+                    <div class="stat-label">
+                        Total Material
+                    </div>
+
+                    <div class="stat-value">
+                        ${totalMaterial}
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">
+                        Arrived
+                    </div>
+
+                    <div class="stat-value percentage-high">
+                        ${arrivedCount}
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">
+                        Purchase Process
+                    </div>
+
+                    <div class="stat-value percentage-medium">
+                        ${poCount}
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">
+                        Overdue Delivery
+                    </div>
+
+                    <div class="stat-value percentage-low">
+                        ${overdueCount}
+                    </div>
                 </div>
 
             </div>
 
-            <div class="flex justify-between mt-1 text-xs text-slate-400">
+            <!-- OVERALL PROGRESS -->
+            <div class="category-card mb-8">
 
-                <span>${done} Finish</span>
+                <div class="flex justify-between items-center mb-4">
 
-                <span>${items.length} Total</span>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-100">
+                            Overall Material Progress
+                        </h2>
+
+                        <p class="text-slate-400 text-sm mt-1">
+                            Monitoring kedatangan material proyek
+                        </p>
+                    </div>
+
+                    <div class="text-3xl font-bold text-cyan-300">
+                        ${progress}%
+                    </div>
+
+                </div>
+
+                <div class="progress-bar">
+                    <div
+                        class="progress-fill"
+                        style="width:${progress}%"
+                    ></div>
+                </div>
 
             </div>
-
-        </div>
         `;
-    });
 
-    html += `
-        </div>
-    </div>
-    `;
+        // GROUPING
+        const grouped =
+            materialData.reduce((acc, item) => {
 
-    // =========================
-    // CRITICAL ACTIVITY
-    // =========================
+                if (!acc[item.kategori]) {
+                    acc[item.kategori] = [];
+                }
 
-    
+                acc[item.kategori].push(item);
 
-    html += `
-    <div class="category-card mb-8">
+                return acc;
 
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-red-300">
-                Critical Activity
-            </h2>
+            }, {});
 
-            <div class="text-sm text-slate-400">
-                ${criticalItems.length} Critical Items
-            </div>
-        </div>
+        Object.keys(grouped).forEach((kategori) => {
 
-        <div class="overflow-x-auto">
+            const items = grouped[kategori];
 
-            <table class="w-full text-sm">
+            const arrived =
+                items.filter(i =>
+                    (i.status || '').toLowerCase().includes('arrived')
+                ).length;
 
-                <thead>
-                    <tr class="border-b border-slate-700 text-slate-400">
-                        <th class="text-left py-3 pr-4">Plan Date</th>
-                        <th class="text-left py-3 pr-4">Category</th>
-                        <th class="text-left py-3 pr-4">System</th>
-                        <th class="text-left py-3 pr-4">Inspection</th>
-                        <th class="text-left py-3 pr-4">Status</th>
-                        <th class="text-left py-3 pr-4">PIC</th>
-                    </tr>
-                </thead>
+            const percentage =
+                ((arrived / items.length) * 100).toFixed(1);
 
-                <tbody>
-    `;
+            html += `
 
-    criticalItems.forEach(item => {
+                <div class="category-card mb-6">
 
-        const status = String(item.status || '').toLowerCase();
+                    <div class="flex items-center justify-between mb-5">
 
-        let statusColor = 'text-red-300 bg-red-500/10 border border-red-500/30';
+                        <div>
 
-        // WIP / progress
-        if (
-            status.includes('wip') ||
-            status.includes('%') ||
-            status.includes('progress') ||
-            status.includes('material siap') ||
-            status.includes('sudah')
-        ) {
-            statusColor = 'text-yellow-300 bg-yellow-500/10 border border-yellow-500/30';
+                            <h2 class="text-2xl font-bold text-slate-100">
+                                ${kategori}
+                            </h2>
+
+                            <p class="text-slate-400 text-sm mt-1">
+                                ${arrived}/${items.length} Material Arrived
+                            </p>
+
+                        </div>
+
+                        <div class="text-2xl font-bold ${getProgressColor(percentage)}">
+                            ${percentage}%
+                        </div>
+
+                    </div>
+
+                    <div class="space-y-3">
+            `;
+
+            items.forEach((item) => {
+
+                const usedDate =
+                    item.usedDate
+                        ? new Date(item.usedDate)
+                            .toLocaleDateString('id-ID')
+                        : '-';
+
+                const arrivalDate =
+                    item.arrivalDate
+                        ? new Date(item.arrivalDate)
+                            .toLocaleDateString('id-ID')
+                        : '-';
+
+                const isLate =
+                    item.arrivalDate &&
+                    item.usedDate &&
+                    new Date(item.arrivalDate) >
+                    new Date(item.usedDate);
+
+                html += `
+
+                    <div class="p-4 rounded-xl border border-slate-700 bg-slate-800/50">
+
+                        <div class="flex justify-between items-start gap-4 mb-4">
+
+                            <div>
+
+                                <h3 class="text-slate-100 font-semibold">
+                                    ${item.material}
+                                </h3>
+
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Required Date :
+                                    ${usedDate}
+                                </p>
+
+                                <p class="text-xs text-slate-400">
+                                    Arrival Date :
+                                    ${arrivalDate}
+                                </p>
+
+                            </div>
+
+                            <div class="
+                                px-3 py-1 rounded-lg text-xs font-semibold whitespace-nowrap
+                                ${
+                                    (item.status || '').toLowerCase().includes('arrived')
+                                        ? 'bg-green-500/20 text-green-300 border border-green-500'
+                                        : (item.status || '').toLowerCase().includes('purchase')
+                                            ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500'
+                                            : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500'
+                                }
+                            ">
+                                ${item.status || '-'}
+                            </div>
+
+                        </div>
+
+                        ${
+                            isLate
+                            ? `
+                                <div class="text-xs text-red-300 bg-red-500/10 border border-red-500 rounded-lg px-3 py-2 mb-3">
+                                    ⚠ Delivery melebihi Used Date
+                                </div>
+                            `
+                            : ''
+                        }
+
+                        ${
+                            item.remark
+                            ? `
+                                <div class="text-xs text-slate-300 bg-slate-900/50 rounded-lg p-3 border border-slate-700">
+                                    ${item.remark}
+                                </div>
+                            `
+                            : ''
+                        }
+
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    function renderLaunchingDashboard() {
+
+        const container =
+            document.getElementById('categoriesContainer');
+
+        container.innerHTML = '';
+
+        document.getElementById('overallSummaryTitle')
+            .classList.add('hidden');
+
+        document.getElementById('summaryStatsContainer')
+            .classList.add('hidden');
+
+        document.getElementById('filtersContainer')
+            .classList.add('hidden');
+
+        if (!launchingData.length) {
+
+            container.innerHTML = `
+                <div class="text-center py-10 text-slate-400">
+                    Data Launching tidak tersedia
+                </div>
+            `;
+
+            return;
         }
 
-        // selesai
-        if (
-            status.includes('ok') ||
-            status.includes('finish') ||
-            status.includes('selesai')
-        ) {
-            statusColor = 'text-green-300 bg-green-500/10 border border-green-500/30';
-        }
+        // =====================
+        // SUMMARY
+        // =====================
 
-        html += `
-        <tr class="border-b border-slate-800 hover:bg-slate-800/40 transition">
+        const totalItem = launchingData.length;
 
-            <td class="py-3 pr-4 text-slate-300 whitespace-nowrap">
-                ${item.planDate || '-'}
-            </td>
+        const completed =
+            launchingData.filter(i =>
+                i.statusInspeksi ===
+                'Already Accepted by Class / OS'
+            ).length;
 
-            <td class="py-3 pr-4">
-                <span class="text-cyan-300 font-medium">
-                    ${item.kategori || '-'}
-                </span>
-            </td>
+        const inProgress =
+            launchingData.filter(i =>
+                i.statusInspeksi ===
+                'While in process'
+            ).length;
 
-            <td class="py-3 pr-4 text-slate-100 font-medium">
-                ${item.sistem || '-'}
-            </td>
+        const notStarted =
+            launchingData.filter(i =>
+                i.statusInspeksi ===
+                'Not carried out yet'
+            ).length;
 
-            <td class="py-3 pr-4 text-slate-400">
-                ${item.inspeksi || '-'}
-            </td>
+        const progress =
+            ((completed / totalItem) * 100)
+            .toFixed(1);
 
-            <td class="py-3 pr-4">
-                <span class="px-3 py-1 rounded-lg text-xs font-semibold ${statusColor}">
-                    ${item.status || 'NOT STARTED'}
-                </span>
-            </td>
+        // =====================
+        // GROUP BY KATEGORI
+        // =====================
 
-            <td class="py-3 pr-4 text-slate-400">
-                ${item.pic || '-'}
-            </td>
+        const grouped =
+            launchingData.reduce((acc, item) => {
 
-        </tr>
-        `;
-    });
+                if (!acc[item.kategori]) {
+                    acc[item.kategori] = [];
+                }
 
-    html += `
-                </tbody>
-            </table>
-        </div>
-    </div>
-    `;
+                acc[item.kategori].push(item);
 
-    // =========================
-    // ISSUE TRACKING
-    // =========================
+                return acc;
 
-    html += `
-    <div class="category-card">
+            }, {});
 
-        <div class="flex items-center justify-between mb-6">
+        let html = `
 
-            <h2 class="text-2xl font-bold text-orange-300">
-                Issue Tracking
-            </h2>
+            <div class="mb-4">
 
-        </div>
+                <h2 class="text-2xl font-bold text-slate-100">
+                    Launching Readiness Dashboard
+                </h2>
 
-        <div class="space-y-4">
-    `;
+                <p class="text-sm text-slate-400 mt-1">
+                    Monitoring kesiapan launching kapal
+                </p>
 
-    launchingData.forEach(item => {
+            </div>
 
-        if (!item.keterangan) return;
+            <!-- KPI -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 
-        html += `
-        <div class="p-4 rounded-xl border border-slate-700 bg-slate-800/40">
-
-            <div class="flex items-start justify-between gap-4">
-
-                <div class="flex-1">
-
-                    <div class="text-slate-100 font-semibold">
-                        ${item.sistem || '-'}
+                <div class="stat-box">
+                    <div class="stat-label">
+                        Total Item
                     </div>
 
-                    <div class="text-sm text-cyan-300 mt-1">
-                        ${item.inspeksi || '-'}
+                    <div class="stat-value">
+                        ${totalItem}
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">
+                        Completed
                     </div>
 
-                    <div class="text-sm text-slate-400 mt-3 whitespace-pre-line">
-                        ${item.keterangan || '-'}
+                    <div class="stat-value percentage-high">
+                        ${completed}
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">
+                        In Progress
+                    </div>
+
+                    <div class="stat-value percentage-medium">
+                        ${inProgress}
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-label">
+                        Not Started
+                    </div>
+
+                    <div class="stat-value percentage-low">
+                        ${notStarted}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- OVERALL PROGRESS -->
+
+            <div class="category-card mb-8">
+
+                <div class="flex justify-between items-center mb-4">
+
+                    <div>
+
+                        <h2 class="text-xl font-bold text-slate-100">
+                            Overall Progress
+                        </h2>
+
+                        <p class="text-sm text-slate-400">
+                            Launching Readiness
+                        </p>
+
+                    </div>
+
+                    <div class="
+                        text-3xl font-bold
+                        ${getProgressColor(progress)}
+                    ">
+                        ${progress}%
                     </div>
 
                 </div>
 
-                <div class="text-right min-w-[120px]">
+                <div class="progress-bar">
 
-                    <div class="text-xs text-slate-500 mb-1">
-                        PIC
-                    </div>
-
-                    <div class="text-sm text-slate-200">
-                        ${item.pic || '-'}
-                    </div>
+                    <div
+                        class="progress-fill"
+                        style="width:${progress}%"
+                    ></div>
 
                 </div>
 
             </div>
 
-        </div>
+            <!-- PROGRESS KATEGORI -->
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         `;
-    });
 
-    html += `
-        </div>
-    </div>
-    `;
+        Object.keys(grouped).forEach(kategori => {
 
-    container.innerHTML = html;
-}
+            const items =
+                grouped[kategori];
+
+            const selesai =
+                items.filter(i =>
+                    i.statusInspeksi ===
+                    'Already Accepted by Class / OS'
+                ).length;
+
+            const persen =
+                (
+                    selesai / items.length * 100
+                ).toFixed(1);
+
+            html += `
+
+                <div class="stat-box">
+
+                    <div class="text-slate-300 font-semibold mb-2">
+                        ${kategori}
+                    </div>
+
+                    <div class="
+                        text-2xl font-bold
+                        ${getProgressColor(persen)}
+                    ">
+                        ${persen}%
+                    </div>
+
+                    <div class="text-xs text-slate-500 mt-1">
+                        ${selesai}/${items.length}
+                    </div>
+
+                    <div class="progress-bar mt-3">
+
+                        <div
+                            class="progress-fill"
+                            style="width:${persen}%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            `;
+        });
+
+        html += `
+            </div>
+
+            <!-- DETAIL PER KATEGORI -->
+        `;
+
+        Object.keys(grouped).forEach(kategori => {
+
+            html += `
+
+                <div class="category-card mb-6">
+
+                    <h2 class="text-xl font-bold text-slate-100 mb-4">
+                        ${kategori}
+                    </h2>
+
+                    <div class="space-y-3">
+            `;
+
+            grouped[kategori].forEach(item => {
+
+                let badge = '';
+
+                if (
+                    item.statusInspeksi ===
+                    'Already Accepted by Class / OS'
+                ) {
+
+                    badge =
+                        'bg-green-500/20 text-green-300 border border-green-500';
+
+                } else if (
+                    item.statusInspeksi ===
+                    'While in process'
+                ) {
+
+                    badge =
+                        'bg-yellow-500/20 text-yellow-300 border border-yellow-500';
+
+                } else {
+
+                    badge =
+                        'bg-red-500/20 text-red-300 border border-red-500';
+                }
+
+                html += `
+
+                    <div class="
+                        p-4 rounded-xl
+                        border border-slate-700
+                        bg-slate-800/50
+                    ">
+
+                        <div class="
+                            flex justify-between items-start
+                            gap-4 mb-3
+                        ">
+
+                            <div>
+
+                                <div class="
+                                    text-slate-100
+                                    font-semibold
+                                ">
+                                    ${item.sistem}
+                                </div>
+
+                                <div class="
+                                    text-xs text-slate-400 mt-1
+                                ">
+                                    ${item.inspeksi}
+                                </div>
+
+                            </div>
+
+                            <div class="
+                                px-3 py-1 rounded-lg
+                                text-xs font-semibold
+                                ${badge}
+                            ">
+                                ${item.statusInspeksi}
+                            </div>
+
+                        </div>
+
+                        <div class="
+                            grid md:grid-cols-3 gap-3
+                            text-xs
+                        ">
+
+                            <div>
+                                <span class="text-slate-500">
+                                    Plan :
+                                </span>
+                                <span class="text-slate-200">
+                                    ${item.planDate}
+                                </span>
+                            </div>
+
+                            <div>
+                                <span class="text-slate-500">
+                                    Actual :
+                                </span>
+                                <span class="text-slate-200">
+                                    ${item.actualDate || '-'}
+                                </span>
+                            </div>
+
+                            <div>
+                                <span class="text-slate-500">
+                                    PIC :
+                                </span>
+                                <span class="text-slate-200">
+                                    ${item.pic}
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div class="
+                            mt-3 text-sm
+                            text-slate-300
+                        ">
+                            ${item.keterangan || '-'}
+                        </div>
+
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
 
     function getMaterialStatus(material) {
 
@@ -724,33 +1950,48 @@ function renderLaunchingDashboard() {
         return 'Selesai';
     }
 
-    document.getElementById('dashboardSelector')
-    .addEventListener('change', (e) => {
+    document.getElementById('dashboardSelector').addEventListener('change', (e) => {
+
+        document.getElementById('filtersContainer').classList.add('hidden');
 
         if (e.target.value === 'summary') {
 
             renderSummaryDashboard();
 
-            document.getElementById('filtersContainer')
-            .classList.add('hidden');
+        } else if (e.target.value === 'hatsat') {
 
+            renderHatsatDashboard();
+
+        } else if (e.target.value === 'qualityplan') {
+
+            renderQualityPlanDashboard();
+        } else if (e.target.value === 'tptr') {
+
+            renderTPTRDashboard();
+        } else if (e.target.value === 'material') {
+
+            renderMaterialDashboard();
         } else if (e.target.value === 'launching') {
 
             renderLaunchingDashboard();
+
+        } else {
+
+            renderITPDashboard();
         }
 
         lucide.createIcons();
     });
 
     // Filter event listeners
-    document.getElementById('urgensiFilter').addEventListener('change', renderLaunchingDashboard);
-    document.getElementById('statusFilter').addEventListener('change', renderLaunchingDashboard);
-    document.getElementById('materialFilter').addEventListener('change', renderLaunchingDashboard);
+    document.getElementById('urgensiFilter').addEventListener('change', renderHatsatDashboard);
+    document.getElementById('statusFilter').addEventListener('change', renderHatsatDashboard);
+    document.getElementById('materialFilter').addEventListener('change', renderHatsatDashboard);
     document.getElementById('resetFiltersBtn').addEventListener('click', () => {
       document.getElementById('urgensiFilter').value = '';
       document.getElementById('statusFilter').value = '';
       document.getElementById('materialFilter').value = '';
-      renderLaunchingDashboard();
+      renderHatsatDashboard();
     });
 
     
