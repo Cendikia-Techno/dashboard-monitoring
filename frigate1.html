@@ -345,16 +345,18 @@
 
           const items = grouped[kategori];
 
-          let progressTotal = 0;
-
-            items.forEach(item => {
-              progressTotal += Number(item.progress) || 0;
-            });
-            
-            const progress =
-              items.length > 0
-                ? (progressTotal / items.length).toFixed(2)
-                : 0;
+          let total = 0;
+        let finish = 0;
+        
+        items.forEach(item => {
+          total += Number(item.totalTask) || 0;
+          finish += Number(item.finish) || 0;
+        });
+        
+        const progress =
+          total > 0
+            ? ((finish / total) * 100).toFixed(1)
+            : 0;
 
           return `
 
