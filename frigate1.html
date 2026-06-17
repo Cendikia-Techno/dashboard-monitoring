@@ -322,14 +322,18 @@
         return acc;
       }, {});
 
-      let totalTasks = 0, totalFinish = 0, totalRemaining = 0;
+      let totalTasks = 0, totalFinish = 0, totalRemaining = 0;let totalProgress = 0;
       summaryData.forEach(item => {
-        totalTasks += Number(item.totalTask) || 0;
-        totalFinish += Number(item.finish) || 0;
-        totalRemaining += Number(item.remaining) || 0;
-      });
+      totalTasks += Number(item.totalTask) || 0;
+      totalFinish += Number(item.finish) || 0;
+      totalRemaining += Number(item.remaining) || 0;
+      totalProgress += Number(item.progress) || 0;
+    });
 
-      const overallProgress = totalTasks > 0 ? ((totalFinish / totalTasks) * 100).toFixed(2) : 0;
+      const overallProgress =
+      summaryData.length > 0
+        ? (totalProgress / summaryData.length).toFixed(2)
+        : 0;
       document.getElementById('totalTasks').textContent = totalTasks.toLocaleString('id-ID');
       document.getElementById('totalFinish').textContent = totalFinish.toLocaleString('id-ID');
       document.getElementById('overallProgress').textContent = overallProgress + '%';
