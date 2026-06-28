@@ -303,9 +303,12 @@ Daily Activity Project QA</h3>
 <div class="card-body">
     <i class="bi bi-calender-event kpi-icon"></i>
 
-<div class="kpi-title">Today's Activity</div>
+<div class="kpi-title">Latest Activity</div>
 
 <div class="kpi-value" id="todayActivity">0</div>
+<div id="latestDate" class="small mt-1">
+    Last Report : -
+</div>
 
 </div>
 
@@ -637,11 +640,31 @@ function renderSummary(){
     document.getElementById("totalKoordinator").innerHTML =
         new Set(filteredData.map(x=>x.koordinator)).size;
 
-    const today =
-        filteredData[0]?.pelaporanDate || "";
+    // Cari tanggal terbaru dari data
+    const latestDate = filteredData.reduce((latest, item) => {
 
-    document.getElementById("todayActivity").innerHTML =
-        filteredData.filter(x=>x.pelaporanDate===today).length;
+        if (!item.pelaporanDate) return latest;
+
+        const current = item.pelaporanDate.split('/').reverse().join('-');
+        const max = latest.split('/').reverse().join('-');
+
+        return new Date(current) > new Date(max)
+            ? item.pelaporanDate
+            : latest;
+
+    }, filteredData[0]?.pelaporanDate || "");
+
+    // Hitung jumlah aktivitas pada tanggal terbaru
+    const latestCount = filteredData.filter(
+        x => x.pelaporanDate === latestDate
+    ).length;
+
+    // Tampilkan jumlah
+    document.getElementById("todayActivity").innerHTML = latestCount;
+
+    // Tampilkan tanggal terakhir
+    document.getElementById("latestDate").innerHTML =
+        "Last Report : " + latestDate;
 
 }
 
