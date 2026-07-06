@@ -151,11 +151,13 @@ td{
 
 <h1>QA Dashboard - KSOT</h1>
 
-<select id="docType">
+<select id="dashboardType">
 
 <option value="itp">Inspection Test Plan</option>
 
 <option value="qplan">Quality Plan</option>
+
+<option value="summary">Summary Inspection</option>
 
 </select>
 
@@ -205,7 +207,7 @@ td{
 
 <table>
 
-<thead>
+<thead id="tableHead">
 
 <tr>
 
@@ -258,23 +260,157 @@ td{
 
     }
 
+    function setInspectionHeader(){
+
+    document.getElementById("tableHead").innerHTML=`
+
+    <tr>
+
+    <th>Kategori</th>
+
+    <th>Item</th>
+
+    <th>Total</th>
+
+    <th>Finish</th>
+
+    <th>Remaining</th>
+
+    <th>Progress</th>
+
+    </tr>
+
+    `;
+
+    }
+
+    function setDocumentHeader(){
+
+    document.getElementById("tableHead").innerHTML=`
+
+    <tr>
+
+    <th width="50%">Section</th>
+
+    <th>Status</th>
+
+    <th width="30%">Progress</th>
+
+    </tr>
+
+    `;
+
+    }
+
     function renderDashboard(type){
 
-        let data = [];
+        if(type=="summary"){
 
-        if(type === "itp"){
+            renderSummaryInspection();
 
-            data = dashboardData.itpData;
+            return;
+
+        }
+
+        let data=[];
+
+        if(type=="itp"){
+
+            data=dashboardData.itpData;
 
         }else{
 
-            data = dashboardData.qplanData;
+            data=dashboardData.qplanData;
 
         }
+
+        setDocumentHeader();
 
         renderSummary(data);
 
         renderTable(data);
+
+    }
+
+    function renderSummaryInspection(){
+
+        const data=dashboardData.summaryData;
+
+        setInspectionHeader();
+
+        renderInspectionCard(data);
+
+        renderInspectionTable(data);
+
+    }
+
+    function renderInspectionCard(data){
+
+        const totalTask =
+        data.reduce((a,b)=>a+b.totalTask,0);
+
+        const finish =
+        data.reduce((a,b)=>a+b.finish,0);
+
+        const remaining =
+        data.reduce((a,b)=>a+b.remaining,0);
+
+        const progress =
+        Math.round((finish/totalTask)*100);
+
+        document.getElementById("overallProgress").innerHTML=
+        progress+"%";
+
+        document.getElementById("doneCount").innerHTML=
+        finish;
+
+        document.getElementById("reviewCount").innerHTML=
+        totalTask;
+
+        document.getElementById("pendingCount").innerHTML=
+        remaining;
+
+    }
+
+    function renderInspectionTable(data){
+
+        let html="";
+
+        data.forEach(item=>{
+
+            html+=`
+
+            <tr>
+
+            <td>${item.kategori}</td>
+
+            <td>${item.item}</td>
+
+            <td>${item.totalTask}</td>
+
+            <td>${item.finish}</td>
+
+            <td>${item.remaining}</td>
+
+            <td>
+
+                <div class="progress">
+
+                    <div style="width:${item.progress}%"></div>
+
+                </div>
+
+                ${(item.progress).toFixed(0)}%
+
+            </td>
+
+            </tr>
+
+            `;
+
+        });
+
+        document.getElementById("tableBody").innerHTML=html;
 
     }
 
@@ -349,13 +485,13 @@ td{
 
     }
 
-    document
-    .getElementById("docType")
-    .addEventListener("change",function(){
+ document
+.getElementById("dashboardType")
+.addEventListener("change",function(){
 
-        renderDashboard(this.value);
+    renderDashboard(this.value);
 
-    });
+});
     
 
 </script>
