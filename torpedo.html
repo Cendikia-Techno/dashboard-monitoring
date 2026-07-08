@@ -144,98 +144,107 @@ td{
 </head>
 
 <body>
+    <div class="container">
 
-<div class="container">
+        <div class="header">
 
-<div class="header">
+            <h1>QA Dashboard - TORPEDO</h1>
 
-<h1>QA Dashboard - TORPEDO</h1>
+            <select id="docType">
 
-<select id="docType">
+                <option value="itp">Inspection Test Plan</option>
 
-<option value="itp">Inspection Test Plan</option>
+                <option value="qplan">Quality Plan</option>
 
-<option value="qplan">Quality Plan</option>
+                <option value="summary">Summary Inspection</option>
 
-</select>
+            </select>
 
-</div>
 
-<div class="cards">
+        </div>
 
-<div class="card">
+        <div id="typeFilterContainer"
+                style="display:none;margin-bottom:20px;">
 
-<h3>Progress</h3>
+                <label style="font-weight:600;margin-right:10px;">
+                    Type Torpedo
+                </label>
 
-<h2 id="overallProgress">0%</h2>
+                <select id="typeFilter">
 
-</div>
+                </select>
 
-<div class="card">
+        </div>
 
-<h3>Selesai</h3>
+        <div class="cards" id="cardsContainer">
 
-<h2 id="doneCount">0</h2>
+        <div class="card">
 
-</div>
+            <h3>Progress</h3>
 
-<div class="card">
+            <h2 id="overallProgress">0%</h2>
 
-<h3>Review</h3>
+        </div>
 
-<h2 id="reviewCount">0</h2>
+        <div class="card">
 
-</div>
+            <h3>Selesai</h3>
 
-<div class="card">
+            <h2 id="doneCount">0</h2>
 
-<h3>Belum</h3>
+        </div>
 
-<h2 id="pendingCount">0</h2>
+        <div class="card">
 
-</div>
+            <h3>Review</h3>
 
-</div>
+            <h2 id="reviewCount">0</h2>
 
-<div class="content">
+        </div>
 
-<div class="panel">
+        <div class="card">
 
-<h2 style="margin-bottom:20px;">Detail Progress</h2>
+            <h3>Belum</h3>
 
-<table>
+            <h2 id="pendingCount">0</h2>
 
-<thead>
+        </div>
 
-<tr>
+    </div>
 
-<th width="50%">Section</th>
+    <div class="content">
+        <div class="panel">
 
-<th>Status</th>
+            <h2 style="margin-bottom:20px;">
 
-<th width="30%">Progress</th>
+                Progress by Category
 
-</tr>
+            </h2>
 
-</thead>
+            <div id="categoryProgress"></div>
 
-<tbody id="tableBody">
+        </div>  
 
-</tbody>
+        <div class="panel">
 
-</table>
+            <h2 id="tableTitle" style="margin-bottom:20px;">Detail Progress</h2>
 
-</div>
+            <div id="tableBody"></div>
 
-</div>
+        </div>
 
-</div>
+    </div>
+
+    </div>
+
+
 
 <script>
     const API_URL =
     "https://script.google.com/macros/s/AKfycbwW07SJ5jyOTSmohhUTbDFeFNsElCvnL-wOAEJzeYOtqYjB6jVLeeZ008RNFKJ-dlyI/exec";
 
     let dashboardData = {};
+    let summaryFilteredData = [];
     loadData();
 
     async function loadData(){
@@ -260,21 +269,323 @@ td{
 
     function renderDashboard(type){
 
-        let data = [];
+        document
+        .getElementById("typeFilterContainer")
+        .style.display="none";
 
-        if(type === "itp"){
+        if(type==="itp"){
 
-            data = dashboardData.itpData;
+            renderSummary(dashboardData.itpData);
 
-        }else{
-
-            data = dashboardData.qplanData;
+            renderTable(dashboardData.itpData);
 
         }
 
-        renderSummary(data);
+        else if(type==="qplan"){
 
-        renderTable(data);
+            renderSummary(dashboardData.qplanData);
+
+            renderTable(dashboardData.qplanData);
+
+        }
+
+        else if(type==="summary"){
+
+            renderSummaryInspection();
+
+        }
+
+    }
+
+    function renderSummaryInspection(){
+
+        document
+        .getElementById("typeFilterContainer")
+        .style.display = "block";
+
+        loadTypeFilter();
+
+        const selectedType =
+        document.getElementById("typeFilter").value || "All";
+
+        filterSummaryData(selectedType);
+
+        refreshSummaryDashboard();
+
+    }
+
+    function loadTypeFilter(){
+
+        const select =
+        document.getElementById("typeFilter");
+
+        select.innerHTML = "";
+
+        // Option All
+        select.innerHTML +=
+        `<option value="All">All</option>`;
+
+        // Ambil type unik
+        const types =
+        [...new Set(
+            dashboardData.summaryData.map(x=>x.type)
+        )];
+
+        types.forEach(type=>{
+
+            select.innerHTML +=
+            `<option value="${type}">${type}</option>`;
+
+        });
+
+    }
+
+    function getSummaryStat(data){
+
+        const totalTask =
+        data.reduce((sum,item)=>
+            sum + item.totalTask,0);
+
+        const finish =
+        data.reduce((sum,item)=>
+            sum + item.finish,0);
+
+        const remaining =
+        data.reduce((sum,item)=>
+            sum + item.remaining,0);
+
+        const progress =
+        totalTask
+            ? (finish/totalTask)*100
+            :0;
+
+        return{
+
+            totalTask,
+
+            finish,
+
+            remaining,
+
+            progress
+
+        };
+
+    }
+
+    function renderCards(cards){
+
+        let html = "";
+
+        cards.forEach(card=>{
+
+            html += `
+
+            <div class="card">
+
+                <h3>${card.title}</h3>
+
+                <h2>${card.value}</h2>
+
+            </div>
+
+            `;
+
+        });
+
+        document
+        .getElementById("cardsContainer")
+        .innerHTML = html;
+
+    }
+
+    function getCategorySummary(data){
+
+        const result = {};
+
+        data.forEach(item=>{
+
+            if(!result[item.kategori]){
+
+                result[item.kategori]={
+
+                    totalTask:0,
+
+                    finish:0,
+
+                    remaining:0
+
+                };
+
+            }
+
+            result[item.kategori].totalTask += item.totalTask;
+
+            result[item.kategori].finish += item.finish;
+
+            result[item.kategori].remaining += item.remaining;
+
+        });
+
+        return result;
+
+    }
+
+    function renderSummaryTable(data){
+
+        let html = `
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Category</th>
+                    <th>Item</th>
+                    <th>Total</th>
+                    <th>Completed</th>
+                    <th>Remaining</th>
+                    <th width="25%">Progress</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+        `;
+
+        data.forEach(item=>{
+
+            html += `
+
+            <tr>
+
+                <td>${item.kategori}</td>
+
+                <td>${item.item || "-"}</td>
+
+                <td style="text-align:center">
+                    ${item.totalTask}
+                </td>
+
+                <td style="text-align:center">
+                    ${item.finish}
+                </td>
+
+                <td style="text-align:center">
+                    ${item.remaining}
+                </td>
+
+                <td>
+
+                    <div class="progress">
+
+                        <div style="
+                            width:${item.progress}%;
+                            background:${getProgressColor(item.progress)};
+                        ">
+
+                        </div>
+
+                    </div>
+
+                    ${item.progress.toFixed(1)}%
+
+                </td>
+
+            </tr>
+
+            `;
+
+        });
+
+        html += `
+
+            </tbody>
+
+        </table>
+        `;
+
+        document.getElementById("tableBody").innerHTML = html;
+
+    }
+
+    function renderCategoryProgress(data){
+
+        const summary =
+        getCategorySummary(data);
+
+        let html="";
+
+        Object.keys(summary).forEach(category=>{
+
+            const item=summary[category];
+
+            const progress=
+            item.totalTask
+            ?(item.finish/item.totalTask)*100
+            :0;
+
+            html+=`
+
+            <div style="margin-bottom:20px;">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    margin-bottom:6px;
+                    font-weight:600;">
+
+                    <span>${category}</span>
+
+                    <span>${progress.toFixed(1)}%</span>
+
+                </div>
+
+                <div class="progress">
+
+                    <div style="width:${progress}%;background:${getProgressColor(progress)};">
+
+                    </div>
+
+                </div>
+
+                <div style="
+                    margin-top:5px;
+                    color:#777;
+                    font-size:13px;">
+
+                    ${item.finish} / ${item.totalTask} Task
+
+                </div>
+
+            </div>
+
+            `;
+
+        });
+
+        document
+        .getElementById("categoryProgress")
+        .innerHTML=html;
+
+    }
+
+    function filterSummaryData(type){
+
+        if(type === "All"){
+
+            summaryFilteredData =
+            dashboardData.summaryData;
+
+        }else{
+
+            summaryFilteredData =
+            dashboardData.summaryData.filter(
+                item => item.type === type
+            );
+
+        }
 
     }
 
@@ -298,27 +609,71 @@ td{
 
         );
 
-        document.getElementById("overallProgress").innerHTML =
-        progress+"%";
+        renderCards([
 
-        document.getElementById("doneCount").innerHTML =
-        selesai;
+            {
 
-        document.getElementById("reviewCount").innerHTML =
-        review;
+                title:"Progress",
 
-        document.getElementById("pendingCount").innerHTML =
-        belum;
+                value:progress+"%"
+
+            },
+
+            {
+
+                title:"Selesai",
+
+                value:selesai
+
+            },
+
+            {
+
+                title:"Review",
+
+                value:review
+
+            },
+
+            {
+
+                title:"Belum",
+
+                value:belum
+
+            }
+
+        ]);
 
     }
 
     function renderTable(data){
 
-        let html="";
+        let html = `
+
+        <table>
+
+        <thead>
+
+        <tr>
+
+            <th width="50%">Section</th>
+
+            <th>Status</th>
+
+            <th width="30%">Progress</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        `;
 
         data.forEach(item=>{
 
-            html+=`
+            html += `
 
             <tr>
 
@@ -344,8 +699,67 @@ td{
 
         });
 
+        html += `
+
+        </tbody>
+
+        </table>
+
+        `;
+
+        document.getElementById("tableTitle").innerHTML =
+        "Detail Progress";
+
         document.getElementById("tableBody").innerHTML =
         html;
+
+    }
+
+    function getProgressColor(progress){
+
+        if(progress>=75) return "#2ecc71";   // hijau
+
+        if(progress>=50) return "#3498db";   // biru
+
+        if(progress>=25) return "#f39c12";   // oranye
+
+        return "#e74c3c";                    // merah
+    }
+
+    function refreshSummaryDashboard(){
+
+        const stat = getSummaryStat(summaryFilteredData);
+
+        renderCards([
+
+            {
+                title:"Total Task",
+                value:stat.totalTask
+            },
+
+            {
+                title:"Completed",
+                value:stat.finish
+            },
+
+            {
+                title:"Remaining",
+                value:stat.remaining
+            },
+
+            {
+                title:"Progress",
+                value:stat.progress.toFixed(2)+"%"
+            }
+
+        ]);
+
+        renderCategoryProgress(summaryFilteredData);
+
+        renderSummaryTable(summaryFilteredData);
+
+        document.getElementById("tableTitle").innerHTML =
+        "Inspection Summary";
 
     }
 
@@ -354,6 +768,15 @@ td{
     .addEventListener("change",function(){
 
         renderDashboard(this.value);
+
+    });
+
+    document
+    .getElementById("typeFilter")
+    .addEventListener("change",function(){
+
+       filterSummaryData(this.value);
+       refreshSummaryDashboard();      
 
     });
     
