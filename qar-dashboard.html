@@ -881,13 +881,13 @@ TABLE CARD
                             </div>
                             <!-- ========================================================== DETAIL TABLE ========================================================== -->
 
-                            <div class="panel mt-4">
+                            <div class="table-card">
 
                                 <div class="d-flex justify-content-between align-items-center mb-3">
 
-                                    <h4>
-                                        Detail HPP Inspection
-                                    </h4>
+                                    <h5 class="table-title mb-0">
+                                        Detail Inspection Report
+                                    </h5>
 
                                     <span id="tableCount" class="badge bg-primary">
                                         0 Data
@@ -897,33 +897,28 @@ TABLE CARD
 
                                 <div class="table-responsive">
 
-                                    <table id="hppTable" class="display table table-striped">
+                                    <table class="table table-striped table-hover" id="hppTable">
 
                                         <thead>
 
                                             <tr>
 
                                                 <th>No</th>
-
                                                 <th>Project</th>
-
                                                 <th>No HPP</th>
-
                                                 <th>Tanggal</th>
-
                                                 <th>Inspector</th>
-
                                                 <th>Item</th>
-
                                                 <th>Jenis</th>
-
-                                                <th>Recommendation</th>
+                                                <th>Rekomendasi</th>
 
                                             </tr>
 
                                         </thead>
 
-                                        <tbody></tbody>
+                                        <tbody>
+
+                                        </tbody>
 
                                     </table>
 
@@ -990,6 +985,48 @@ TABLE CARD
                     throw err;
 
                 }
+
+            }
+
+            function renderTable() {
+
+                const tbody = document.querySelector("#hppTable tbody");
+
+                let html = "";
+
+                filteredData.forEach((item, index) => {
+
+                    html += `
+
+                    <tr>
+
+                        <td>${index + 1}</td>
+
+                        <td>${item.project}</td>
+
+                        <td>${item.noHPP}</td>
+
+                        <td>${item.tanggal}</td>
+
+                        <td>${item.inspector}</td>
+
+                        <td>${item.item}</td>
+
+                        <td>${item.jenis}</td>
+
+                        <td>${item.rekomendasi}</td>
+
+                    </tr>
+
+                    `;
+
+                });
+
+                tbody.innerHTML = html;
+
+                document.getElementById("tableCount").textContent =
+
+                    filteredData.length + " Data";
 
             }
             /* ========================================================== FILL SELECT ========================================================== */
@@ -2104,88 +2141,6 @@ PARETO TARGET LINE
 
             }
 
-            function renderTable() {
-
-                if (hppTable) {
-
-                    hppTable.destroy();
-                    hppTable = null;
-
-                }
-
-                const tbody = document.querySelector("#hppTable tbody");
-                tbody.innerHTML = "";
-
-                let html = "";
-
-                filteredData.forEach((item, index) => {
-
-                    html += `
-
-                    <tr>
-
-                        <td>${index + 1}</td>
-
-                        <td>${item.project}</td>
-
-                        <td>${item.noHPP}</td>
-
-                        <td>${item.tanggal}</td>
-
-                        <td>${item.inspector}</td>
-
-                        <td>${item.item}</td>
-
-                        <td>${item.jenis}</td>
-
-                        <td>${item.rekomendasi}</td>
-
-                    </tr>
-
-                    `;
-
-                });
-
-                tbody.innerHTML = html;
-
-                hppTable = new DataTable("#hppTable", {
-
-                    pageLength: 10,
-
-                    responsive: true,
-
-                    autoWidth: false,
-
-                    scrollX: true,
-
-                    ordering: true,
-
-                    searching: true,
-
-                    lengthMenu: [10, 25, 50, 100],
-
-                    language: {
-
-                        search: "Search HPP :"
-
-                    }
-
-                });
-
-                document.getElementById("tableCount").innerHTML =
-                    hppTable.rows().count() + " Data";
-
-                hppTable.on("draw", function () {
-
-                    document.getElementById("tableCount").innerHTML =
-
-                        hppTable.rows({
-                            search: "applied"
-                        }).count() + " Data";
-
-                });
-
-            }
 
             document.addEventListener("DOMContentLoaded", async () => {
 
@@ -2228,7 +2183,6 @@ PARETO TARGET LINE
             PT PAL Indonesia - Biro Kualitas Teknik
 
         </footer>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
     </body>
 
