@@ -14,6 +14,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/v/bs5/dt-2.3.2/r-3.0.4/datatables.min.css" />
+
+    <script src="https://cdn.datatables.net/v/bs5/dt-2.3.2/r-3.0.4/datatables.min.js">
+    </script>
     <style>
         :root {
 
@@ -839,15 +844,13 @@ TABLE CARD
 
                                     <div class="chart-title">
 
-                                        Project Performance
+                                        Pareto Recommendation
 
                                     </div>
 
-                                    <div class="chart-placeholder">
+                                    <div style="height:340px">
 
-                                        <i class="bi bi-pie-chart"></i>
-
-                                        Chart akan tampil di sini
+                                        <canvas id="paretoChart"></canvas>
 
                                     </div>
 
@@ -878,63 +881,49 @@ TABLE CARD
                             </div>
                             <!-- ========================================================== DETAIL TABLE ========================================================== -->
 
-                            <div class="table-card">
+                            <div class="panel mt-4">
 
                                 <div class="d-flex justify-content-between align-items-center mb-3">
 
-                                    <div class="table-title">
+                                    <h4>
+                                        Detail HPP Inspection
+                                    </h4>
 
-                                        Detail Inspection Report (HPP)
-
-                                    </div>
-
-                                    <button class="btn btn-success">
-
-                                        <i class="bi bi-file-earmark-excel"></i>
-
-                                        Export Excel
-
-                                    </button>
+                                    <span id="tableCount" class="badge bg-primary">
+                                        0 Data
+                                    </span>
 
                                 </div>
 
                                 <div class="table-responsive">
 
-                                    <table class="table table-bordered table-hover">
+                                    <table id="hppTable" class="display table table-striped">
 
                                         <thead>
 
                                             <tr>
 
                                                 <th>No</th>
+
                                                 <th>Project</th>
-                                                <th>Biro</th>
+
                                                 <th>No HPP</th>
-                                                <th>Date</th>
+
+                                                <th>Tanggal</th>
+
                                                 <th>Inspector</th>
-                                                <th>Item Inspection</th>
-                                                <th>Inspection Type</th>
-                                                <th>Reinsp</th>
+
+                                                <th>Item</th>
+
+                                                <th>Jenis</th>
+
                                                 <th>Recommendation</th>
-                                                <th>Status</th>
 
                                             </tr>
 
                                         </thead>
 
-                                        <tbody>
-
-                                            <tr>
-
-                                                <td colspan="11" class="text-center text-muted py-5">
-
-                                                    No data available
-
-                                                </td>
-
-                                            </tr>
-
-                                        </tbody>
+                                        <tbody></tbody>
 
                                     </table>
 
@@ -973,6 +962,8 @@ TABLE CARD
 
             let projectChart = null;
             let trendChart = null;
+            let paretoChart = null;
+            let hppTable = null;
 
             async function loadData() {
 
@@ -981,9 +972,7 @@ TABLE CARD
                     const response = await fetch(CONFIG.API_URL);
 
                     if (!response.ok) {
-
                         throw new Error("Gagal mengambil data");
-
                     }
 
                     rawData = await response.json();
@@ -991,17 +980,14 @@ TABLE CARD
                     filteredData = [...rawData];
 
                     fillFilters();
-                    applyFilter();
 
                     console.log(rawData);
 
-                }
-
-                catch (err) {
+                } catch (err) {
 
                     console.error(err);
 
-                    alert("Tidak dapat mengambil data Apps Script");
+                    throw err;
 
                 }
 
@@ -1140,6 +1126,8 @@ TABLE CARD
                 renderKPI();
                 renderTrendChart();
                 renderProjectChart();
+                renderParetoChart();
+                renderTable();
 
                 console.log(filteredData.length);
 
@@ -1248,6 +1236,8 @@ TABLE CARD
                 });
 
             }
+
+
             /* ========================================================== PROJECT PERFORMANCE ========================================================== */
 
             function getProjectData() {
@@ -1294,6 +1284,55 @@ TABLE CARD
                 }).sort((a, b) => b.qar - a.qar);
 
             }
+            /* ========================================================== TARGET LINE PLUGIN ========================================================== */
+
+            const targetLinePlugin = {
+
+                id: "targetLine",
+
+                afterDraw(chart, args, options) {
+
+                    const { ctx, scales } = chart;
+
+                    const xScale = scales.x;
+
+                    const yScale = scales.y;
+
+                    const target = options.target || 96;
+
+                    const x = xScale.getPixelForValue(target);
+
+                    ctx.save();
+
+                    // Garis target
+                    ctx.beginPath();
+
+                    ctx.setLineDash([6, 4]);
+
+                    ctx.lineWidth = 2;
+
+                    ctx.strokeStyle = "#dc3545";
+
+                    ctx.moveTo(x, yScale.top);
+
+                    ctx.lineTo(x, yScale.bottom);
+
+                    ctx.stroke();
+
+                    // Tulisan Target
+                    ctx.setLineDash([]);
+
+                    ctx.fillStyle = "#dc3545";
+
+                    ctx.font = "bold 12px Arial";
+
+                    ctx.fillText(`Target ${target}%`, x + 6, yScale.top + 15);
+
+                    ctx.restore();
+
+                }
+
+            };
             function renderProjectChart() {
 
                 const data = getProjectData();
@@ -1310,7 +1349,7 @@ TABLE CARD
 
                 projectChart = new Chart(ctx, {
 
-                    plugins: [ChartDataLabels],
+                    plugins: [ChartDataLabels, targetLinePlugin],
 
                     type: "bar",
 
@@ -1323,6 +1362,26 @@ TABLE CARD
                             label: "QAR (%)",
 
                             data: data.map(i => i.qar),
+
+                            backgroundColor: data.map(item => {
+
+                                if (item.qar >= 96) return "#198754";   // Hijau
+
+                                if (item.qar >= 90) return "#fd7e14";   // Orange
+
+                                return "#dc3545";                      // Merah
+
+                            }),
+
+                            borderColor: data.map(item => {
+
+                                if (item.qar >= 96) return "#198754";
+
+                                if (item.qar >= 90) return "#fd7e14";
+
+                                return "#dc3545";
+
+                            }),
 
                             borderWidth: 1
 
@@ -1339,6 +1398,10 @@ TABLE CARD
                         indexAxis: "y",
 
                         plugins: {
+
+                            targetLine: {
+                                target: 96
+                            },
 
                             legend: {
                                 display: false
@@ -1594,6 +1657,330 @@ TABLE CARD
                 });
 
             }
+            /* ==========================================================
+            PARETO RECOMMENDATION
+            ========================================================== */
+
+            function getRecommendationLabel(code) {
+
+                const labels = {
+
+                    "DEF": "DEF - Deformation",
+
+                    "W/G": "W/G - Welding gerinda",
+
+                    "INSTAL": "INSTAL - Installation",
+                    "MISS": "MISS - Miss Alighment",
+                    "LEAK": "LEAK - Leakage"
+
+                };
+
+                return labels[code] || code;
+
+            }
+            function getParetoData() {
+
+                const result = {};
+
+                filteredData.forEach(item => {
+
+                    if (item.rekomendasi === "ACC") return;
+
+                    if (!item.rekomendasi) return;
+
+                    if (!result[item.rekomendasi]) {
+
+                        result[item.rekomendasi] = 0;
+
+                    }
+
+                    result[item.rekomendasi]++;
+
+                });
+
+                const data = Object.keys(result)
+
+                    .map(key => ({
+
+                        kode: key,
+
+                        kategori: getRecommendationLabel(key),
+
+                        jumlah: result[key]
+
+                    }))
+
+                    .sort((a, b) => b.jumlah - a.jumlah);
+
+                const total = data.reduce((sum, item) => sum + item.jumlah, 0);
+
+                let cumulative = 0;
+
+                data.forEach(item => {
+
+                    cumulative += item.jumlah;
+
+                    item.percent = Number(
+
+                        (cumulative / total * 100).toFixed(1)
+
+                    );
+
+                });
+
+                return data;
+
+            }
+
+            /* ==========================================================
+PARETO TARGET LINE
+========================================================== */
+
+            const paretoTargetPlugin = {
+
+                id: "paretoTarget",
+
+                afterDraw(chart, args, options) {
+
+                    const { ctx, chartArea, scales } = chart;
+
+                    const yScale = scales.y1;
+
+                    const target = options.target || 80;
+
+                    const y = yScale.getPixelForValue(target);
+
+                    ctx.save();
+
+                    // Garis 80%
+                    ctx.beginPath();
+                    ctx.setLineDash([8, 5]);
+                    ctx.strokeStyle = "#dc3545";
+                    ctx.lineWidth = 2;
+
+                    ctx.moveTo(chartArea.left, y);
+                    ctx.lineTo(chartArea.right, y);
+
+                    ctx.stroke();
+
+                    // Label
+                    ctx.setLineDash([]);
+                    ctx.fillStyle = "#dc3545";
+                    ctx.font = "bold 12px Arial";
+
+                    ctx.fillText("Pareto 80%", chartArea.left + 10, y - 8);
+
+                    ctx.restore();
+
+                }
+
+            };
+
+            function renderParetoChart() {
+
+                const data = getParetoData();
+
+                const ctx = document.getElementById("paretoChart");
+
+                if (!ctx) return;
+
+                if (paretoChart) {
+
+                    paretoChart.destroy();
+
+                }
+
+                paretoChart = new Chart(ctx, {
+
+                    plugins: [ChartDataLabels, paretoTargetPlugin],
+
+                    data: {
+
+                        labels: data.map(i => i.kategori),
+
+                        datasets: [
+
+                            {
+
+                                type: "bar",
+
+                                label: "Recommendation",
+
+                                data: data.map(i => i.jumlah),
+
+                                backgroundColor: data.map(item => {
+
+                                    return item.percent <= 80
+                                        ? "#dc3545"   // Merah
+                                        : "#fd7e14";  // Oranye
+
+                                }),
+
+                                borderColor: data.map(item => {
+
+                                    return item.percent <= 80
+                                        ? "#dc3545"
+                                        : "#fd7e14";
+
+                                }),
+
+                                borderWidth: 1,
+
+                                borderRadius: 6,
+
+                                datalabels: {
+
+                                    anchor: "end",
+
+                                    align: "top",
+
+                                    color: "#333",
+
+                                    font: {
+
+                                        weight: "bold",
+
+                                        size: 12
+
+                                    }
+
+                                }
+
+                            },
+
+                            {
+
+                                type: "line",
+
+                                label: "Kumulatif",
+
+                                data: data.map(i => i.percent),
+                                yAxisID: "y1",
+
+                                borderColor: "#198754",
+
+                                backgroundColor: "#198754",
+
+                                pointBackgroundColor: "#198754",
+
+                                pointRadius: 5,
+
+                                pointHoverRadius: 7,
+
+                                tension: .3,
+
+                                borderWidth: 3,
+
+                                datalabels: {
+
+                                    formatter: v => v + "%",
+
+                                    anchor: "end",
+
+                                    align: "top"
+
+                                }
+
+                            }
+
+                        ]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+                        tooltip: {
+
+                            callbacks: {
+
+                                label: function (context) {
+
+                                    const row = data[context.dataIndex];
+
+                                    if (context.dataset.type === "bar") {
+
+                                        return "Total : " + row.jumlah + " HPP";
+
+                                    }
+
+                                    return "Kumulatif : " + row.percent + "%";
+
+                                }
+
+                            }
+
+                        },
+                        layout: {
+
+                            padding: {
+
+                                top: 30
+
+                            }
+
+                        },
+
+                        plugins: {
+                            paretoTarget: {
+                                target: 80
+                            },
+
+                            legend: {
+
+                                position: "bottom"
+
+                            }
+
+                        },
+
+                        scales: {
+
+                            y: {
+
+                                beginAtZero: true,
+
+                                title: {
+
+                                    display: true,
+
+                                    text: "Jumlah Recommendation"
+
+                                }
+
+                            },
+
+                            y1: {
+
+                                position: "right",
+
+                                min: 0,
+
+                                max: 100,
+
+                                grid: {
+
+                                    drawOnChartArea: false
+
+                                },
+
+                                ticks: {
+
+                                    callback: v => v + "%"
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                });
+
+            }
 
             function renderKPI() {
 
@@ -1717,17 +2104,104 @@ TABLE CARD
 
             }
 
+            function renderTable() {
+
+                if (hppTable) {
+
+                    hppTable.destroy();
+                    hppTable = null;
+
+                }
+
+                const tbody = document.querySelector("#hppTable tbody");
+                tbody.innerHTML = "";
+
+                let html = "";
+
+                filteredData.forEach((item, index) => {
+
+                    html += `
+
+                    <tr>
+
+                        <td>${index + 1}</td>
+
+                        <td>${item.project}</td>
+
+                        <td>${item.noHPP}</td>
+
+                        <td>${item.tanggal}</td>
+
+                        <td>${item.inspector}</td>
+
+                        <td>${item.item}</td>
+
+                        <td>${item.jenis}</td>
+
+                        <td>${item.rekomendasi}</td>
+
+                    </tr>
+
+                    `;
+
+                });
+
+                tbody.innerHTML = html;
+
+                hppTable = new DataTable("#hppTable", {
+
+                    pageLength: 10,
+
+                    responsive: true,
+
+                    autoWidth: false,
+
+                    scrollX: true,
+
+                    ordering: true,
+
+                    searching: true,
+
+                    lengthMenu: [10, 25, 50, 100],
+
+                    language: {
+
+                        search: "Search HPP :"
+
+                    }
+
+                });
+
+                document.getElementById("tableCount").innerHTML =
+                    hppTable.rows().count() + " Data";
+
+                hppTable.on("draw", function () {
+
+                    document.getElementById("tableCount").innerHTML =
+
+                        hppTable.rows({
+                            search: "applied"
+                        }).count() + " Data";
+
+                });
+
+            }
+
             document.addEventListener("DOMContentLoaded", async () => {
 
-                renderKPI();
+                try {
 
-                await loadData();
+                    await loadData();
 
-                applyFilter();
+                    applyFilter();
 
-                renderTrendChart();
+                } catch (err) {
 
-                renderProjectChart();
+                    console.error(err);
+
+                    alert(err);
+
+                }
 
             });
 
@@ -1754,6 +2228,7 @@ TABLE CARD
             PT PAL Indonesia - Biro Kualitas Teknik
 
         </footer>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
     </body>
 
