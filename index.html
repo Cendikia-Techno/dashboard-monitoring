@@ -187,44 +187,56 @@
       .project-title{
         font-size:16px;
       }
-      .update-notice {
-          display: flex;
-          align-items: center;
-          gap: 15px;
-          background: linear-gradient(90deg, #fff7e6, #fff2cc);
-          border-left: 5px solid #f39c12;
-          padding: 15px 20px;
-          margin: 20px 0;
-          border-radius: 10px;
-          box-shadow: 0 3px 10px rgba(0,0,0,.08);
-          animation: fadeIn .8s ease;
+      .announcement{
+          margin:30px auto;
+          max-width:1100px;
+      
+          background:rgba(255,255,255,.05);
+          backdrop-filter:blur(12px);
+      
+          border:1px solid rgba(255,255,255,.08);
+          border-left:6px solid #4da3ff;
+      
+          border-radius:16px;
+      
+          padding:22px 28px;
+      
+          box-shadow:0 10px 30px rgba(0,0,0,.25);
       }
       
-      .update-notice .icon {
-          font-size: 32px;
+      .announcement-header{
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          margin-bottom:15px;
       }
       
-      .notice-content {
-          color: #6c4f00;
-          line-height: 1.6;
+      .announcement-title{
+          color:white;
+          font-size:22px;
+          font-weight:700;
       }
       
-      .notice-content strong {
-          color: #d35400;
-          font-size: 16px;
+      .badge-beta{
+          background:#2ecc71;
+          color:white;
+          padding:6px 14px;
+          border-radius:20px;
+          font-size:12px;
+          font-weight:700;
+          letter-spacing:1px;
       }
       
-      @keyframes fadeIn {
-          from {
-              opacity: 0;
-              transform: translateY(-10px);
-          }
-          to {
-              opacity: 1;
-              transform: translateY(0);
-          }
+      .announcement-body{
+          color:#cfd8e3;
+          line-height:1.8;
+          font-size:15px;
       }
-
+      
+      .status-ok{
+          color:#7CFFB2;
+          font-weight:600;
+      }
     }
 
   </style>
@@ -263,15 +275,25 @@
     </p>
   </div>
 
-  <!-- Notification -->
-  <div class="update-notice">
-    <span class="icon">🚀</span>
-    <div class="notice-content">
-      <strong>Dashboard Version 2.0 is Coming!</strong><br>
-      Kami sedang melakukan pengembangan sistem agar lebih cepat, modern, dan mudah digunakan.
-      Mohon bersabar, pembaruan akan segera tersedia. Terima kasih atas pengertiannya.
+ <div class="announcement">
+    <div class="announcement-header">
+        <div class="announcement-title">
+            🚀 Dashboard Version 2.0 Sedang Dikembangkan
+        </div>
+
+        <span class="badge-beta">BETA</span>
     </div>
-  </div>
+
+    <div class="announcement-body">
+        Kami sedang mengembangkan <b>Quality Assurance Dashboard Version 2.0</b>
+        dengan tampilan yang lebih modern, performa lebih cepat, serta fitur
+        monitoring yang lebih lengkap.
+
+        <br><br>
+
+        <span class="status-ok">✔ Dashboard saat ini tetap dapat digunakan secara normal.</span>
+    </div>
+</div>
 
   <div id="dashboardContainer"></div>
 
