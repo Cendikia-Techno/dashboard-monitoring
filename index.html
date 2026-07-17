@@ -187,6 +187,43 @@
       .project-title{
         font-size:16px;
       }
+      .update-notice {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          background: linear-gradient(90deg, #fff7e6, #fff2cc);
+          border-left: 5px solid #f39c12;
+          padding: 15px 20px;
+          margin: 20px 0;
+          border-radius: 10px;
+          box-shadow: 0 3px 10px rgba(0,0,0,.08);
+          animation: fadeIn .8s ease;
+      }
+      
+      .update-notice .icon {
+          font-size: 32px;
+      }
+      
+      .notice-content {
+          color: #6c4f00;
+          line-height: 1.6;
+      }
+      
+      .notice-content strong {
+          color: #d35400;
+          font-size: 16px;
+      }
+      
+      @keyframes fadeIn {
+          from {
+              opacity: 0;
+              transform: translateY(-10px);
+          }
+          to {
+              opacity: 1;
+              transform: translateY(0);
+          }
+      }
 
     }
 
@@ -218,21 +255,27 @@
 
   <div class="main">
 
-    <!-- TITLE -->
-
-    <div class="title">
-
-      <h1>Quality Assurance Dashboard</h1>
-
-      <p>
-        Centralized monitoring system for dashboard and database management
-      </p>
-
-    </div>
-
-    <div id="dashboardContainer"></div>
-
+  <!-- TITLE -->
+  <div class="title">
+    <h1>Quality Assurance Dashboard</h1>
+    <p>
+      Centralized monitoring system for dashboard and database management
+    </p>
   </div>
+
+  <!-- Notification -->
+  <div class="update-notice">
+    <span class="icon">🚀</span>
+    <div class="notice-content">
+      <strong>Dashboard Version 2.0 is Coming!</strong><br>
+      Kami sedang melakukan pengembangan sistem agar lebih cepat, modern, dan mudah digunakan.
+      Mohon bersabar, pembaruan akan segera tersedia. Terima kasih atas pengertiannya.
+    </div>
+  </div>
+
+  <div id="dashboardContainer"></div>
+
+</div>
 
   <!-- FOOTER -->
 
