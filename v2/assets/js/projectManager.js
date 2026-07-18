@@ -1,4 +1,4 @@
-import { projects } from "../../config/projects.js";
+import { projects } from "./config/projects.js";
 
 let currentProject = projects[0];
 

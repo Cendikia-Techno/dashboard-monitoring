@@ -1,11 +1,11 @@
-import { createHeroHeader } from "../../components/heroHeader.js";
+import { createHero } from "../../components/hero.js";
 import { createKPICard } from "../../components/kpiCard.js";
 
 export function renderSummary() {
 
     return `
 
-    ${createHeroHeader({
+    ${createHero({
 
         project: "Landing Dock Project #1",
 
