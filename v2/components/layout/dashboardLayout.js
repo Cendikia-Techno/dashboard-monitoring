@@ -10,7 +10,7 @@ export function createDashboard({
 
     return `
 
-    <div class="dashboard-layout">
+    <div class="dashboard-page">
 
         ${hero}
 

@@ -1,84 +1,229 @@
-import { createHero } from "../../components/hero.js";
-import { createKPICard } from "../../components/kpiCard.js";
+import { createDashboard } from "../../components/layout/dashboardLayout.js";
+import { createHero } from "../../components/hero/hero.js";
+import { createKPICard } from "../../components/cards/kpiCard.js";
+import { createSection } from "../../components/layout/sectionCard.js";
+import { createProgressList } from "../../components/lists/progressList.js";
+import { createAttentionList } from "../../components/lists/attentionList.js";
+import { createActivityList } from "../../components/lists/activityList.js";
 
 export function renderSummary() {
 
-    return `
+    // ===========================
+    // Hero
+    // ===========================
 
-    ${createHero({
+    const hero = createHero({
 
-        project: "Landing Dock Project #1",
+        title: "🚢 Landing Dock Project #1",
 
-        progress: 72,
+        subtitle: "Executive Quality Dashboard",
 
-        lastUpdate: "17 Jul 2026",
+        lastUpdate: "18 Jul 2026",
 
-        kpis: [
+        status: "🟢 Connected"
 
-            {
-                label: "📋 ITP",
-                value: "245"
-            },
+    });
 
-            {
-                label: "📄 QP",
-                value: "35"
-            },
+    // ===========================
+    // KPI
+    // ===========================
 
-            {
-                label: "🔍 Inspection",
-                value: "1,254"
-            },
-
-            {
-                label: "📦 Material",
-                value: "92%"
-            }
-
-        ]
-
-    })}
+    const kpis = `
 
     <div class="kpi-grid">
 
         ${createKPICard({
-        title: "Inspection Test Plan",
+
+        title: "ITP",
+
         value: "245",
+
         icon: "fa-clipboard-check",
-        color: "var(--primary)",
-        subtitle: "Approved Document",
-        trend: "+12"
+
+        color: "#0B2E59",
+
+        subtitle: "Inspection Test Plan"
+
     })}
 
         ${createKPICard({
+
         title: "Quality Plan",
-        value: "35",
+
+        value: "132",
+
         icon: "fa-file-lines",
-        color: "var(--success)",
-        subtitle: "Ready",
-        trend: "+4"
+
+        color: "#2563EB",
+
+        subtitle: "Quality Plan"
+
     })}
 
         ${createKPICard({
-        title: "Summary Inspection",
-        value: "1,254",
+
+        title: "Inspection",
+
+        value: "84%",
+
         icon: "fa-magnifying-glass",
-        color: "var(--secondary)",
-        subtitle: "Inspection",
-        trend: "+30"
+
+        color: "#16A34A",
+
+        subtitle: "Completion"
+
     })}
 
         ${createKPICard({
-        title: "Material Ready",
+
+        title: "Material",
+
         value: "92%",
-        icon: "fa-boxes-stacked",
-        color: "var(--warning)",
-        subtitle: "Warehouse",
-        trend: "+5%"
+
+        icon: "fa-box",
+
+        color: "#F59E0B",
+
+        subtitle: "Readiness"
+
     })}
 
     </div>
 
     `;
+
+    // ===========================
+    // Section
+    // ===========================
+
+    const progress = createSection({
+
+        title: "Overall Progress",
+
+        content: createProgressList([
+
+            { title: "ITP", value: 81 },
+
+            { title: "Quality Plan", value: 73 },
+
+            { title: "Inspection", value: 91 },
+
+            { title: "Launching", value: 78 },
+
+            { title: "Material", value: 84 },
+
+            { title: "TPTR", value: 69 },
+
+            { title: "HAT/SAT", value: 55 }
+
+        ])
+
+    });
+
+    const attention = createSection({
+
+        title: "Need Attention",
+
+        content: createAttentionList([
+
+            {
+
+                title: "HAT/SAT",
+
+                message: "12 item belum selesai",
+
+                level: "high"
+
+            },
+
+            {
+
+                title: "TPTR",
+
+                message: "5 dokumen menunggu verifikasi",
+
+                level: "medium"
+
+            },
+
+            {
+
+                title: "Material",
+
+                message: "18 material belum diterima",
+
+                level: "high"
+
+            }
+
+        ])
+
+    });
+
+    const activity = createSection({
+
+        title: "Recent Activity",
+
+        content: createActivityList([
+
+            {
+                title: "Vendor PT ABC mengunggah ITP",
+                time: "08:10 WIB",
+                type: "success"
+            },
+
+            {
+                title: "Quality Plan diperbarui",
+                time: "08:35 WIB",
+                type: "info"
+            },
+
+            {
+                title: "Material diterima di QA",
+                time: "09:05 WIB",
+                type: "warning"
+            },
+
+            {
+                title: "BA Closing selesai",
+                time: "09:40 WIB",
+                type: "success"
+            }
+
+        ])
+
+    });
+
+    const bottom = `
+
+    <div class="summary-bottom">
+
+        ${attention}
+
+        ${activity}
+
+    </div>
+
+    `;
+
+    // ===========================
+    // Dashboard
+    // ===========================
+
+    return createDashboard({
+
+        hero,
+
+        kpis,
+
+        sections: [
+
+            progress,
+
+            bottom
+
+        ]
+
+    });
 
 }
