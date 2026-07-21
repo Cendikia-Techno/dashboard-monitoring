@@ -1,13 +1,18 @@
 import { MODULES } from "./config/modules.js";
 
-import { renderSummary } from "../../modules/summary/summary.js";
-import { renderITP } from "../../modules/itp/itp.js";
-import { renderQualityPlan } from "../../modules/qualityplan/qualityplan.js";
-import { renderInspeksi } from "../../modules/inspeksi/inspeksi.js";
-import { renderLaunching } from "../../modules/launching/launching.js";
-import { renderMaterial } from "../../modules/material/material.js";
-import { renderTPTR } from "../../modules/tptr/tptr.js";
-import { renderHatsat } from "../../modules/hatsat/hatsat.js";
+import { renderSummary } from "./modules/summary/summary.js";
+import { renderITP } from "./modules/itp/itp.js";
+import { renderQualityPlan } from "./modules/qualityplan/qualityplan.js";
+import { renderInspection } from "./modules/inspeksi/inspeksi.js";
+import { renderLaunching } from "./modules/launching/launching.js";
+import { renderMaterial } from "./modules/material/material.js";
+import { renderTPTR } from "./modules/tptr/tptr.js";
+import { renderHatsat } from "./modules/hatsat/hatsat.js";
+
+import { initEnterpriseTable } from "./components/table/enterpriseTable.js";
+
+// setelah container.innerHTML = renderModule();
+
 
 const routes = {
 
@@ -17,7 +22,7 @@ const routes = {
 
     [MODULES.QUALITYPLAN]: renderQualityPlan,
 
-    [MODULES.INSPEKSI]: renderInspeksi,
+    [MODULES.INSPEKSI]: renderInspection,
 
     [MODULES.LAUNCHING]: renderLaunching,
 
@@ -49,5 +54,9 @@ export function loadModule(moduleName) {
     }
 
     container.innerHTML = render();
+    document.querySelectorAll(".qdp-enterprise-table").forEach(table => {
+        initEnterpriseTable(table.id);
+    });
+
 
 }

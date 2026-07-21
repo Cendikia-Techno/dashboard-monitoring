@@ -5,20 +5,30 @@ import { createSection } from "../../components/layout/sectionCard.js";
 import { createProgressList } from "../../components/lists/progressList.js";
 import { createAttentionList } from "../../components/lists/attentionList.js";
 import { createActivityList } from "../../components/lists/activityList.js";
+import { getSummaryStatistics } from "../../services/statistics.js";
+import { getCurrentProject } from "../../projectManager.js";
 
 export function renderSummary() {
 
+    const stats = getSummaryStatistics();
+    const project = getCurrentProject();
+
+    if (!stats) {
+
+        return `<div class="loading">Loading Dashboard...</div>`;
+
+    }
     // ===========================
     // Hero
     // ===========================
 
     const hero = createHero({
 
-        title: "🚢 Landing Dock Project #1",
+        title: `🚢 ${project.name}`,
 
         subtitle: "Executive Quality Dashboard",
 
-        lastUpdate: "18 Jul 2026",
+        lastUpdate: new Date().toLocaleDateString("id-ID"),
 
         status: "🟢 Connected"
 
@@ -30,13 +40,13 @@ export function renderSummary() {
 
     const kpis = `
 
-    <div class="kpi-grid">
+    <div class="qdp-kpi-grid">
 
         ${createKPICard({
 
         title: "ITP",
 
-        value: "245",
+        value: stats.itp.total,
 
         icon: "fa-clipboard-check",
 
@@ -50,7 +60,7 @@ export function renderSummary() {
 
         title: "Quality Plan",
 
-        value: "132",
+        value: stats.qualityPlan.total,
 
         icon: "fa-file-lines",
 
@@ -64,7 +74,7 @@ export function renderSummary() {
 
         title: "Inspection",
 
-        value: "84%",
+        value: stats.inspection.progress + "%",
 
         icon: "fa-magnifying-glass",
 
@@ -78,7 +88,7 @@ export function renderSummary() {
 
         title: "Material",
 
-        value: "92%",
+        value: "-",
 
         icon: "fa-box",
 
@@ -102,19 +112,19 @@ export function renderSummary() {
 
         content: createProgressList([
 
-            { title: "ITP", value: 81 },
+            { title: "ITP", value:stats.itp.progress },
 
-            { title: "Quality Plan", value: 73 },
+            { title: "Quality Plan", value:stats.qualityPlan.progress },
 
-            { title: "Inspection", value: 91 },
+            { title: "Inspection", value:stats.inspection.progress },
 
-            { title: "Launching", value: 78 },
+            { title: "Launching", value: 0 },
 
-            { title: "Material", value: 84 },
+            { title: "Material", value: 0 },
 
-            { title: "TPTR", value: 69 },
+            { title: "TPTR", value: 0 },
 
-            { title: "HAT/SAT", value: 55 }
+            { title: "HAT/SAT", value: 0 }
 
         ])
 
@@ -216,13 +226,22 @@ export function renderSummary() {
 
         kpis,
 
-        sections: [
+        fullTop: [
 
-            progress,
+            progress
 
-            bottom
+        ],
 
-        ]
+        split: [
+
+            attention,
+
+            activity
+
+        ],
+
+        fullBottom: [],
+        splitRatio: "1fr 1fr"
 
     });
 

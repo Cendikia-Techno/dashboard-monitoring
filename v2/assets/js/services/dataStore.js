@@ -1,4 +1,4 @@
-let dashboardData = {};
+let dashboardData = null;
 
 export function setDashboardData(data) {
     dashboardData = data;
@@ -8,10 +8,10 @@ export function getDashboardData() {
     return dashboardData;
 }
 
-export function getModuleData(moduleName) {
-    return dashboardData[moduleName] || [];
+export function clearDashboardData() {
+    dashboardData = null;
 }
 
-export function clearDashboardData() {
-    dashboardData = {};
+export function hasDashboardData() {
+    return dashboardData !== null;
 }
