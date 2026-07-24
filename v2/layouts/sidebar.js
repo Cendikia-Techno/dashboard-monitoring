@@ -1,22 +1,31 @@
-import { menuItems } from "../config/navigation.js";
+import { menuItems } from "../assets/js/config/navigation.js";
+import { QA_APPLICATIONS } from "../assets/js/config/qaApplications.js";
 
-export function renderSidebar(){
+export function renderSidebar() {
 
-return`
+    return `
 
-<ul>
+<h3>Navigation</h3>
 
-${menuItems.map(item=>`
+<ul class="menu">
 
-<li data-module="${item.id}">
+    <li class="menu-title">
 
-<i class="fas ${item.icon}"></i>
+        <span>QA MENU</span>
 
-<span>${item.label}</span>
+    </li>
 
-</li>
+    ${menuItems.map(item => `
 
-`).join("")}
+        <li data-module="${item.id}">
+
+            <i class="fas ${item.icon}"></i>
+
+            <span>${item.label}</span>
+
+        </li>
+
+    `).join("")}
 
 </ul>
 

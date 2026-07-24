@@ -1,0 +1,14 @@
+/* CSS Pie Chart */
+.qdp-pie-chart {
+
+    width: 100%;
+    height: 360px;
+
+}
+
+.qdp-pie-chart canvas {
+
+    width: 100% !important;
+    height: 100% !important;
+
+}

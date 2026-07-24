@@ -1,0 +1,209 @@
+/* enterprise Tabel */
+.qdp-enterprise-table {
+
+    width: 100%;
+
+}
+
+.qdp-enterprise-table th {
+
+    background: #0B2E59;
+    color: #fff;
+    cursor: pointer;
+    user-select: none;
+    transition: .2s;
+
+}
+
+.qdp-enterprise-table th:hover {
+
+    background: #18467D;
+
+}
+
+.qdp-enterprise-table th.sort-active {
+
+    border-bottom: 3px solid #FFD54A;
+
+}
+
+.sort-arrow {
+
+    color: #FFD54A;
+    margin-left: 6px;
+    font-size: 12px;
+    vertical-align: middle;
+
+}
+
+.qdp-table-toolbar {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 18px;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+
+}
+
+.qdp-table-search {
+
+    width: 260px;
+
+    padding: 10px 14px;
+
+    border: 1px solid #D9E2EC;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    font-size: 14px;
+
+    transition: .2s;
+
+}
+
+.qdp-table-search:focus {
+
+    border-color: #2563EB;
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .15);
+
+}
+
+.qdp-page-size {
+
+    padding: 8px 10px;
+
+    border-radius: 8px;
+
+    border: 1px solid #D9E2EC;
+
+    margin: 0 8px;
+
+}
+
+.qdp-table-wrapper {
+
+    overflow: auto;
+
+    border: 1px solid #E5E7EB;
+
+    border-radius: 12px;
+
+}
+
+.qdp-enterprise-table table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    background: #fff;
+
+}
+
+.qdp-enterprise-table thead {
+
+    background: #0B2E59;
+
+    color: white;
+
+}
+
+.qdp-enterprise-table th {
+
+    padding: 14px;
+
+    text-align: left;
+
+    font-weight: 600;
+
+    font-size: 14px;
+
+    white-space: nowrap;
+
+}
+
+.qdp-enterprise-table td {
+
+    padding: 13px 14px;
+
+    border-bottom: 1px solid #EDF2F7;
+
+    font-size: 14px;
+
+}
+
+.qdp-enterprise-table tbody tr:hover {
+
+    background: #F8FAFC;
+
+}
+
+.qdp-enterprise-table tbody tr:nth-child(even) {
+
+    background: #FCFCFD;
+
+}
+
+.qdp-table-footer {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-top: 18px;
+
+    flex-wrap: wrap;
+
+}
+
+.qdp-pagination {
+
+    display: flex;
+
+    gap: 6px;
+
+}
+
+.qdp-pagination button {
+
+    width: 34px;
+
+    height: 34px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #F3F4F6;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+}
+
+.qdp-pagination button.active {
+
+    background: #2563EB;
+
+    color: white;
+
+}
+
+.qdp-pagination button:hover {
+
+    background: #CBD5E1;
+
+}

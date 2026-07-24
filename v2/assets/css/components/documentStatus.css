@@ -1,0 +1,57 @@
+/* ===========================
+   Document Status
+=========================== */
+
+.qdp-status-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+
+}
+
+.qdp-status-item {
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid #ECECEC;
+
+}
+
+.qdp-status-item:last-child {
+
+    border-bottom: none;
+
+}
+
+.qdp-status-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    font-size: 15px;
+
+}
+
+.qdp-status-header span {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+.qdp-status-header strong {
+
+    color: #0B2E59;
+
+    font-size: 16px;
+
+}

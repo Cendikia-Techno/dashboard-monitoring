@@ -5,15 +5,16 @@ import { createSection } from "../../components/layout/sectionCard.js";
 import { createProgressList } from "../../components/lists/progressList.js";
 import { createAttentionList } from "../../components/lists/attentionList.js";
 import { createActivityList } from "../../components/lists/activityList.js";
-import { getSummaryStatistics } from "../../services/statistics.js";
+import { getOverallStatistics } from "../../services/statistics.js";
 import { getCurrentProject } from "../../projectManager.js";
+
 
 export function renderSummary() {
 
-    const stats = getSummaryStatistics();
+    const summary = getOverallStatistics();
     const project = getCurrentProject();
 
-    if (!stats) {
+    if (!summary) {
 
         return `<div class="loading">Loading Dashboard...</div>`;
 
@@ -24,13 +25,10 @@ export function renderSummary() {
 
     const hero = createHero({
 
-        title: `🚢 ${project.name}`,
+        title: "Executive Summary",
 
-        subtitle: "Executive Quality Dashboard",
-
-        lastUpdate: new Date().toLocaleDateString("id-ID"),
-
-        status: "🟢 Connected"
+        lastUpdate:
+            new Date().toLocaleString("id-ID")
 
     });
 
@@ -46,7 +44,7 @@ export function renderSummary() {
 
         title: "ITP",
 
-        value: stats.itp.total,
+        value: summary.progressValue.itp + "%",
 
         icon: "fa-clipboard-check",
 
@@ -60,7 +58,7 @@ export function renderSummary() {
 
         title: "Quality Plan",
 
-        value: stats.qualityPlan.total,
+        value: summary.progressValue.qualityPlan + "%",
 
         icon: "fa-file-lines",
 
@@ -74,7 +72,7 @@ export function renderSummary() {
 
         title: "Inspection",
 
-        value: stats.inspection.progress + "%",
+        value: summary.progressValue.inspection + "%",
 
         icon: "fa-magnifying-glass",
 
@@ -88,13 +86,54 @@ export function renderSummary() {
 
         title: "Material",
 
-        value: "-",
+        value: summary.progressValue.material + "%",
 
         icon: "fa-box",
 
         color: "#F59E0B",
 
         subtitle: "Readiness"
+
+    })}
+
+${createKPICard({
+        title: "Launching",
+
+        value: summary.progressValue.launching + "%",
+
+        icon: "fa-ship",
+
+        color: "#0EA5E9",
+
+        subtitle: "Readiness"
+
+    })}
+
+${createKPICard({
+
+        title: "TPTR",
+
+        value: summary.progressValue.tptr + "%",
+
+        icon: "fa-file-signature",
+
+        color: "#DC2626",
+
+        subtitle: "Documentation"
+
+    })}
+
+${createKPICard({
+
+        title: "HAT / SAT",
+
+        value: summary.progressValue.hatsat + "%",
+
+        icon: "fa-gears",
+
+        color: "#14B8A6",
+
+        subtitle: "Function Test"
 
     })}
 
@@ -110,23 +149,11 @@ export function renderSummary() {
 
         title: "Overall Progress",
 
-        content: createProgressList([
+        content: createProgressList(
 
-            { title: "ITP", value:stats.itp.progress },
+            summary.progress
 
-            { title: "Quality Plan", value:stats.qualityPlan.progress },
-
-            { title: "Inspection", value:stats.inspection.progress },
-
-            { title: "Launching", value: 0 },
-
-            { title: "Material", value: 0 },
-
-            { title: "TPTR", value: 0 },
-
-            { title: "HAT/SAT", value: 0 }
-
-        ])
+        )
 
     });
 

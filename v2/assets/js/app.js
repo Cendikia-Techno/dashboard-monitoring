@@ -1,17 +1,11 @@
-import { initSidebar } from "./controllers/sidebarController.js";
-import { initToolbar } from "./controllers/toolbarController.js";
-import { loadModule } from "./router.js";
-import { loadDashboardData } from "./services/api.js";
+import { initNetworkManager } from "./services/networkManager.js";
+import { showPortal } from "./controllers/appController.js";
 
-async function initApp(){
+function initApp() {
 
-    initSidebar();
+    initNetworkManager();
 
-    initToolbar();
-
-    await loadDashboardData();
-
-    loadModule("summary");
+    showPortal();
 
 }
 

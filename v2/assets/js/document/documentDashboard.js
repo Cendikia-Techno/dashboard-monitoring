@@ -25,6 +25,8 @@ export function createDocumentDashboard({
 
         subtitle,
 
+        spreadsheet: project.spreadsheet,
+
         lastUpdate: new Date().toLocaleDateString("id-ID"),
 
         status: "🟢 Connected"
@@ -156,7 +158,7 @@ ${createKPICard({
         status: createStatusBadge(item.status)
 
     }));
-console.log("rows:",rows);
+    
     const detail = createSection({
 
         title: `Detail ${title}`,

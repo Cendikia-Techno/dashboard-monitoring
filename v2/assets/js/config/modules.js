@@ -1,5 +1,7 @@
 export const MODULES = {
 
+    WELCOME: "welcome",
+
     SUMMARY: "summary",
 
     ITP: "itp",

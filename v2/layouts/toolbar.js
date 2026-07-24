@@ -1,30 +1,55 @@
-export function renderToolbar(){
+export function renderToolbar() {
 
-return`
+    return `
 
 <section class="toolbar">
 
-<select>
+    <div class="toolbar-left">
 
-<option>LDP-1</option>
+        <div class="toolbar-left">
 
-<option>LDP-2</option>
+        <div
+            id="categoryBadge"
+            class="toolbar-category">
 
-<option>FMP-1</option>
+        </div>
 
-<option>FMP-2</option>
+        <div class="toolbar-group">
 
-</select>
+            <label>
 
-<input
-type="text"
-placeholder="Search...">
+                Project
 
-<button>
+            </label>
 
-Refresh
+            <select id="projectSelect">
 
-</button>
+            </select>
+
+        </div>
+
+    </div>
+
+    <div class="toolbar-right">
+
+        <span
+            id="lastUpdate">
+
+            -
+
+        </span>
+
+        <button
+            id="backPortalBtn"
+            class="portal-btn">
+
+            <i class="fa-solid fa-house"></i>
+
+            Portal
+
+        </button>
+
+    </div>
 
 </section>
 

@@ -3,7 +3,7 @@ import { createHero } from "../components/hero/hero.js";
 import { createKPICard } from "../components/cards/kpiCard.js";
 import { createSection } from "../components/layout/sectionCard.js";
 import { createProgressList } from "../components/lists/progressList.js";
-import { createSimpleTable } from "../components/table/simpleTable.js";
+import { createEnterpriseTable } from "../components/table/enterpriseTable.js";
 
 export function createProgressDashboard({
 
@@ -13,9 +13,20 @@ export function createProgressDashboard({
 
     subtitle,
 
-    stats
+    statistics,
+
+    tableHeaders,
+
+    tableColumns,
+
+    rowMapper,
+
+    leftPanel = null,
+    rightPanel = null,
+    bottomPanel = null
 
 }) {
+    console.log("Critical:", statistics.critical);
 
     // hero //
     const hero = createHero({
@@ -24,9 +35,13 @@ export function createProgressDashboard({
 
         subtitle,
 
-        lastUpdate: new Date().toLocaleDateString("id-ID"),
+        spreadsheet: project.spreadsheet,
 
-        status: "🟢 Connected"
+        lastUpdate: new Date().toLocaleString("id-ID"),
+
+        nextRefresh: "03:00",
+
+        showRefreshButton: true
 
     });
 
@@ -37,21 +52,9 @@ export function createProgressDashboard({
 
     ${createKPICard({
 
-        title: "Total Item",
-
-        value: stats.totalItem,
-
-        icon: "fa-list",
-
-        color: "#2563EB"
-
-    })}
-
-    ${createKPICard({
-
         title: "Total Task",
 
-        value: stats.totalTask,
+        value: statistics.total,
 
         icon: "fa-list-check",
 
@@ -63,7 +66,7 @@ export function createProgressDashboard({
 
         title: "Finished",
 
-        value: stats.finishTask,
+        value: statistics.finish,
 
         icon: "fa-circle-check",
 
@@ -73,9 +76,21 @@ export function createProgressDashboard({
 
     ${createKPICard({
 
+        title: "Remaining",
+
+        value: statistics.remaining,
+
+        icon: "fa-clock",
+
+        color: "#F59E0B"
+
+    })}
+
+    ${createKPICard({
+
         title: "Progress",
 
-        value: stats.averageProgress + "%",
+        value: statistics.progress + "%",
 
         icon: "fa-chart-line",
 
@@ -87,103 +102,58 @@ export function createProgressDashboard({
 
     `;
 
-    // Progress //
-    const progress = createSection({
+    // left progress //
+    const left = leftPanel ??
 
-        title: "Progress by Item",
+        createSection({
 
-        content: createProgressList(
+            title: "Progress by Category",
 
-            stats.categoryProgress.map(item => ({
+            content: createProgressList(
 
-                title: item.category,
+                statistics.categories
 
-                value: item.progress
+            )
 
-            }))
+        });
 
-        )
+    // Right Critical //
+    const right = rightPanel ??
 
-    });
+        createSection({
 
-    // Critical //
-    const critical = createSection({
+            title: "Critical Progress",
 
-        title: "Critical Progress",
+            content: createProgressList(
 
-        content: createProgressList(
+                statistics.critical
 
-            stats.rows
+            )
 
-                .filter(item => item.remaining > 0)
+        });
 
-                .sort((a, b) => a.progress - b.progress)
-
-                .slice(0, 5)
-
-                .map(item => ({
-
-                    title: `${item.kategori} • ${item.item}`,
-
-                    value: Math.round(item.progress)
-
-                }))
-
-        )
-
-    });
 
     // Table //
-    
-    const rows = stats.rows.map((item, index) => `
 
-        <tr>
-
-        <td>${index + 1}</td>
-
-        <td>${item.kategori}</td>
-
-        <td>${item.item}</td>
-
-        <td>${item.totalTask}</td>
-
-        <td>${item.finish}</td>
-
-        <td>${Math.round(item.progress)}%</td>
-
-        <td>${item.remaining}</td>
-
-        </tr>
-
-        `);
+    const rows = statistics.rows.map(rowMapper);
 
     const detail = createSection({
 
         title: `Detail ${title}`,
 
-        content: createSimpleTable(
+        content: createEnterpriseTable({
 
-            [
+            id: `${title.replace(/\s+/g, "")}Table`,
 
-                "No",
+            headers: tableHeaders,
 
-                "Category",
+            columns: tableColumns,
 
-                "Item",
+            rows,
 
-                "Task",
+            pageSize: 10
 
-                "Finish",
-
-                "Progress",
-
-                "Remaining"
-
-            ],
-
-            rows
-
-        )
+        })
 
     });
 
@@ -196,16 +166,14 @@ export function createProgressDashboard({
         fullTop: [],
 
         split: [
-
-            progress,
-
-            critical
-
+            left,
+            right
         ],
 
         splitRatio: "1fr 1fr",
 
         fullBottom: [
+            ...(bottomPanel ? [bottomPanel] : []),
 
             detail
 

@@ -1,0 +1,56 @@
+/* ===========================
+   Need Attention
+=========================== */
+
+.qdp-attention-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.qdp-attention-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 24px;
+    border-radius: 16px;
+    background: #F9FAFB;
+    transition: .2s;
+}
+
+.qdp-attention-item:hover {
+    background: #F3F4F6;
+}
+
+.qdp-attention-icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+}
+
+.qdp-attention-icon.high {
+    background: #EF4444;
+}
+
+.qdp-attention-icon.medium {
+    background: #F59E0B;
+}
+
+.qdp-attention-icon.low {
+    background: #22C55E;
+}
+
+.qdp-attention-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.qdp-attention-content strong {
+    color: #0B2E59;
+    font-size: 14px;
+}
+
+.qdp-attention-content small {
+    color: #6B7280;
+    margin-top: 2px;
+}

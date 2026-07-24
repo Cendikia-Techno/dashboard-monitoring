@@ -14,157 +14,16 @@
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-    <div class="app">
+    <!-- PORTAL -->
+    <div id="portalContainer"></div>
 
-        <header class="header">
-
-            <div class="header-left">
-
-                <button id="toggleSidebar" class="toggle-btn">
-
-                    <i class="fas fa-bars"></i>
-
-                </button>
-
-                <div class="logo">
-
-                    ⚓
-
-                </div>
-
-                <div>
-
-                    <h2>QA Digital Platform</h2>
-
-                    <p>Integrated Quality Monitoring System</p>
-
-                </div>
-
-            </div>
-
-            <div class="header-right">
-
-                <span class="status-live">
-
-                    ● LIVE
-
-                </span>
-
-                <span class="version">
-
-                    Version 2.0
-
-                </span>
-
-            </div>
-
-        </header>
-
-        <aside class="sidebar">
-
-            <h3>Navigation</h3>
-
-            <ul class="menu">
-
-                <li class="active" data-module="summary">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Summary</span>
-                </li>
-
-                <li data-module="itp">
-                    <i class="fas fa-clipboard-check"></i>
-                    <span>ITP</span>
-                </li>
-                <li data-module="qualityplan">
-                    <i class="fas fa-file-lines"></i>
-                    <span>Quality Plan</span>
-                </li>
-                <li data-module="inspeksi">
-                    <i class="fas fa-magnifying-glass-chart"></i>
-                    <span>Summary Inspeksi</span>
-                </li>
-                <li data-module="launching">
-                    <i class="fas fa-rocket"></i>
-                    <span>Launching</span>
-                </li>
-                <li data-module="tptr">
-                    <i class="fas fa-folder-open"></i>
-                    <span>Dokumen TPTR</span>
-                </li>
-                <li data-module="material">
-                    <i class="fas fa-boxes-stacked"></i>
-                    <span>Monitoring Material</span>
-                </li>
-                <li data-module="hatsat">
-                    <i class="fas fa-circle-check"></i>
-                    <span>HAT / SAT</span>
-                </li>
-
-            </ul>
-
-        </aside>
-
-        <main class="main">
-
-            <div class="toolbar">
-
-                <div class="toolbar-left">
-
-                    <div class="toolbar-group">
-
-                        <label for="projectSelect">Project</label>
-
-                        <select id="projectSelect">
-                            <!-- Diisi otomatis oleh projectManager.js -->
-                        </select>
-
-                    </div>
-
-                </div>
-
-                <div class="toolbar-right">
-
-                    <button id="refreshBtn">
-
-                        <i class="fas fa-rotate-right"></i>
-
-                        Refresh
-
-                    </button>
-
-                    <span class="status-api">
-
-                        🟢 Connected
-
-                    </span>
-
-                    <span id="lastUpdate">
-
-                        Last Update : -
-
-                    </span>
-
-                </div>
-
-            </div>
-
-            <section id="main-content" class="content">
-
-            </section>
-
-        </main>
-
-        <footer class="footer">
-
-            QA Digital Platform V2 © 2026
-
-        </footer>
-
-    </div>
+    <!-- DASHBOARD -->
+    <div id="dashboardContainer"></div>
 
     <script type="module" src="assets/js/app.js"></script>
 </body>

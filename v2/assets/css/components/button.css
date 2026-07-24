@@ -1,0 +1,43 @@
+.portal-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:10px 18px;
+
+    border:none;
+
+    border-radius:999px;
+
+    background:#FFFFFF;
+
+    color:#0B2E59;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+
+}
+
+.portal-btn:hover{
+
+    background:#0B2E59;
+
+    color:#FFFFFF;
+
+    transform:translateY(-2px);
+
+}
+
+.portal-btn i{
+
+    font-size:14px;
+
+}

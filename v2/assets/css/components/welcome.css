@@ -1,0 +1,99 @@
+.qa-welcome{
+
+    text-align:center;
+
+    padding:60px 20px;
+
+}
+
+.qa-logo{
+
+    width:90px;
+
+    height:90px;
+
+    margin:auto;
+
+    border-radius:24px;
+
+    background:#0B2E59;
+
+    color:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:42px;
+
+    margin-bottom:20px;
+
+}
+
+.qa-welcome h1{
+
+    font-size:34px;
+
+    color:#0B2E59;
+
+}
+
+.qa-welcome p{
+
+    margin-top:10px;
+
+    color:#64748B;
+
+}
+
+.welcome-card{
+
+    max-width:500px;
+
+    margin:40px auto;
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:35px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.welcome-card select{
+
+    width:100%;
+
+    margin-top:20px;
+
+    padding:14px;
+
+    border-radius:12px;
+
+}
+
+.welcome-card button{
+
+    width:100%;
+
+    margin-top:18px;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#0B2E59;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+}

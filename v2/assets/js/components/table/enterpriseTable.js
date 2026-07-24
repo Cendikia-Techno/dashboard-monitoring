@@ -1,26 +1,43 @@
+// ======================================================
+// Enterprise Table Store
+// ======================================================
+
+const tableStore = new Map();
+
+function registerTable(id, config) {
+    tableStore.set(id, config);
+}
+
+function getTable(id) {
+    return tableStore.get(id);
+}
+
+// ======================================================
+// Create Enterprise Table
+// ======================================================
+
 export function createEnterpriseTable({
 
     id,
-
     headers,
-
     columns,
-
     rows,
-
     pageSize = 10
 
 }) {
 
+    registerTable(id, {
+
+        headers,
+        columns,
+        rows,
+        pageSize
+
+    });
+
     return `
 
-<div class="qdp-enterprise-table" id="${id}"
-
-     data-columns='${JSON.stringify(columns)}'
-
-     data-rows='${encodeURIComponent(JSON.stringify(rows))}'
-
-     data-pagesize="${pageSize}">
+<div class="qdp-enterprise-table" id="${id}">
 
     <div class="qdp-table-toolbar">
 
@@ -31,9 +48,7 @@ export function createEnterpriseTable({
             <select class="qdp-page-size">
 
                 <option value="10">10</option>
-
                 <option value="25">25</option>
-
                 <option value="50">50</option>
 
             </select>
@@ -45,11 +60,8 @@ export function createEnterpriseTable({
         <div>
 
             <input
-
                 class="qdp-table-search"
-
                 type="text"
-
                 placeholder="Search...">
 
         </div>
@@ -64,7 +76,15 @@ export function createEnterpriseTable({
 
                 <tr>
 
-                    ${headers.map(h => `<th>${h}</th>`).join("")}
+                    ${headers.map((h, index) => `
+
+                    <th data-column="${columns[index]}">
+
+                    ${h}
+
+                    </th>
+
+                    `).join("")}
 
                 </tr>
 
@@ -90,81 +110,15 @@ export function createEnterpriseTable({
 
 }
 
-export function initEnterpriseTable(id) {
+function renderTable(tbody, columns, rows) {
 
-    const container = document.getElementById(id);
-
-    if (!container) return;
-
-    const columns = JSON.parse(
-
-        container.dataset.columns
-
-    );
-
-    let rows = JSON.parse(
-
-        decodeURIComponent(
-
-            container.dataset.rows
-
-        )
-
-    );
-
-    let filtered = [...rows];
-
-    let currentPage = 1;
-
-    let pageSize = Number(
-
-        container.dataset.pagesize
-
-    );
-
-    const tbody =
-
-        container.querySelector("tbody");
-
-    const info =
-
-        container.querySelector(".qdp-table-info");
-
-    const pagination =
-
-        container.querySelector(".qdp-pagination");
-
-    const search =
-
-        container.querySelector(".qdp-table-search");
-
-    const pageSelect =
-
-        container.querySelector(".qdp-page-size");
-
-    function render() {
-
-        const start =
-
-            (currentPage - 1) * pageSize;
-
-        const end =
-
-            start + pageSize;
-
-        const pageRows =
-
-            filtered.slice(start, end);
-
-        tbody.innerHTML =
-
-            pageRows.map(row => `
+    tbody.innerHTML = rows.map(row => `
 
 <tr>
 
 ${columns.map(col => `
 
-<td>${row[col]}</td>
+<td>${row[col] ?? ""}</td>
 
 `).join("")}
 
@@ -172,71 +126,53 @@ ${columns.map(col => `
 
 `).join("");
 
-        info.innerHTML =
+}
 
-            `Showing ${filtered.length === 0 ? 0 : start + 1}
+function renderInfo(info, start, end, total) {
 
-to ${Math.min(end, filtered.length)}
+    info.innerHTML = `
 
-of ${filtered.length} entries`;
+Showing
 
-        renderPagination();
+${total === 0 ? 0 : start + 1}
 
-    }
+to
 
-    search.addEventListener("input", e => {
+${Math.min(end, total)}
 
-        const keyword =
+of
 
-            e.target.value.toLowerCase();
+${total}
 
-        filtered =
+entries
 
-            rows.filter(row =>
+`;
 
-                Object.values(row)
+}
 
-                    .join(" ")
+function renderPagination(
 
-                    .toLowerCase()
+    pagination,
+    totalRows,
+    pageSize,
+    currentPage,
+    onPageChange
 
-                    .includes(keyword)
+) {
 
-            );
+    const totalPages = Math.ceil(totalRows / pageSize);
 
-        currentPage = 1;
+    pagination.innerHTML = "";
 
-        render();
+    if (totalPages <= 1) return;
 
-    });
+    for (let i = 1; i <= totalPages; i++) {
 
-    pageSelect.addEventListener("change", e => {
-
-        pageSize =
-
-            Number(e.target.value);
-
-        currentPage = 1;
-
-        render();
-
-    });
-
-    function renderPagination() {
-
-        const totalPages =
-
-            Math.ceil(filtered.length / pageSize);
-
-        pagination.innerHTML = "";
-
-        for (let i = 1; i <= totalPages; i++) {
-
-            pagination.innerHTML += `
+        pagination.innerHTML += `
 
 <button
 
-class="${i === currentPage ? 'active' : ''}"
+class="${i === currentPage ? "active" : ""}"
 
 data-page="${i}">
 
@@ -246,27 +182,293 @@ ${i}
 
 `;
 
+    }
+
+    pagination.querySelectorAll("button").forEach(btn => {
+
+        btn.onclick = () => {
+
+            onPageChange(
+
+                Number(btn.dataset.page)
+
+            );
+
+        };
+
+    });
+
+}
+
+function sortRows(rows, column, direction) {
+
+    return [...rows].sort((a, b) => {
+
+        const valueA = a[column] ?? "";
+        const valueB = b[column] ?? "";
+
+        // Number
+        if (
+            !isNaN(valueA) &&
+            !isNaN(valueB)
+        ) {
+
+            return direction === "asc"
+
+                ? Number(valueA) - Number(valueB)
+
+                : Number(valueB) - Number(valueA);
+
         }
 
-        pagination
+        // String
+        return direction === "asc"
 
-            .querySelectorAll("button")
+            ? String(valueA).localeCompare(String(valueB))
 
-            .forEach(btn => {
+            : String(valueB).localeCompare(String(valueA));
 
-                btn.onclick = () => {
+    });
 
-                    currentPage =
+}
 
-                        Number(btn.dataset.page);
+function updateHeaderSort(headers, activeColumn, direction) {
 
-                    render();
+    headers.forEach(th => {
 
-                }
+        const column = th.dataset.column;
 
-            });
+        const title = th.dataset.title || th.textContent;
+
+        th.dataset.title = title;
+
+        if (column === activeColumn) {
+
+            th.innerHTML = `
+
+            ${title}
+
+            <i class="fa-solid ${direction === "asc"
+                    ? "fa-sort-up"
+                    : "fa-sort-down"} sort-arrow"></i>
+
+        `;
+
+            th.classList.add("sort-active");
+
+        } else {
+
+            th.innerHTML = title;
+
+            th.classList.remove("sort-active");
+
+        }
+
+    });
+
+}
+
+// ======================================================
+// Initialize Enterprise Table
+// ======================================================
+
+export function initEnterpriseTable(id) {
+
+    const container = document.getElementById(id);
+
+    if (!container) return;
+
+    const config = getTable(id);
+
+    if (!config) {
+
+        console.error("EnterpriseTable config not found:", id);
+
+        return;
 
     }
+
+    const {
+
+        columns,
+        rows,
+        pageSize: defaultPageSize
+
+    } = config;
+
+    let filtered = [...rows];
+
+    let currentPage = 1;
+
+    let pageSize = defaultPageSize;
+
+    let sortColumn = null;
+
+    let sortDirection = "asc";
+
+    const tbody = container.querySelector("tbody");
+
+    const info = container.querySelector(".qdp-table-info");
+
+    const pagination = container.querySelector(".qdp-pagination");
+
+    const search = container.querySelector(".qdp-table-search");
+
+    const pageSelect = container.querySelector(".qdp-page-size");
+
+    const tableHeaders = container.querySelectorAll("thead th");
+
+    pageSelect.value = pageSize;
+
+    // ==================================================
+    // Render Table
+    // ==================================================
+
+    function render() {
+
+        const start = (currentPage - 1) * pageSize;
+
+        const end = start + pageSize;
+
+        const pageRows = filtered.slice(start, end);
+
+        renderTable(
+
+            tbody,
+
+            columns,
+
+            pageRows
+
+        );
+
+        renderInfo(
+
+            info,
+
+            start,
+
+            end,
+
+            filtered.length
+
+        );
+
+        renderPagination(
+
+            pagination,
+
+            filtered.length,
+
+            pageSize,
+
+            currentPage,
+
+            (page) => {
+
+                currentPage = page;
+
+                render();
+
+            }
+
+        );
+
+    }
+
+    // ==================================================
+    // Search
+    // ==================================================
+
+    search.addEventListener("input", e => {
+
+        const keyword = e.target.value.toLowerCase();
+
+        filtered = rows.filter(row =>
+
+            Object.values(row)
+
+                .join(" ")
+
+                .toLowerCase()
+
+                .includes(keyword)
+
+        );
+
+        currentPage = 1;
+
+        render();
+
+    });
+
+    // ==================================================
+    // Page Size
+    // ==================================================
+
+    pageSelect.addEventListener("change", e => {
+
+        pageSize = Number(e.target.value);
+
+        currentPage = 1;
+
+        render();
+
+    });
+
+    tableHeaders.forEach(th => {
+
+        th.style.cursor = "pointer";
+
+        th.onclick = () => {
+
+            const column = th.dataset.column;
+
+            if (sortColumn === column) {
+
+                sortDirection =
+
+                    sortDirection === "asc"
+
+                        ? "desc"
+
+                        : "asc";
+
+            } else {
+
+                sortColumn = column;
+
+                sortDirection = "asc";
+
+            }
+
+            filtered = sortRows(
+
+                filtered,
+
+                sortColumn,
+
+                sortDirection
+
+            );
+
+            updateHeaderSort(
+
+                tableHeaders,
+
+                sortColumn,
+
+                sortDirection
+
+            );
+
+            currentPage = 1;
+
+            render();
+
+        };
+
+    });
 
     render();
 

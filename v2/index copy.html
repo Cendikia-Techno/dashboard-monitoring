@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QA Digital Platform V2</title>
+
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div class="app">
+
+        <header class="header">
+
+            <div class="header-left">
+
+                <button id="toggleSidebar" class="toggle-btn">
+
+                    <i class="fas fa-bars"></i>
+
+                </button>
+
+                <div class="logo">
+
+                    ⚓
+
+                </div>
+
+                <div>
+
+                    <h2>QA Digital Platform</h2>
+
+                    <p>Integrated Quality Monitoring System</p>
+
+                </div>
+
+            </div>
+
+            <div class="header-right">
+
+                <span class="status-live">
+
+                    ● LIVE
+
+                </span>
+
+                <span class="version">
+
+                    Version 2.0
+
+                </span>
+
+            </div>
+
+        </header>
+
+        <aside class="sidebar">
+
+            <div id="sidebarContainer"></div>
+
+        </aside>
+
+        <main class="main">
+
+            <div class="toolbar">
+
+                <div class="toolbar-left">
+
+                    <div class="toolbar-group">
+
+                        <label for="projectSelect">Project</label>
+
+                        <select id="projectSelect">
+                            <!-- Diisi otomatis oleh projectManager.js -->
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="toolbar-right">
+
+                    <span id="apiStatus" class="status-api">
+
+                        🟢 Connected
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <section id="main-content" class="content">
+
+            </section>
+
+        </main>
+
+        <footer class="footer">
+
+            QA Digital Platform V2 © 2026
+
+        </footer>
+
+    </div>
+
+    <script type="module" src="assets/js/app.js"></script>
+</body>
+
+</html>

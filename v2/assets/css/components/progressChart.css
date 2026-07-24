@@ -1,0 +1,82 @@
+/* CSS bar Chart */
+.qdp-progress-chart {
+
+    background: #fff;
+
+    border-radius: 12px;
+
+    padding: 20px;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+
+}
+
+.qdp-chart-title {
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+    color: #0B2E59;
+
+    margin-bottom: 18px;
+
+}
+
+.qdp-progress-row {
+
+    display: grid;
+
+    grid-template-columns: 170px 1fr 60px;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 14px;
+
+}
+
+.qdp-progress-label {
+
+    font-weight: 500;
+
+}
+
+.qdp-progress-bar {
+
+    height: 12px;
+
+    background: #edf2f7;
+
+    border-radius: 999px;
+
+    overflow: hidden;
+
+}
+
+.qdp-progress-fill {
+
+    height: 100%;
+
+    background: linear-gradient(90deg,
+
+            #2563EB,
+
+            #16A34A);
+
+    border-radius: 999px;
+
+    transition: width .8s ease;
+
+}
+
+.qdp-progress-value {
+
+    text-align: right;
+
+    font-weight: 600;
+
+    color: #0B2E59;
+
+}

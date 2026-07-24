@@ -1,0 +1,51 @@
+.qdp-badge {
+
+    padding: 6px 12px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+.qdp-badge.success {
+
+    background: #DCFCE7;
+
+    color: #166534;
+
+}
+
+.qdp-badge.warning {
+
+    background: #FEF3C7;
+
+    color: #92400E;
+
+}
+
+.qdp-badge.danger {
+
+    background: #FEE2E2;
+
+    color: #991B1B;
+
+}
+
+.status-api.online{
+
+    color:#22C55E;
+
+    font-weight:600;
+
+}
+
+.status-api.offline{
+
+    color:#EF4444;
+
+    font-weight:600;
+
+}

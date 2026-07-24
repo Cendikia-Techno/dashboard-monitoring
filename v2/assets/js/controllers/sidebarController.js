@@ -30,4 +30,20 @@ export function initSidebar() {
 
     });
 
+    document.addEventListener("click", (e) => {
+
+        const app = e.target.closest(".menu-app");
+
+        if (!app) return;
+
+        window.open(
+
+            app.dataset.url,
+
+            "_blank"
+
+        );
+
+    });
+
 }

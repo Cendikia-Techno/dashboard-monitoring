@@ -1,5 +1,5 @@
 import { MODULES } from "./config/modules.js";
-
+import { renderWelcome } from "./modules/welcome/welcome.js";
 import { renderSummary } from "./modules/summary/summary.js";
 import { renderITP } from "./modules/itp/itp.js";
 import { renderQualityPlan } from "./modules/qualityplan/qualityplan.js";
@@ -7,15 +7,14 @@ import { renderInspection } from "./modules/inspeksi/inspeksi.js";
 import { renderLaunching } from "./modules/launching/launching.js";
 import { renderMaterial } from "./modules/material/material.js";
 import { renderTPTR } from "./modules/tptr/tptr.js";
-import { renderHatsat } from "./modules/hatsat/hatsat.js";
+import { renderHATSAT } from "./modules/hatsat/hatsat.js";
 
 import { initEnterpriseTable } from "./components/table/enterpriseTable.js";
 
-// setelah container.innerHTML = renderModule();
-
-
 const routes = {
 
+    [MODULES.WELCOME]: renderWelcome,
+    
     [MODULES.SUMMARY]: renderSummary,
 
     [MODULES.ITP]: renderITP,
@@ -30,11 +29,27 @@ const routes = {
 
     [MODULES.TPTR]: renderTPTR,
 
-    [MODULES.HATSAT]: renderHatsat
+    [MODULES.HATSAT]: renderHATSAT
 
 };
 
-export function loadModule(moduleName) {
+// ======================================================
+// CURRENT ACTIVE MODULE
+// ======================================================
+
+let currentModule = MODULES.SUMMARY;
+
+export function getCurrentModule() {
+    return currentModule;
+}
+
+// ======================================================
+// LOAD MODULE
+// ======================================================
+
+export function loadModule(moduleName = currentModule) {
+
+    currentModule = moduleName;
 
     const container = document.getElementById("main-content");
 
@@ -54,9 +69,11 @@ export function loadModule(moduleName) {
     }
 
     container.innerHTML = render();
-    document.querySelectorAll(".qdp-enterprise-table").forEach(table => {
-        initEnterpriseTable(table.id);
-    });
 
+    document.querySelectorAll(".qdp-enterprise-table").forEach(table => {
+
+        initEnterpriseTable(table.id);
+
+    });
 
 }
