@@ -28,6 +28,7 @@ export function renderMaterial() {
         })
 
     });
+    
 
     const statusChart = createSection({
 

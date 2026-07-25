@@ -4,6 +4,7 @@ import { createKPICard } from "../components/cards/kpiCard.js";
 import { createSection } from "../components/layout/sectionCard.js";
 import { createProgressList } from "../components/lists/progressList.js";
 import { createEnterpriseTable } from "../components/table/enterpriseTable.js";
+import { getCurrentModuleInfo } from "../router.js";
 
 export function createProgressDashboard({
 
@@ -27,19 +28,13 @@ export function createProgressDashboard({
 
 }) {
     console.log("Critical:", statistics.critical);
+    const currentModule = getCurrentModuleInfo();
 
     // hero //
     const hero = createHero({
 
-        title: `📊 ${project.name}`,
-
-        subtitle,
-
-        spreadsheet: project.spreadsheet,
-
-        lastUpdate: new Date().toLocaleString("id-ID"),
-
-        nextRefresh: "03:00",
+        lastUpdate:
+            new Date().toLocaleString("id-ID"),
 
         showRefreshButton: true
 
@@ -137,13 +132,15 @@ export function createProgressDashboard({
 
     const rows = statistics.rows.map(rowMapper);
 
+    const module = getCurrentModuleInfo();
+
     const detail = createSection({
 
-        title: `Detail ${title}`,
+        title: `Detail ${module.title}`,
 
         content: createEnterpriseTable({
 
-            id: `${title.replace(/\s+/g, "")}Table`,
+            id: `${module.id}Table`,
 
             headers: tableHeaders,
 

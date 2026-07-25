@@ -1,5 +1,4 @@
 import {
-    getProjects,
     getCurrentProject,
     setCurrentProject,
     getCurrentCategory,
@@ -18,6 +17,12 @@ export function initToolbar() {
     const badge =
         document.getElementById("categoryBadge");
 
+    if (!select) return;
+
+    // ==========================================
+    // Category Badge
+    // ==========================================
+
     if (badge) {
 
         badge.innerHTML = `
@@ -28,13 +33,11 @@ export function initToolbar() {
 
         `;
 
-            }
+    }
 
-    if (!select) return;
-
-    // ==========================
-    // Load Project List
-    // ==========================
+    // ==========================================
+    // Load Project Dropdown
+    // ==========================================
 
     select.innerHTML = "";
 
@@ -42,53 +45,56 @@ export function initToolbar() {
 
         select.innerHTML += `
 
-        <option value="${project.id}">
-        ${project.title}
-        </option>
+            <option value="${project.id}">
+                ${project.title}
+            </option>
 
         `;
 
     });
 
+    // Current Project
     select.value =
         getCurrentProject().id;
 
-    // ====================================
-    // SET PROJECT YANG SEDANG AKTIF
-    // ====================================
-
-    select.value = getCurrentProject().id;
-    // ==========================
+    // ==========================================
     // Back Portal
-    // ==========================
+    // ==========================================
 
     const backBtn =
         document.getElementById("backPortalBtn");
 
     if (backBtn) {
 
-        backBtn.addEventListener("click", () => {
+        backBtn.onclick = () => {
 
             showPortal();
 
-        });
+        };
 
     }
 
-    // ==========================
+    // ==========================================
     // Change Project
-    // ==========================
+    // ==========================================
 
-    select.addEventListener("change", async (e) => {
+    select.onchange = (e) => {
 
-        setCurrentProject(e.target.value);
+        const projectId = e.target.value;
 
-        console.log("Current Project :", e.target.value);
+        if (!projectId) return;
 
-        await loadDashboardData();
+        // Simpan project aktif
+        setCurrentProject(projectId);
 
-        loadModule(getCurrentModule());
+        console.log("🚢 Switch Project :", projectId);
 
-    });
+        // ==================================================
+        // Background Refresh
+        // ==================================================
+
+        loadDashboardData();
+
+    };
 
 }

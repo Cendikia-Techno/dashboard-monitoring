@@ -1,7 +1,10 @@
-import { menuItems } from "../assets/js/config/navigation.js";
-import { QA_APPLICATIONS } from "../assets/js/config/qaApplications.js";
+import { getDashboardModules } from "../assets/js/router.js";
 
 export function renderSidebar() {
+
+    const menuItems = getDashboardModules()
+
+        .filter(item => item.menu);
 
     return `
 
@@ -21,7 +24,7 @@ export function renderSidebar() {
 
             <i class="fas ${item.icon}"></i>
 
-            <span>${item.label}</span>
+            <span>${item.title}</span>
 
         </li>
 

@@ -1,68 +1,80 @@
 import { getCurrentProject } from "../projectManager.js";
+import { getCurrentModule, loadModule } from "../router.js";
+
 import { setDashboardData } from "./dataStore.js";
 import { saveDashboardCache, loadDashboardCache } from "./cacheManager.js";
 import { getNetworkStatus } from "./networkManager.js";
 
-export async function loadDashboardData() {
+export async function loadDashboardData(forceRefresh = false) {
 
     const project = getCurrentProject();
 
     if (!project.api) {
 
-        console.warn("API belum dikonfigurasi.");
+        console.warn("⚠ API belum dikonfigurasi.");
 
         return null;
 
     }
 
     // ============================================
-    // OFFLINE MODE
+    // STEP 1 : LOAD CACHE
+    // ============================================
+
+    if (!forceRefresh) {
+
+        const cache = loadDashboardCache(project.id);
+
+        if (cache) {
+
+            console.log("📦 Cache Loaded");
+
+            setDashboardData(cache.data);
+
+            // Dashboard langsung memakai cache
+            loadModule(getCurrentModule());
+
+        }
+
+    }
+
+    // ============================================
+    // STEP 2 : OFFLINE MODE
     // ============================================
 
     if (!getNetworkStatus()) {
 
-        console.log("📦 Loading Dashboard Cache...");
-
-        const cache = loadDashboardCache(
-
-            project.name
-
-        );
-
-        if (cache) {
-
-            console.log("✅ Cache Loaded");
-
-            setDashboardData(cache.data);
-
-            return cache.data;
-
-        }
-
-        console.warn("❌ Cache tidak ditemukan");
+        console.log("🔴 Offline Mode");
 
         return null;
 
     }
 
     // ============================================
-    // ONLINE MODE
+    // STEP 3 : FETCH API
     // ============================================
 
     try {
 
         const response = await fetch(project.api);
 
+        if (!response.ok) {
+
+            throw new Error(`HTTP ${response.status}`);
+
+        }
+
         const data = await response.json();
 
-        console.log("API Response:", data);
+        console.log("🌐 API Response", data);
 
+        // Update Store
         setDashboardData(data);
 
-        // simpan cache terbaru
+        // Update Cache
         saveDashboardCache(
 
-            project.name,
+            project.id,
 
             data
 
@@ -70,7 +82,10 @@ export async function loadDashboardData() {
 
         console.log("💾 Cache Updated");
 
-        console.log("Dashboard data loaded");
+        // Refresh Dashboard
+        loadModule(getCurrentModule());
+
+        console.log("✅ Dashboard Updated");
 
         return data;
 
@@ -78,23 +93,21 @@ export async function loadDashboardData() {
 
     catch (err) {
 
-        console.error("Failed load data", err);
+        console.error("❌ Failed Load API", err);
 
-        // ========================================
-        // FALLBACK KE CACHE
-        // ========================================
+        // ============================================
+        // FALLBACK CACHE
+        // ============================================
 
-        const cache = loadDashboardCache(
-
-            project.name
-
-        );
+        const cache = loadDashboardCache(project.id);
 
         if (cache) {
 
             console.log("📦 Using Cached Dashboard");
 
             setDashboardData(cache.data);
+
+            loadModule(getCurrentModule());
 
             return cache.data;
 

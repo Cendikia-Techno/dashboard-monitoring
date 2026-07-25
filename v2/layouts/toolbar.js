@@ -6,8 +6,6 @@ export function renderToolbar() {
 
     <div class="toolbar-left">
 
-        <div class="toolbar-left">
-
         <div
             id="categoryBadge"
             class="toolbar-category">

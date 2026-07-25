@@ -21,15 +21,17 @@ export function createDocumentDashboard({
 
     const hero = createHero({
 
-        title: `📋 ${project.name}`,
+        title: `🚢 ${project.title}`,
 
-        subtitle,
+        subtitle: project.description,
 
-        spreadsheet: project.spreadsheet,
+        module: title,
 
-        lastUpdate: new Date().toLocaleDateString("id-ID"),
+        spreadsheet: project.dataSource,
 
-        status: "🟢 Connected"
+        lastUpdate: new Date().toLocaleString("id-ID"),
+
+        showRefreshButton: true
 
     });
 
@@ -158,7 +160,7 @@ ${createKPICard({
         status: createStatusBadge(item.status)
 
     }));
-    
+
     const detail = createSection({
 
         title: `Detail ${title}`,

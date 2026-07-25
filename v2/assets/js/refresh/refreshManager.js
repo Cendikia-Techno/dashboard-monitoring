@@ -21,7 +21,7 @@ export async function refreshDashboard() {
 
     try {
 
-        await loadDashboardData();
+        await loadDashboardData(true);
 
         updateLastUpdateUI();
 
@@ -47,7 +47,7 @@ export function initRefreshButton() {
 
         if (e.target.closest("#refreshNowBtn")) {
 
-            await refreshDashboard();
+            await refreshDashboard(true);
 
         }
 

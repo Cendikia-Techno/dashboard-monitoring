@@ -1,0 +1,31 @@
+.qdp-breadcrumb{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-bottom:18px;
+
+    font-size:14px;
+
+    color:#64748B;
+
+}
+
+.qdp-breadcrumb strong{
+
+    color:#0B2E59;
+
+    font-weight:700;
+
+}
+
+.qdp-breadcrumb i{
+
+    font-size:11px;
+
+    opacity:.6;
+
+}

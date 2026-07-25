@@ -10,7 +10,9 @@ export function createPortalLayout(content = "") {
 
             <div class="logo">
 
-                <i class="fa-solid fa-shield-halved"></i>
+                <img
+                    src="assets/images/logo_qa.png"
+                    alt="QA Portal">
 
             </div>
 

@@ -1,5 +1,7 @@
 export function createDashboard({
 
+    breadcrumb = "",
+
     hero = "",
 
     kpis = "",
@@ -18,6 +20,8 @@ export function createDashboard({
 
     <div class="dashboard-page">
 
+        ${breadcrumb}
+        
         ${hero}
 
         ${kpis}

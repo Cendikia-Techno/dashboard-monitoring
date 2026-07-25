@@ -7,6 +7,7 @@ import { createAttentionList } from "../../components/lists/attentionList.js";
 import { createActivityList } from "../../components/lists/activityList.js";
 import { getOverallStatistics } from "../../services/statistics.js";
 import { getCurrentProject } from "../../projectManager.js";
+import { createBreadcrumb } from "../../components/layout/breadcrumb.js";
 
 
 export function renderSummary() {
@@ -19,13 +20,21 @@ export function renderSummary() {
         return `<div class="loading">Loading Dashboard...</div>`;
 
     }
+
+    const breadcrumb =
+
+        createBreadcrumb({
+
+            project: project.title,
+
+            module: "Executive Summary"
+
+        });
     // ===========================
     // Hero
     // ===========================
 
     const hero = createHero({
-
-        title: "Executive Summary",
 
         lastUpdate:
             new Date().toLocaleString("id-ID")
@@ -248,6 +257,8 @@ ${createKPICard({
     // ===========================
 
     return createDashboard({
+
+        breadcrumb,
 
         hero,
 

@@ -58,7 +58,7 @@ export function showPortal() {
 // DASHBOARD
 // =====================================================
 
-export async function showDashboard() {
+export function showDashboard() {
 
     const portal = document.getElementById("portalContainer");
     const dashboard = document.getElementById("dashboardContainer");
@@ -77,17 +77,26 @@ export async function showDashboard() {
     document.getElementById("toolbarContainer").innerHTML =
         renderToolbar();
 
-    // Controller
+    // Init Controller
     initSidebar();
     initToolbar();
 
-    // Load API
-    await loadDashboardData();
+    // =====================================================
+    // Render dashboard langsung (pakai cache jika ada)
+    // =====================================================
 
-    // Load module aktif
     loadModule(getCurrentModule());
 
+    // =====================================================
+    // Background refresh (tidak blocking UI)
+    // =====================================================
+
+    loadDashboardData();
+
+    // =====================================================
     // Auto Refresh
+    // =====================================================
+
     startAutoRefresh(() => getCurrentModule());
 
 }

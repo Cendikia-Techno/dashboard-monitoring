@@ -24,21 +24,36 @@ export function renderWelcome() {
 
         hero: `
 
-<div class="qa-welcome">
+<div class="portal-hero">
 
-    <div class="qa-logo">
+    <img
+        src="assets/images/logo_qa.png"
+        class="portal-logo"
+        alt="QA Portal">
 
-        <i class="fa-solid fa-shield-halved"></i>
+    <h1>
 
-    </div>
+        QA Portal
 
-    <h1>Welcome to QA Portal</h1>
+    </h1>
 
     <p>
 
         Quality Assurance Digital Platform
 
     </p>
+
+    <span>
+
+        One Portal • One Data • One Quality
+
+    </span>
+
+</div>
+
+<div class="portal-divider">
+
+    Choose Quality Application
 
 </div>
 

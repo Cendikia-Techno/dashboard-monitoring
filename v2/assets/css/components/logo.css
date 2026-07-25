@@ -1,0 +1,23 @@
+.portal-logo{
+
+    width:130px;
+
+    height:150px;
+
+    margin-bottom:16px;
+
+    margin:0 auto 25px;
+
+    display:block;
+
+    filter:drop-shadow(0 8px 18px rgba(0,0,0,.18));
+
+    transition:.3s;
+
+}
+
+.portal-logo:hover{
+
+    transform:scale(1.05);
+
+}

@@ -35,10 +35,6 @@ export function renderInspection() {
 
         project,
 
-        title: "Inspection",
-
-        subtitle: "Inspection Progress Dashboard",
-
         statistics: getInspectionStatistics(),
 
         leftPanel: progressChart,

@@ -1,8 +1,7 @@
 import { getCurrentProject } from "../../projectManager.js";
+import { getCurrentModuleInfo } from "../../router.js";
 
 export function createHero({
-
-    title,
 
     lastUpdate = "-",
 
@@ -14,6 +13,8 @@ export function createHero({
 
     const project = getCurrentProject();
 
+    const module = getCurrentModuleInfo();
+
     return `
 
 <div class="qdp-hero">
@@ -22,8 +23,7 @@ export function createHero({
 
         <div class="hero-project">
 
-            <div
-                class="hero-project-icon">
+            <div class="hero-project-icon">
 
                 <i class="fa-solid ${project.icon}"></i>
 
@@ -39,11 +39,15 @@ export function createHero({
 
         </div>
 
-        <h2 class="hero-page-title">
+        ${module.subtitle ? `
 
-            ${title}
+        <p class="hero-page-subtitle">
 
-        </h2>
+            ${module.subtitle}
+
+        </p>
+
+        ` : ""}
 
         ${project.dataSource ? `
 
@@ -51,11 +55,14 @@ export function createHero({
 
             <a
                 href="${project.dataSource}"
-                target="_blank">
+                target="_blank"
+                rel="noopener noreferrer">
 
                 <i class="fa-solid fa-table"></i>
 
-                Source Data
+                Source Data (Google Sheets)
+
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
 
             </a>
 
@@ -73,14 +80,15 @@ export function createHero({
 
                 <small>Last Update</small>
 
-                <strong>
+                <strong id="lastUpdateText">
 
                     ${lastUpdate}
 
                 </strong>
 
             </div>
-             <div>
+
+            <div>
 
                 <small>Next Refresh</small>
 
@@ -96,17 +104,17 @@ export function createHero({
 
         ${showRefreshButton ? `
 
-<button
-id="refreshNowBtn"
-class="qdp-btn-refresh">
+        <button
+            id="refreshNowBtn"
+            class="qdp-btn-refresh">
 
-<i class="fa-solid fa-rotate-right"></i>
+            <i class="fa-solid fa-rotate-right"></i>
 
-Refresh
+            Refresh
 
-</button>
+        </button>
 
-`: ""}
+        ` : ""}
 
     </div>
 

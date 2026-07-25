@@ -13,6 +13,8 @@
 @import url("./components/portal.css");
 @import url("./components/button.css");
 @import url("./components/applicationLauncher.css");
+@import url("./components/breadcrumb.css");
+@import url("./components/logo.css");
 
 :root {
 
@@ -106,29 +108,43 @@ body {
 
 .logo {
 
-    width: 52px;
-
-    height: 52px;
-
-    border-radius: 16px;
-
-    background: var(--qdp-bg);
-
-    color: #0B2E59;
+    width: 58px;
+    height: 58px;
 
     display: flex;
-
     justify-content: center;
-
     align-items: center;
 
-    font-size: 28px;
+    flex-shrink: 0;
+
+}
+
+.logo img {
+
+    width: 56px;
+    height: 56px;
+
+    object-fit: contain;
+
+    transition: .3s;
+
+}
+
+.logo img:hover {
+
+    transform: scale(1.05);
 
 }
 
 .header-left h2 {
 
-    font-size: 22px;
+    font-size: 30px;
+
+    font-weight: 700;
+
+    color: white;
+
+    letter-spacing: .3px;
 
 }
 
@@ -136,7 +152,7 @@ body {
 
     font-size: 13px;
 
-    opacity: .8;
+    opacity: .85;
 
 }
 
@@ -334,27 +350,39 @@ body {
 
 }
 
-.toolbar {
+.toolbar{
 
-    display: flex;
+    display:flex;
 
-    justify-content: space-between;
+    align-items:center;
 
-    align-items: center;
+    justify-content:space-between;
 
-    padding: 15px 25px;
+    width:100%;
 
-    background: var(--qdp-bg);
-
-    border-bottom: 1px solid #E5E7EB;
+    gap:20px;
 
 }
 
-.toolbar-left {
+#backPortalBtn {
+
+    margin-left: auto;
 
     display: flex;
 
-    gap: 20px;
+    align-items: center;
+
+    gap: 8px;
+
+}
+
+.toolbar-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
 
 }
 
@@ -388,13 +416,15 @@ body {
 
 }
 
-.toolbar-right {
+.toolbar-right{
 
-    display: flex;
+    margin-left:auto;
 
-    align-items: center;
+    display:flex;
 
-    gap: 15px;
+    align-items:center;
+
+    gap:16px;
 
 }
 

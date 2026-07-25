@@ -1,79 +1,84 @@
-import { MODULES } from "./config/modules.js";
-import { renderWelcome } from "./modules/welcome/welcome.js";
-import { renderSummary } from "./modules/summary/summary.js";
-import { renderITP } from "./modules/itp/itp.js";
-import { renderQualityPlan } from "./modules/qualityplan/qualityplan.js";
-import { renderInspection } from "./modules/inspeksi/inspeksi.js";
-import { renderLaunching } from "./modules/launching/launching.js";
-import { renderMaterial } from "./modules/material/material.js";
-import { renderTPTR } from "./modules/tptr/tptr.js";
-import { renderHATSAT } from "./modules/hatsat/hatsat.js";
+import { DASHBOARD_MODULES } from "./config/dashboardRegistry.js";
 
-import { initEnterpriseTable } from "./components/table/enterpriseTable.js";
+let currentModule = "summary";
 
-const routes = {
-
-    [MODULES.WELCOME]: renderWelcome,
-    
-    [MODULES.SUMMARY]: renderSummary,
-
-    [MODULES.ITP]: renderITP,
-
-    [MODULES.QUALITYPLAN]: renderQualityPlan,
-
-    [MODULES.INSPEKSI]: renderInspection,
-
-    [MODULES.LAUNCHING]: renderLaunching,
-
-    [MODULES.MATERIAL]: renderMaterial,
-
-    [MODULES.TPTR]: renderTPTR,
-
-    [MODULES.HATSAT]: renderHATSAT
-
-};
-
-// ======================================================
-// CURRENT ACTIVE MODULE
-// ======================================================
-
-let currentModule = MODULES.SUMMARY;
+// ===========================================
+// CURRENT MODULE
+// ===========================================
 
 export function getCurrentModule() {
+
     return currentModule;
+
 }
 
-// ======================================================
+// ===========================================
+// CURRENT MODULE INFO
+// ===========================================
+
+export function getCurrentModuleInfo() {
+
+    return DASHBOARD_MODULES.find(
+
+        module => module.id === currentModule
+
+    );
+
+}
+
+// ===========================================
 // LOAD MODULE
-// ======================================================
+// ===========================================
 
-export function loadModule(moduleName = currentModule) {
+export function loadModule(moduleId) {
 
-    currentModule = moduleName;
+    const module = DASHBOARD_MODULES.find(
 
-    const container = document.getElementById("main-content");
+        item => item.id === moduleId
 
-    const render = routes[moduleName];
+    );
 
-    if (!render) {
+    if (!module) {
 
-        container.innerHTML = `
-            <div class="error-page">
-                <h2>Module Not Found</h2>
-                <p>Module "${moduleName}" belum tersedia.</p>
-            </div>
-        `;
+        console.error(`❌ Module "${moduleId}" not found.`);
 
         return;
 
     }
 
-    container.innerHTML = render();
+    currentModule = moduleId;
 
-    document.querySelectorAll(".qdp-enterprise-table").forEach(table => {
+    const container =
+        document.getElementById("main-content");
 
-        initEnterpriseTable(table.id);
+    if (!container) return;
 
-    });
+    container.innerHTML =
+        module.render();
+
+    // Update active sidebar
+    document
+        .querySelectorAll(".menu li[data-module]")
+        .forEach(menu => {
+
+            menu.classList.remove("active");
+
+            if (menu.dataset.module === moduleId) {
+
+                menu.classList.add("active");
+
+            }
+
+        });
+
+}
+
+// ===========================================
+// GET ALL MODULES
+// ===========================================
+
+export function getDashboardModules() {
+
+    return DASHBOARD_MODULES;
 
 }
