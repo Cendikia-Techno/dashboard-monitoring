@@ -1,7 +1,7 @@
 import { renderWelcome } from "../modules/welcome/welcome.js";
 import { renderSummary } from "../modules/summary/summary.js";
 import { renderInspection } from "../modules/inspeksi/inspeksi.js";
-import { renderQualityPlan } from "../modules/qualityplan/qualityPlan.js";
+import { renderQualityPlan } from "../modules/qualityplan/qualityplan.js";
 import { renderITP } from "../modules/itp/itp.js";
 import { renderMaterial } from "../modules/material/material.js";
 import { renderLaunching } from "../modules/launching/launching.js";
