@@ -396,6 +396,7 @@ export function getITPStatistics() {
     console.log("DashboardData:", data);
 
     const items = data?.itpData || [];
+    console.log("ITP Items :", items);
 
     const total = items.length;
 

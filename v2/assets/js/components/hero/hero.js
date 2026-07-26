@@ -49,22 +49,51 @@ export function createHero({
 
         ` : ""}
 
-        ${project.dataSource ? `
+        ${project.dataSource || project.dataRingkas ? `
 
-        <div class="hero-link">
+        <div class="hero-links">
 
-            <a
-                href="${project.dataSource}"
-                target="_blank"
-                rel="noopener noreferrer">
+            ${project.dataSource ? `
 
-                <i class="fa-solid fa-table"></i>
+            <div class="hero-link">
 
-                Source Data (Google Sheets)
+                <a
+                    href="${project.dataSource}"
+                    target="_blank"
+                    rel="noopener noreferrer">
 
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    <i class="fa-solid fa-table"></i>
 
-            </a>
+                    Source Data (Inspection Status)
+
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                </a>
+
+            </div>
+
+            ` : ""}
+
+            ${project.dataRingkas ? `
+
+            <div class="hero-link">
+
+                <a
+                    href="${project.dataRingkas}"
+                    target="_blank"
+                    rel="noopener noreferrer">
+
+                    <i class="fa-solid fa-chart-simple"></i>
+
+                    Source Data (Tim Ringkas)
+
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                </a>
+
+            </div>
+
+            ` : ""}
 
         </div>
 

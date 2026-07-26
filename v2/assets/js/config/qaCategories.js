@@ -7,12 +7,6 @@ export const QA_CATEGORIES = [
     },
 
     {
-        id: "submarine",
-        title: "Kapal Selam",
-        icon: "fa-water"
-    },
-
-    {
         id: "general",
         title: "Rekayasa Umum",
         icon: "fa-industry"
@@ -22,6 +16,12 @@ export const QA_CATEGORIES = [
         id: "maintenance",
         title: "Harkan",
         icon: "fa-screwdriver-wrench"
+    },
+
+    {
+        id: "submarine",
+        title: "Kapal Selam",
+        icon: "fa-water"
     },
 
     {

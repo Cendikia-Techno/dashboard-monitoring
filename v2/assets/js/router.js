@@ -1,4 +1,5 @@
 import { DASHBOARD_MODULES } from "./config/dashboardRegistry.js";
+import { initEnterpriseTable } from "./components/table/enterpriseTable.js";
 
 let currentModule = "summary";
 
@@ -56,7 +57,24 @@ export function loadModule(moduleId) {
     container.innerHTML =
         module.render();
 
+    // ==========================================
+    // Initialize Components
+    // ==========================================
+
+    requestAnimationFrame(() => {
+
+        document
+            .querySelectorAll(".qdp-enterprise-table")
+            .forEach(table => {
+
+                initEnterpriseTable(table.id);
+
+            });
+
+    });
+
     // Update active sidebar
+
     document
         .querySelectorAll(".menu li[data-module]")
         .forEach(menu => {

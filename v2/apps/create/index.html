@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Under Development</title>
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:Arial, sans-serif;
+      background:
+      linear-gradient(rgba(15,23,42,0.92), rgba(15,23,42,0.96)),
+      url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1600&auto=format&fit=crop');
+      background-size:cover;
+      background-position:center;
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      color:white;
+      overflow:hidden;
+    }
+
+    .container{
+      text-align:center;
+      background:rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.1);
+      backdrop-filter:blur(12px);
+      padding:60px 40px;
+      border-radius:28px;
+      width:90%;
+      max-width:600px;
+      box-shadow:0 10px 40px rgba(0,0,0,0.35);
+    }
+
+    .icon{
+      font-size:90px;
+      margin-bottom:25px;
+      animation:float 3s ease-in-out infinite;
+    }
+
+    h1{
+      font-size:42px;
+      margin-bottom:18px;
+      letter-spacing:1px;
+    }
+
+    p{
+      font-size:18px;
+      line-height:1.8;
+      opacity:0.8;
+      margin-bottom:35px;
+    }
+
+    .status{
+      display:inline-block;
+      padding:12px 24px;
+      border-radius:40px;
+      background:#2563eb;
+      font-size:14px;
+      font-weight:bold;
+      letter-spacing:1px;
+      box-shadow:0 4px 15px rgba(37,99,235,0.4);
+    }
+
+    footer{
+      position:fixed;
+      bottom:20px;
+      width:100%;
+      text-align:center;
+      font-size:14px;
+      color:rgba(255,255,255,0.65);
+    }
+
+    footer span{
+      color:#60a5fa;
+      font-weight:bold;
+    }
+
+    @keyframes float{
+      0%{
+        transform:translateY(0px);
+      }
+      50%{
+        transform:translateY(-10px);
+      }
+      100%{
+        transform:translateY(0px);
+      }
+    }
+
+    @media(max-width:768px){
+
+      .container{
+        padding:45px 25px;
+      }
+
+      h1{
+        font-size:30px;
+      }
+
+      p{
+        font-size:16px;
+      }
+
+      .icon{
+        font-size:70px;
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="icon">🚧</div>
+
+    <h1>Dashboard Under Development</h1>
+
+    <p>
+      Dashboard saat ini sedang dalam proses pengembangan
+      dan penyempurnaan sistem monitoring.
+      <br><br>
+      Silakan kembali beberapa waktu lagi.
+    </p>
+
+    <div class="status">
+      DEVELOPMENT IN PROGRESS
+    </div>
+
+  </div>
+
+  <footer>
+    © 2026 QA Project Dashboard |
+    Created by <span>Biro Quality Engineer - Allif C</span>
+  </footer>
+
+</body>
+</html>

@@ -3,6 +3,7 @@ import { getITPStatistics } from "../../services/statistics.js";
 import { getCurrentProject } from "../../projectManager.js";
 
 export function renderITP(){
+    
 
     return createDocumentDashboard({
 
@@ -13,6 +14,7 @@ export function renderITP(){
         subtitle:"Inspection Test Plan",
 
         statistics:getITPStatistics()
+        
 
     });
 

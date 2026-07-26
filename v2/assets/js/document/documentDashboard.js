@@ -160,6 +160,7 @@ ${createKPICard({
         status: createStatusBadge(item.status)
 
     }));
+    console.log("Rows Table :", rows);
 
     const detail = createSection({
 
