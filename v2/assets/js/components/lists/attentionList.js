@@ -1,24 +1,82 @@
-export function createAttentionList(items){
+export function createAttentionList(items = []) {
+
+    if (!items.length) {
+
+        return `
+
+        <div class="empty-state">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            <p>No critical action.</p>
+
+        </div>
+
+        `;
+
+    }
 
     return `
 
-    <div class="qdp-attention-list">
+    <div class="attention-list">
 
         ${items.map(item => `
 
-            <div class="qdp-attention-item">
+        <div class="attention-card ${item.priority}">
 
-                <div class="qdp-attention-icon ${item.level}"></div>
+            ${item.module === "Launching" ? `
 
-                <div class="qdp-attention-content">
+                <div class="attention-module">
 
-                    <strong>${item.title}</strong>
+                    <i class="fa-solid fa-circle-exclamation"></i>
 
-                    <small>${item.message}</small>
+                    ${item.module}
 
                 </div>
 
+                <div class="attention-title">
+
+                    Launching Requirement Items
+
+                </div>
+
+                ` : `
+
+                <div class="attention-module">
+
+                    <i class="fa-solid fa-circle-exclamation"></i>
+
+                    ${item.module}
+
+                </div>
+
+                <div class="attention-subtitle">
+
+                    ${item.subtitle}
+
+                </div>
+
+                <div class="attention-title">
+
+                    ${item.title}
+
+                </div>
+
+                `}
+
+            <div class="attention-value">
+
+                ${item.outstanding}
+
             </div>
+
+            <div class="attention-label">
+
+                Outstanding
+
+            </div>
+
+        </div>
 
         `).join("")}
 

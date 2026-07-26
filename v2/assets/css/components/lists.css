@@ -1,0 +1,203 @@
+/* =========================================
+   Attention List
+========================================= */
+
+.attention-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:16px;
+
+}
+
+.attention-item {
+
+    padding: 16px;
+
+    border-radius: 12px;
+
+    border-left: 5px solid #2563eb;
+
+    background: #fff;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+
+}
+
+.attention-item.high {
+
+    border-left-color: #dc2626;
+
+}
+
+.attention-item.medium {
+
+    border-left-color: #f59e0b;
+
+}
+
+.attention-item.low {
+
+    border-left-color: #16a34a;
+
+}
+
+.attention-module {
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #2563eb;
+
+    text-transform: uppercase;
+
+}
+
+.attention-category {
+
+    margin-top: 6px;
+
+    font-size: 13px;
+
+    color: #64748b;
+
+}
+
+.attention-title {
+
+    margin-top: 4px;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: #0f172a;
+
+}
+
+.attention-footer {
+
+    margin-top: 10px;
+
+    font-size: 14px;
+
+    color: #475569;
+
+}
+
+.attention-footer strong {
+
+    font-size: 22px;
+
+    color: #dc2626;
+
+}
+
+.attention-card{
+
+    background:#fff;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    border-left:6px solid #2563EB;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+
+    transition:.2s;
+
+}
+
+.attention-card:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.attention-card.high{
+
+    border-left-color:#DC2626;
+
+}
+
+.attention-card.medium{
+
+    border-left-color:#F59E0B;
+
+}
+
+.attention-card.low{
+
+    border-left-color:#22C55E;
+
+}
+
+.attention-module{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:6px 12px;
+
+    border-radius:999px;
+
+    background:#0B2E59;
+
+    color:#fff;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    margin-bottom:12px;
+
+}
+
+.attention-subtitle{
+
+    font-size:13px;
+
+    color:#64748B;
+
+    margin-bottom:4px;
+
+}
+
+.attention-title{
+
+    font-size:16px;
+
+    font-weight:700;
+
+    color:#0F172A;
+
+}
+
+.attention-value{
+
+    margin-top:14px;
+
+    font-size:30px;
+
+    font-weight:700;
+
+    color:#DC2626;
+
+}
+
+.attention-label{
+
+    color:#64748B;
+
+    font-size:13px;
+
+}

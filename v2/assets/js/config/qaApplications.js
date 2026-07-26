@@ -19,7 +19,7 @@ export const QA_APPLICATIONS = [
 
         type: "dashboard",
 
-        dataSource: "https://docs.google.com/dataSources/d/1AbiM8peLWOFzytEVvMn-6Etyvv7r65Sqimp2jtXN6S0/edit?gid=5623554#gid=5623554",
+        dataSource: "https://docs.google.com/spreadsheets/d/1AbiM8peLWOFzytEVvMn-6Etyvv7r65Sqimp2jtXN6S0/edit?gid=5623554#gid=5623554",
         dataRingkas: "https://docs.google.com/spreadsheets/d/1oI5_FoUdNSm9uMb4IBA6MZkOgNtrVyQ-3ZjMrMRRo68/edit?gid=1750372807#gid=1750372807",
         api: "https://script.google.com/macros/s/AKfycby-LLgoFRwN7RjxXyZV5oGu-O9elZwi08AY_4_SkFAxkOCjs4yVsv0br5ZnMV2ZfUFM/exec"
     },
@@ -39,7 +39,7 @@ export const QA_APPLICATIONS = [
 
         type: "dashboard",
         dataRingkas: "https://docs.google.com/spreadsheets/d/1FdUw9S_eXnfFiiSem6tg72db12uqOET1DOvY3-Ux7hM/edit?usp=sharing",
-        dataSource: "https://docs.google.com/dataSources/d/1dJF3-WVtDLAoQG2a4yhtANXywOugNrcjxd3KEVdFI40/edit?gid=417136588#gid=417136588",
+        dataSource: "https://docs.google.com/spreadsheets/d/1dJF3-WVtDLAoQG2a4yhtANXywOugNrcjxd3KEVdFI40/edit?gid=417136588#gid=417136588",
         api: "https://script.google.com/macros/s/AKfycbzZme5dt5rmmaboKEOzwHrphAVBsyFFgFEO1uaFIlDQgv5XwxU9Zx94jDtE8Rj4rAX19g/exec"
     },
 
@@ -58,7 +58,7 @@ export const QA_APPLICATIONS = [
 
         type: "dashboard",
         dataRingkas: "https://docs.google.com/spreadsheets/d/1U6_BVsscMxL1B4XqpGuNJWsGC0nhSOiQzoufOi6quD8/edit?gid=0#gid=0",
-        dataSource: "https://docs.google.com/dataSources/d/1AHQ61TYKFsyB34QoiF83-JG4hDpJCDnRma9G5TJs7rE/edit?gid=61200208#gid=61200208",
+        dataSource: "https://docs.google.com/spreadsheets/d/1AHQ61TYKFsyB34QoiF83-JG4hDpJCDnRma9G5TJs7rE/edit?gid=61200208#gid=61200208",
         api: "https://script.google.com/macros/s/AKfycbwwS9C43rB54vilk--7OtAUeRC66yCVumJ4jRp3ORfvDJZ6VZTFIQVKObIa9Gn0MEmQWA/exec"
     },
 
@@ -77,7 +77,7 @@ export const QA_APPLICATIONS = [
 
         type: "dashboard",
         dataRingkas: "",
-        dataSource: "https://docs.google.com/dataSources/d/11dq0Y82qz-lhSaimaNq1Wy5trgOng4nJy-GPQ8ZoEFU/edit?gid=89082007#gid=89082007",
+        dataSource: "https://docs.google.com/spreadsheets/d/11dq0Y82qz-lhSaimaNq1Wy5trgOng4nJy-GPQ8ZoEFU/edit?gid=89082007#gid=89082007",
         api: "https://script.google.com/macros/s/AKfycbzQbukAYz2i27Lvsj52JAi6G2xKmcpxiYCV0XHUO9E1xAilhSSRB6CkzRMEFzt5BqLG/exec"
     },
     {
@@ -95,7 +95,7 @@ export const QA_APPLICATIONS = [
 
         type: "dashboard",
         dataRingkas: "https://docs.google.com/spreadsheets/d/19QHf_chaGtoXORgh5CPVEnl02F2Rrv1BK-9eJAf9Z3Q/edit?gid=421171808#gid=421171808",
-        dataSource: "https://docs.google.com/dataSources/d/19QHf_chaGtoXORgh5CPVEnl02F2Rrv1BK-9eJAf9Z3Q/edit?gid=301492703#gid=301492703",
+        dataSource: "https://docs.google.com/spreadsheets/d/19QHf_chaGtoXORgh5CPVEnl02F2Rrv1BK-9eJAf9Z3Q/edit?gid=301492703#gid=301492703",
         api: "https://script.google.com/macros/s/AKfycbxSye4UMbfKg7-9F3TAQPF2x_wwXj26uJztTWcnMboATAyrnGPto8L9axNaetZTenyE2g/exec"
     },
     {

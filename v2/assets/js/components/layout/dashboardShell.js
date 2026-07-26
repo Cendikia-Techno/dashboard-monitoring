@@ -81,7 +81,7 @@ export function createDashboardShell() {
     <!-- FOOTER -->
     <footer class="footer">
 
-        © 2026 PT PAL Indonesia | QA Digital Platform
+        © 2026 PT PAL Indonesia | QA Digital Platform | Created by Quality Engineer (Allif C.)
 
     </footer>
 

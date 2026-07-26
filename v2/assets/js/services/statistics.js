@@ -1124,3 +1124,280 @@ export function getOverallStatistics() {
 
 }
 
+/* ======================================================
+   Inspection Attention
+====================================================== */
+
+export function getInspectionAttention() {
+
+    const data = getDashboardData();
+
+    const items = data?.summaryData || [];
+
+    if (!items.length) return null;
+
+    const outstanding = items
+        .filter(item => Number(item.remaining) > 0)
+        .sort((a, b) => Number(b.remaining) - Number(a.remaining));
+
+    if (!outstanding.length) return null;
+
+    const top = outstanding[0];
+
+    // Severity berdasarkan persentase outstanding
+    const outstandingPercent =
+        (Number(top.remaining) / Number(top.totalTask)) * 100;
+
+    let priority = "low";
+
+    if (outstandingPercent >= 60) {
+
+        priority = "high";
+
+    } else if (outstandingPercent >= 30) {
+
+        priority = "medium";
+
+    }
+
+    return {
+
+        module: "Inspection",
+
+        title: top.item,
+
+        subtitle: top.kategori,
+
+        outstanding: top.remaining,
+
+        total: top.totalTask,
+
+        progress: Math.round(top.progress),
+
+        priority
+
+    };
+
+}
+
+/* ======================================================
+   TPTR Attention
+====================================================== */
+
+export function getTPTRAttention() {
+
+    const data = getDashboardData();
+
+    const items = data?.tptrData || [];
+
+    if (!items.length) return null;
+
+    const counter = {};
+
+    items.forEach(item => {
+
+        const remark = (item.remark || "NO STATUS").trim();
+
+        counter[remark] = (counter[remark] || 0) + 1;
+
+    });
+
+    const sorted = Object.entries(counter)
+
+        .sort((a, b) => b[1] - a[1]);
+
+    const [remark, total] = sorted[0];
+
+    let priority = "low";
+
+    if (
+
+        remark.includes("CLASS") ||
+
+        remark.includes("SATGAS")
+
+    ) {
+
+        priority = "high";
+
+    }
+
+    return {
+
+        module: "TPTR",
+
+        subtitle: "Documentation",
+
+        title: remark,
+
+        outstanding: total,
+
+        total: items.length,
+
+        priority
+
+    };
+
+}
+
+export function getMaterialAttention() {
+
+    const data = getDashboardData();
+
+    const items = data?.materialData || [];
+
+    if (!items.length) return null;
+
+    const critical = items
+        .map(item => {
+
+            const used = new Date(item.usedDate);
+
+            const arrival = new Date(item.arrivalDate);
+
+            const delay =
+                Math.ceil(
+                    (arrival - used) /
+                    (1000 * 60 * 60 * 24)
+                );
+
+            return {
+
+                ...item,
+
+                delay
+
+            };
+
+        })
+
+        .filter(item => item.delay > 0)
+
+        .sort((a, b) => b.delay - a.delay);
+
+    if (!critical.length) return null;
+
+    const top = critical[0];
+
+    return {
+
+        module: "Material",
+
+        subtitle: top.kategori,
+
+        title: top.material,
+
+        outstanding: top.delay,
+
+        total: "Days",
+
+        priority: "high"
+
+    };
+
+}
+
+/* ======================================================
+   Launching Attention
+====================================================== */
+
+export function getLaunchingAttention() {
+
+    const data = getDashboardData();
+
+    const items = data?.launchingData || [];
+
+    if (!items.length) return null;
+
+    // Requirement yang belum selesai
+    const outstanding = items.filter(item =>
+        item.statusInspeksi !== "Done"
+    );
+
+    if (!outstanding.length) return null;
+
+    // Prioritaskan item dengan urgensi Prioritas
+    const priorityItems = outstanding.filter(item =>
+        item.urgensi === "Prioritas"
+    );
+
+    const top = priorityItems.length
+        ? priorityItems[0]
+        : outstanding[0];
+
+    return {
+
+        module: "Launching",
+
+        subtitle: top.sistem,
+
+        title: top.inspeksi,
+
+        outstanding: outstanding.length,
+
+        total: items.length,
+
+        priority: "high"
+
+    };
+
+}
+
+/* ======================================================
+   HAT / SAT Attention
+====================================================== */
+
+export function getHATSATAttention() {
+
+    const data = getDashboardData();
+
+    const items = data?.hatsatData || [];
+
+    if (!items.length) return null;
+
+    // Semua function test yang belum Close
+    const outstanding = items.filter(item =>
+        item.statusFungsi !== "Close"
+    );
+
+    if (!outstanding.length) return null;
+
+    // Ambil contoh system pertama
+    const top = outstanding[0];
+
+    return {
+
+        module: "HAT / SAT",
+
+        subtitle: top.kategori,
+
+        title: top.sistem,
+
+        outstanding: outstanding.length,
+
+        total: items.length,
+
+        priority: "high"
+
+    };
+
+}
+
+/* ======================================================
+   Executive Need Attention
+====================================================== */
+
+export function getNeedAttention() {
+
+    return [
+
+        getInspectionAttention(),
+        getTPTRAttention(),
+        getMaterialAttention(),
+        getLaunchingAttention(),
+        getHATSATAttention()
+
+    ].filter(Boolean);
+
+}
+

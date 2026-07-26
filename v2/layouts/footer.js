@@ -4,7 +4,7 @@ return`
 
 <footer class="footer">
 
-QA Digital Platform ©2026
+QA Digital Platform ©2026 | Created by Quality Engineer (Allif C)
 
 </footer>
 

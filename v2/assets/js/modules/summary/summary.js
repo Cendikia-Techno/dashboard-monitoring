@@ -5,7 +5,7 @@ import { createSection } from "../../components/layout/sectionCard.js";
 import { createProgressList } from "../../components/lists/progressList.js";
 import { createAttentionList } from "../../components/lists/attentionList.js";
 import { createActivityList } from "../../components/lists/activityList.js";
-import { getOverallStatistics } from "../../services/statistics.js";
+import { getOverallStatistics, getNeedAttention } from "../../services/statistics.js";
 import { getCurrentProject } from "../../projectManager.js";
 import { createBreadcrumb } from "../../components/layout/breadcrumb.js";
 
@@ -170,75 +170,14 @@ ${createKPICard({
 
         title: "Need Attention",
 
-        content: createAttentionList([
+        content: createAttentionList(
 
-            {
+            getNeedAttention()
 
-                title: "HAT/SAT",
-
-                message: "12 item belum selesai",
-
-                level: "high"
-
-            },
-
-            {
-
-                title: "TPTR",
-
-                message: "5 dokumen menunggu verifikasi",
-
-                level: "medium"
-
-            },
-
-            {
-
-                title: "Material",
-
-                message: "18 material belum diterima",
-
-                level: "high"
-
-            }
-
-        ])
+        )
 
     });
 
-    const activity = createSection({
-
-        title: "Recent Activity",
-
-        content: createActivityList([
-
-            {
-                title: "Vendor PT ABC mengunggah ITP",
-                time: "08:10 WIB",
-                type: "success"
-            },
-
-            {
-                title: "Quality Plan diperbarui",
-                time: "08:35 WIB",
-                type: "info"
-            },
-
-            {
-                title: "Material diterima di QA",
-                time: "09:05 WIB",
-                type: "warning"
-            },
-
-            {
-                title: "BA Closing selesai",
-                time: "09:40 WIB",
-                type: "success"
-            }
-
-        ])
-
-    });
 
     const bottom = `
 
@@ -246,7 +185,6 @@ ${createKPICard({
 
         ${attention}
 
-        ${activity}
 
     </div>
 
@@ -265,21 +203,15 @@ ${createKPICard({
         kpis,
 
         fullTop: [
-
             progress
-
         ],
 
         split: [
 
-            attention,
-
-            activity
-
         ],
 
-        fullBottom: [],
-        splitRatio: "1fr 1fr"
+        fullBottom: [attention],
+        splitRatio: "2fr 1fr"
 
     });
 
