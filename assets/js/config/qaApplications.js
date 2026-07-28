@@ -249,7 +249,7 @@ export const QA_APPLICATIONS = [
         icon: "fa-water",
         color: "#0B2E59",
         type: "external",
-        url: "apps/submarine/torpedo/index.html"
+        url: "apps/submarine/shiplift/index.html"
     },
     {
         id: "ardadedali",
