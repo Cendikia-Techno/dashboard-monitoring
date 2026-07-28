@@ -314,6 +314,7 @@ export const QA_APPLICATIONS = [
     {
         id: "selflearning",
         title: "QA Self Learning",
+        description: "Sistem pembelajaran QA berbasis AI yang memberikan jawaban secara cepat berdasarkan standar, prosedur, spesifikasi, dan dokumen teknis",
         category: "nonproject",
         icon: "fa-chart-column",
         type: "external",
