@@ -317,7 +317,7 @@ export const QA_APPLICATIONS = [
         category: "nonproject",
         icon: "fa-chart-column",
         type: "external",
-        url: "apps/create/index.html"
+        url: "https://notebook.google.com/notebook/aeadedef-e05d-4e95-bac6-87849bac8cf3"
     }
 
 ];
