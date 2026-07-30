@@ -173,6 +173,16 @@ export const QA_APPLICATIONS = [
         type: "external",
         url: "apps/maintenance/r41/index.html"
     },
+    {
+        id: "kri",
+        title: "KRI",
+        description: "Maintenance Projects Harkan kategori KRI",
+        category: "maintenance",
+        icon: "fa-screwdriver-wrench",
+        color: "#F59E0B",
+        type: "external",
+        url: "apps/maintenance/kri/index.html"
+    },
 
     {
         id: "nonkri",
