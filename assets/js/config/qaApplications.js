@@ -299,7 +299,7 @@ export const QA_APPLICATIONS = [
         category: "nonproject",
         icon: "fa-chart-column",
         type: "external",
-        url: "apps/create/index.html"
+        url: "apps/nonproject/tools/index.html"
     },
 
     {
