@@ -294,8 +294,9 @@ export const QA_APPLICATIONS = [
     },
 
     {
-        id: "tools",
-        title: "Tools Management",
+        id: "Qtools",
+        title: "Quality Tools Management",
+        description: "Memonitoring Peminjaman dan Pengingat Kalibrasi Alat Ukur",
         category: "nonproject",
         icon: "fa-chart-column",
         type: "external",
