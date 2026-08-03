@@ -231,10 +231,16 @@
 
         .kpi-container {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
             margin-bottom: 20px;
         }
+
+        .kpi-cal {
+            border-left-color: #6366f1;
+        }
+
+        /* Warna Indigo untuk Kalibrasi */
 
         .kpi-card {
             background: white;
@@ -290,6 +296,10 @@
             <div class="kpi-card kpi-warn">
                 <h4>Due (30 Hari)</h4>
                 <p id="kpi-warning">0</p>
+            </div>
+            <div class="kpi-card kpi-cal">
+                <h4>Dikalibrasi</h4>
+                <p id="kpi-calibrating">0</p>
             </div>
             <div class="kpi-card kpi-loan">
                 <h4>Dipinjam</h4>
@@ -498,115 +508,96 @@
             const dataHalamanIni = filteredData.slice(startIndex, endIndex);
 
             dataHalamanIni.forEach(alat => {
-                // A. Logika Status Kalibrasi
+                // A. Logika Status Peminjaman & Kalibrasi Dasar
+                let statusPinjam = alat['Status Peminjaman'] || "Tersedia";
+                let displayStatusPeminjaman = `<b>${statusPinjam}</b>`;
                 let statusKalibrasi = `<span class="badge-aman">Aman</span>`;
-                if (alat['Tgl Expired Kalibrasi']) {
-                    const tglExp = new Date(alat['Tgl Expired Kalibrasi']);
-                    const diffDaysKalibrasi = Math.ceil((tglExp - today) / (1000 * 60 * 60 * 24));
 
-                    if (diffDaysKalibrasi < 0 || isNaN(diffDaysKalibrasi)) {
-                        statusKalibrasi = `<span class="badge-danger">EXPIRED!</span>`;
-                    } else if (diffDaysKalibrasi <= 30) {
-                        statusKalibrasi = `<span class="badge-warning">Sisa ${diffDaysKalibrasi} Hari</span>`;
-                    } else {
-                        statusKalibrasi = `<span class="badge-aman">Aman (${diffDaysKalibrasi} Hari)</span>`;
+                // Logika Status Khusus "Sedang Dikalibrasi"
+                if (statusPinjam === "Sedang Dikalibrasi") {
+                    displayStatusPeminjaman = `<b style="color: #dc2626;">TIDAK BISA DIPINJAM</b>`;
+                    statusKalibrasi = `<span style="background: #e0e7ff; color: #4338ca; padding: 4px 8px; border-radius: 20px; font-weight: bold; font-size: 11px;">SEDANG DIKALIBRASI</span>`;
+                } else {
+                    // Logika Kalibrasi Normal (Jika tidak sedang di lab)
+                    if (alat['Tgl Expired Kalibrasi']) {
+                        const tglExp = new Date(alat['Tgl Expired Kalibrasi']);
+                        const diffDaysKalibrasi = Math.ceil((tglExp - today) / (1000 * 60 * 60 * 24));
+                        if (diffDaysKalibrasi < 0 || isNaN(diffDaysKalibrasi)) {
+                            statusKalibrasi = `<span class="badge-danger">EXPIRED!</span>`;
+                        } else if (diffDaysKalibrasi <= 30) {
+                            statusKalibrasi = `<span class="badge-warning">Sisa ${diffDaysKalibrasi} Hari</span>`;
+                        } else {
+                            statusKalibrasi = `<span class="badge-aman">Aman (${diffDaysKalibrasi} Hari)</span>`;
+                        }
                     }
                 }
 
-                // B. Tombol Preview PDF Sertifikat (Diambil dari kolom Certificate Link)
-                let certLink = alat['Certificate Link'] || alat['certificate link'] || alat['Link Sertifikat'] || alat['certificate_link'] || "";
+                // B. Logika Tanggal Pinjam (Jika sedang dipinjam)
+                if (statusPinjam === "Dipinjam" && alat['Tgl Kembali']) {
+                    const tglKembali = new Date(alat['Tgl Kembali']);
+                    tglKembali.setHours(0, 0, 0, 0);
+                    const diffDaysKembali = Math.ceil((tglKembali - today) / (1000 * 60 * 60 * 24));
+                    let notifKembali = diffDaysKembali < 0 ? `<br><span style="color: #dc2626; font-size: 11px; font-weight: bold;">⚠️ TERLAMBAT ${Math.abs(diffDaysKembali)} Hari!</span>` :
+                        diffDaysKembali <= 2 ? `<br><span style="color: #d97706; font-size: 11px; font-weight: bold;">⏳ Sisa ${diffDaysKembali} Hari</span>` :
+                            `<br><span style="color: #059669; font-size: 11px;">s.d. ${alat['Tgl Kembali']}</span>`;
+                    displayStatusPeminjaman = `<b style="color: #2563eb;">Dipinjam</b>${notifKembali}`;
+                }
 
+                // C. Logika Tombol Aksi (Tersentralisasi)
+                let tombolUtama = "";
+                let tombolKalibrasi = "";
+
+                // 1. Tentukan tombol dasar berdasarkan status
+                if (statusPinjam === "Tersedia") {
+                    tombolUtama = `<button class="btn btn-pinjam" onclick="openPinjam('${alat['Tool ID']}')">Pinjam</button>
+                           <button class="btn" style="background: #475569;" onclick="kirimKalibrasi('${alat['Tool ID']}')">Kirim Kalibrasi</button>`;
+                    tombolKalibrasi = `<button class="btn btn-kalibrasi" onclick="openKalibrasi('${alat['Tool ID']}')">⚙️ Update Kalibrasi</button>`;
+                } else if (statusPinjam === "Dipinjam") {
+                    tombolUtama = `<button class="btn btn-kembali" onclick="openKembali('${alat['Tool ID']}')">Kembalikan</button>`;
+                    tombolKalibrasi = `<button class="btn btn-kalibrasi" onclick="openKalibrasi('${alat['Tool ID']}')">⚙️ Update Kalibrasi</button>`;
+                } else if (statusPinjam === "Sedang Dikalibrasi") {
+                    tombolUtama = `<span style="color: #8b5cf6; font-weight: bold; border: 1px solid #8b5cf6; padding: 6px; border-radius: 4px; text-align: center; font-size: 12px;">SEDANG DI LAB</span>`;
+                    tombolKalibrasi = `<button class="btn btn-kalibrasi" style="background: #10b981;" onclick="openKalibrasi('${alat['Tool ID']}')">✅ Selesai Kalibrasi</button>`;
+                } else {
+                    // Status Rusak/Hilang
+                    tombolUtama = `<span style="color: #dc2626; font-weight: bold; border: 1px solid #dc2626; padding: 6px; border-radius: 4px; text-align: center; font-size: 12px;">${statusPinjam.toUpperCase()}</span>`;
+                    tombolKalibrasi = `<button class="btn btn-kalibrasi" onclick="openKalibrasi('${alat['Tool ID']}')">⚙️ Update Kalibrasi</button>`;
+                }
+
+                // 2. Filter Berdasarkan Role (Jika bukan Admin, hapus tombol Kalibrasi & limit tombol Utama)
+                if (!isAdmin()) {
+                    if (statusPinjam === "Tersedia") {
+                        tombolUtama = `<button class="btn btn-pinjam" onclick="openPinjam('${alat['Tool ID']}')">Pinjam</button>`;
+                        tombolKalibrasi = "";
+                    } else {
+                        tombolUtama = `<span style="color: #64748b; font-size: 12px;">Akses Terbatas</span>`;
+                        tombolKalibrasi = "";
+                    }
+                }
+
+                // D. Preview Link
+                let certLink = alat['Certificate Link'] || alat['certificate link'] || alat['Link Sertifikat'] || alat['certificate_link'] || "";
                 let linkSertifikat = certLink && certLink.toString().trim() !== ""
                     ? `<button onclick="openPreview('${certLink}')" style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px; border: 1px solid #cbd5e1; font-weight:bold; color: #0284c7; cursor: pointer; font-size: 12px;">📄 Preview</button>`
                     : `<span style="color:#94a3b8; font-size:12px;">Belum Ada</span>`;
 
-                // C. Logika Status Peminjaman & Keterlambatan
-                let statusPinjam = alat['Status Peminjaman'] || "Tersedia";
-                let displayStatusPeminjaman = `<b>${statusPinjam}</b>`;
-
-                // Logika Tombol Aksi
-                let tombolUtama = "";
-                let tombolKalibrasi = "";
-
-                if (isAdmin()) {
-                    // ADMIN: Full Access
-                    if (statusPinjam === "Tersedia") {
-                        tombolUtama = `<button class="btn btn-pinjam" onclick="openPinjam('${alat['Tool ID']}')">Pinjam</button>
-                                   <button class="btn" style="background: #475569;" onclick="kirimKalibrasi('${alat['Tool ID']}')">Kirim Kalibrasi</button>`;
-                    } else if (statusPinjam === "Dipinjam") {
-                        tombolUtama = `<button class="btn btn-kembali" onclick="openKembali('${alat['Tool ID']}')">Kembalikan</button>`;
-                    } else {
-                        tombolUtama = `<span style="color: #dc2626; font-weight: bold; border: 1px solid #dc2626; padding: 6px; border-radius: 4px; font-size: 12px;">${statusPinjam.toUpperCase()}</span>`;
-                    }
-                    tombolKalibrasi = `<button class="btn btn-kalibrasi" onclick="openKalibrasi('${alat['Tool ID']}')">⚙️ Update Kalibrasi</button>`;
-                } else {
-                    // INSPEKTOR: Cuma Pinjam (jika status Tersedia)
-                    if (statusPinjam === "Tersedia") {
-                        tombolUtama = `<button class="btn btn-pinjam" onclick="openPinjam('${alat['Tool ID']}')">Pinjam</button>`;
-                    } else {
-                        tombolUtama = `<span style="color: #64748b; font-size: 12px;">Akses Terbatas</span>`;
-                    }
-                    // Inspektor tidak mendapatkan tombol kalibrasi
-                    tombolKalibrasi = "";
-                }
-
-                if (statusPinjam === "Tersedia") {
-                    tombolUtama = `
-                    <button class="btn btn-pinjam" onclick="openPinjam('${alat['Tool ID']}')">Pinjam</button>
-                    <button class="btn" style="background: #475569;" onclick="kirimKalibrasi('${alat['Tool ID']}')">Kirim Kalibrasi</button>
-                `;
-                    tombolKalibrasi = `<button class="btn btn-kalibrasi" onclick="openKalibrasi('${alat['Tool ID']}')">⚙️ Update Kalibrasi</button>`;
-
-                } else if (statusPinjam === "Dipinjam") {
-                    tombolUtama = `<button class="btn btn-kembali" onclick="openKembali('${alat['Tool ID']}')">Kembalikan</button>`;
-                    tombolKalibrasi = `<button class="btn btn-kalibrasi" onclick="openKalibrasi('${alat['Tool ID']}')">⚙️ Update Kalibrasi</button>`;
-
-                    if (alat['Tgl Kembali']) {
-                        const tglKembali = new Date(alat['Tgl Kembali']);
-                        tglKembali.setHours(0, 0, 0, 0);
-                        const diffDaysKembali = Math.ceil((tglKembali - today) / (1000 * 60 * 60 * 24));
-                        let notifKembali = diffDaysKembali < 0 ? `<br><span style="color: #dc2626; font-size: 11px; font-weight: bold;">⚠️ TERLAMBAT ${Math.abs(diffDaysKembali)} Hari!</span>` :
-                            diffDaysKembali <= 2 ? `<br><span style="color: #d97706; font-size: 11px; font-weight: bold;">⏳ Sisa ${diffDaysKembali} Hari</span>` :
-                                `<br><span style="color: #059669; font-size: 11px;">s.d. ${alat['Tgl Kembali']}</span>`;
-                        displayStatusPeminjaman = `<b style="color: #2563eb;">Dipinjam</b>${notifKembali}`;
-                    }
-                } else if (statusPinjam === "Sedang Dikalibrasi") {
-                    // JIKA ALAT SEDANG DIKALIBRASI
-                    tombolUtama = `<span style="color: #8b5cf6; font-weight: bold; border: 1px solid #8b5cf6; padding: 6px; border-radius: 4px; text-align: center; font-size: 12px;">SEDANG DI LAB</span>`;
-                    displayStatusPeminjaman = `<b style="color: #8b5cf6;">Sedang Dikalibrasi</b>`;
-                    tombolKalibrasi = `<button class="btn btn-kalibrasi" style="background: #10b981;" onclick="openKalibrasi('${alat['Tool ID']}')">✅ Selesai Kalibrasi</button>`;
-                } else {
-                    // Status Rusak atau Hilang
-                    tombolUtama = `<span style="color: #dc2626; font-weight: bold; border: 1px solid #dc2626; padding: 6px; border-radius: 4px; text-align: center; font-size: 12px;">${statusPinjam.toUpperCase()}</span>`;
-                    displayStatusPeminjaman = `<b style="color: #dc2626;">${statusPinjam.toUpperCase()}</b>`;
-                    tombolKalibrasi = `<button class="btn btn-kalibrasi" onclick="openKalibrasi('${alat['Tool ID']}')">⚙️ Update Kalibrasi</button>`;
-                }
-
-                // Tombol Aksi Ditumpuk (Pinjam/Kembali + Kalibrasi)
-                let aksiHTML = `
-                <div class="aksi-container">
-                    ${tombolUtama}
-                    ${tombolKalibrasi}
-                </div>
-            `;
-
+                // E. Gabungkan ke Baris Tabel
                 html += `
-                <tr>
-                    <td>${aksiHTML}</td>
-                    <td><strong>${alat['Tool ID'] || '-'}</strong></td>
-                    <td>${alat['Nama Alat'] || '-'}</td>
-                    <td>${displayStatusPeminjaman}</td>
-                    <td>${statusKalibrasi}</td>
-                    <td>${linkSertifikat}</td> <!-- KOLOM SERTIFIKAT BARU -->
-                    <td>${alat['Tgl Expired Kalibrasi'] || '-'}</td>
-                    <td>${alat['Nama Peminjam'] ? alat['Nama Peminjam'] + '<br><small>(' + alat['Departemen Peminjam'] + ')</small>' : '-'}</td>
-                    <td>${alat['Tgl Pinjam'] || '-'}</td>
-                    <td>${alat['Vendor Kalibrasi'] || '-'}</td>
-                </tr>
-            `;
+            <tr>
+                <td><div class="aksi-container">${tombolUtama}${tombolKalibrasi}</div></td>
+                <td><strong>${alat['Tool ID'] || '-'}</strong></td>
+                <td>${alat['Nama Alat'] || '-'}</td>
+                <td>${displayStatusPeminjaman}</td>
+                <td>${statusKalibrasi}</td>
+                <td>${linkSertifikat}</td>
+                <td>${alat['Tgl Expired Kalibrasi'] || '-'}</td>
+                <td>${alat['Nama Peminjam'] ? alat['Nama Peminjam'] + '<br><small>(' + alat['Departemen Peminjam'] + ')</small>' : '-'}</td>
+                <td>${alat['Tgl Pinjam'] || '-'}</td>
+                <td>${alat['Vendor Kalibrasi'] || '-'}</td>
+            </tr>
+        `;
             });
 
-            // JANGAN LUPA TAMBAHKAN KOLOM "Sertifikat" DI BAGIAN <thead> HTML ANDA SEBELUM "Tgl Expired Kalibrasi"
             document.querySelector("#tabelAlat tbody").innerHTML = html || `<tr><td colspan="10" style="text-align:center; padding: 20px;">Tidak ada data ditemukan</td></tr>`;
             renderPaginationControls();
         }
@@ -769,12 +760,12 @@
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            let expired = 0, warning = 0, loan = 0;
-
-            // Total alat langsung dari panjang data
+            let expired = 0, warning = 0, loan = 0, calibrating = 0;
             let total = globalDataAlat.length;
 
             globalDataAlat.forEach(alat => {
+                let status = (alat['Status Peminjaman'] || "").toString().trim();
+
                 // Hitung Kalibrasi
                 if (alat['Tgl Expired Kalibrasi']) {
                     const tglExp = new Date(alat['Tgl Expired Kalibrasi']);
@@ -783,14 +774,16 @@
                     else if (diffDays <= 30) warning++;
                 }
 
-                // Hitung Status Peminjaman
-                if (alat['Status Peminjaman'] === "Dipinjam") loan++;
+                // Hitung Status
+                if (status === "Dipinjam") loan++;
+                if (status === "Sedang Dikalibrasi") calibrating++;
             });
 
             document.getElementById('kpi-expired').innerText = expired;
             document.getElementById('kpi-warning').innerText = warning;
+            document.getElementById('kpi-calibrating').innerText = calibrating;
             document.getElementById('kpi-loan').innerText = loan;
-            document.getElementById('kpi-total').innerText = total; // Menampilkan total
+            document.getElementById('kpi-total').innerText = total;
         }
 
         // Eksekusi load data saat HTML dibuka pertama kali
