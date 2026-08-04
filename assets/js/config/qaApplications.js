@@ -134,6 +134,24 @@ export const QA_APPLICATIONS = [
         dataSource: "https://docs.google.com/spreadsheets/d/1Yh3p-2zc6KK3WrLl3w3SYmnl1zRmx5vwfdvT5hXo2AI/edit?gid=1609180914#gid=1609180914",
         api: "https://script.google.com/macros/s/AKfycbx4dPZfsNIlfvmo1dSIYKxXh-Rc9Ryx_pJpNoi5Ru6fsNMnpUxFQv6l6pfUeUOAVCBZ/exec"
     },
+    {
+        id: "geomarin",
+
+        title: "GEOMARIN V",
+
+        description: "Kapal Geomarin V",
+
+        category: "surface",
+
+        icon: "fa-ship",
+
+        color: "#0B2E59",
+
+        type: "dashboard",
+        dataRingkas: "",
+        dataSource: "https://docs.google.com/spreadsheets/d/1PPmEI14Zw728mPbWCCbDguqj9fsfXCB4o9Iep1s5ncA/edit?gid=966538218#gid=966538218",
+        api: "https://script.google.com/macros/s/AKfycbyIEkVVwvkdn3l5a_hYQggra4rQXe5k4NprB6UCDvS258MJvqDrK4iHUefMPMFL_EhF/exec"
+    },
     // =================================================
     // REKAYASA UMUM
     // =================================================

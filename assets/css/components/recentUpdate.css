@@ -1,0 +1,201 @@
+.recent-update-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+}
+
+.recent-update-item {
+
+    padding: 14px 16px;
+
+    border-radius: 12px;
+
+    background: #fff;
+
+    border: 1px solid #edf2f7;
+
+    transition: .25s;
+
+}
+
+.recent-update-item:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 8px 18px rgba(0, 0, 0, .08);
+
+}
+
+.recent-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 8px;
+
+}
+
+.recent-module {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    font-weight: 600;
+
+}
+
+.recent-dot {
+
+    width: 10px;
+
+    height: 10px;
+
+    border-radius: 50%;
+
+}
+
+.recent-dot.green {
+
+    background: #16a34a;
+
+}
+
+.recent-dot.blue {
+
+    background: #2563eb;
+
+}
+
+.recent-dot.orange {
+
+    background: #f59e0b;
+
+}
+
+.recent-dot.red {
+
+    background: #dc2626;
+
+}
+
+.recent-dot.cyan {
+
+    background: #0891b2;
+
+}
+
+.recent-dot.purple {
+
+    background: #9333ea;
+
+}
+
+.recent-dot.teal {
+
+    background: #0d9488;
+
+}
+
+.recent-right {
+
+    display: flex;
+
+    gap: 8px;
+
+    align-items: center;
+
+}
+
+.recent-revision {
+
+    font-size: 12px;
+
+    color: #64748b;
+
+    font-weight: 600;
+
+}
+
+.recent-badge {
+
+    background: #16a34a;
+
+    color: #fff;
+
+    font-size: 10px;
+
+    padding: 2px 8px;
+
+    border-radius: 20px;
+
+    font-weight: 700;
+
+    letter-spacing: .5px;
+
+}
+
+.recent-ago {
+
+    font-size: 13px;
+
+    color: #475569;
+
+    margin-bottom: 4px;
+
+}
+
+.recent-date {
+
+    font-size: 11px;
+
+    color: #94a3b8;
+
+}
+
+.recent-icon {
+
+    width: 20px;
+
+    text-align: center;
+
+    font-size: 14px;
+
+}
+
+.recent-icon.green {
+    color: #16a34a;
+}
+
+.recent-icon.blue {
+    color: #2563eb;
+}
+
+.recent-icon.orange {
+    color: #f59e0b;
+}
+
+.recent-icon.red {
+    color: #dc2626;
+}
+
+.recent-icon.cyan {
+    color: #0891b2;
+}
+
+.recent-icon.purple {
+    color: #9333ea;
+}
+
+.recent-icon.teal {
+    color: #0d9488;
+}
