@@ -1382,6 +1382,141 @@ export function getHATSATAttention() {
     };
 
 }
+/* ======================================================
+   Executive recent update
+====================================================== */
+
+export function getRecentUpdates() {
+
+    const status = getDashboardData()?.systemStatus;
+
+    if (!status) return [];
+
+    const now = Date.now();
+
+    const modules = {
+
+        summary: {
+            title: "Summary",
+            color: "green",
+            icon: "fa-chart-line"
+        },
+
+        itp: {
+            title: "ITP",
+            color: "blue",
+            icon: "fa-clipboard-check"
+        },
+
+        qualityPlan: {
+            title: "Quality Plan",
+            color: "purple",
+            icon: "fa-file-lines"
+        },
+
+        material: {
+            title: "Material",
+            color: "orange",
+            icon: "fa-box"
+        },
+
+        launching: {
+            title: "Launching",
+            color: "cyan",
+            icon: "fa-ship"
+        },
+
+        tptr: {
+            title: "TPTR",
+            color: "red",
+            icon: "fa-file-signature"
+        },
+
+        hatsat: {
+            title: "HAT / SAT",
+            color: "teal",
+            icon: "fa-gears"
+        }
+
+    };
+
+    return Object.entries(status)
+
+        .map(([key, value]) => {
+
+            const config = modules[key] || {
+
+                title: key,
+
+                color: "gray",
+
+                icon: "fa-circle"
+
+            };
+
+            const date = new Date(value.lastUpdate);
+
+            return {
+
+                module: config.title,
+
+                color: config.color,
+
+                icon: config.icon,
+
+                revision: value.revision,
+
+                lastUpdate: date,
+
+                dateString: date.toLocaleString("id-ID"),
+
+                timeAgo: formatTimeAgo(date),
+
+                isNew:
+
+                    (now - date.getTime()) <
+
+                    24 * 60 * 60 * 1000
+
+            };
+
+        })
+
+        .sort((a, b) =>
+
+            b.lastUpdate - a.lastUpdate
+
+        )
+
+        .slice(0, 5);
+
+}
+
+function formatTimeAgo(date) {
+
+    const diff =
+
+        Math.floor(
+
+            (Date.now() - date.getTime()) / 1000
+
+        );
+
+    if (diff < 60)
+
+        return "Just now";
+
+    if (diff < 3600)
+
+        return Math.floor(diff / 60) + " min ago";
+
+    if (diff < 86400)
+
+        return Math.floor(diff / 3600) + " hrs ago";
+
+    return Math.floor(diff / 86400) + " days ago";
+
+}
 
 /* ======================================================
    Executive Need Attention

@@ -8,7 +8,8 @@ import { createActivityList } from "../../components/lists/activityList.js";
 import { getOverallStatistics, getNeedAttention } from "../../services/statistics.js";
 import { getCurrentProject } from "../../projectManager.js";
 import { createBreadcrumb } from "../../components/layout/breadcrumb.js";
-
+import { createRecentUpdateList } from "../../components/lists/recentUpdateList.js";
+import { getRecentUpdates } from "../../services/statistics.js";
 
 export function renderSummary() {
 
@@ -178,6 +179,18 @@ ${createKPICard({
 
     });
 
+    const recentUpdate = createSection({
+
+        title: "Recent Update",
+
+        content: createRecentUpdateList(
+
+            getRecentUpdates()
+
+        )
+
+    });
+
 
     const bottom = `
 
@@ -207,10 +220,13 @@ ${createKPICard({
         ],
 
         split: [
+            attention,
+
+            recentUpdate
 
         ],
 
-        fullBottom: [attention],
+        fullBottom: [],
         splitRatio: "2fr 1fr"
 
     });
