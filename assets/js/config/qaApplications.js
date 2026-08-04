@@ -173,6 +173,16 @@ export const QA_APPLICATIONS = [
         type: "external",
         url: "apps/maintenance/r41/index.html"
     },
+    {
+        id: "kri",
+        title: "KRI",
+        description: "Maintenance Projects Harkan kategori KRI",
+        category: "maintenance",
+        icon: "fa-screwdriver-wrench",
+        color: "#F59E0B",
+        type: "external",
+        url: "apps/maintenance/kri/index.html"
+    },
 
     {
         id: "nonkri",
@@ -249,7 +259,7 @@ export const QA_APPLICATIONS = [
         icon: "fa-water",
         color: "#0B2E59",
         type: "external",
-        url: "apps/submarine/torpedo/index.html"
+        url: "apps/submarine/shiplift/index.html"
     },
     {
         id: "ardadedali",
@@ -284,12 +294,13 @@ export const QA_APPLICATIONS = [
     },
 
     {
-        id: "tools",
-        title: "Tools Management",
+        id: "Qtools",
+        title: "Quality Tools Management",
+        description: "Memonitoring Peminjaman dan Pengingat Kalibrasi Alat Ukur",
         category: "nonproject",
         icon: "fa-chart-column",
         type: "external",
-        url: "apps/create/index.html"
+        url: "apps/nonproject/tools/index.html"
     },
 
     {
@@ -314,10 +325,11 @@ export const QA_APPLICATIONS = [
     {
         id: "selflearning",
         title: "QA Self Learning",
+        description: "Sistem pembelajaran QA berbasis AI yang memberikan jawaban secara cepat berdasarkan standar, prosedur, spesifikasi, dan dokumen teknis",
         category: "nonproject",
         icon: "fa-chart-column",
         type: "external",
-        url: "apps/create/index.html"
+        url: "https://notebook.google.com/notebook/aeadedef-e05d-4e95-bac6-87849bac8cf3"
     }
 
 ];
