@@ -163,8 +163,9 @@ export const QA_APPLICATIONS = [
         category: "general",
         icon: "fa-industry",
         color: "#2563EB",
-        type: "external",
-        url: "apps/create/index.html"
+        type: "dashboard",
+        dataSource: "https://docs.google.com/spreadsheets/d/1-phK3MqofbMYDxKijis2LmB_qhiRqZhevs6iMxwPetk/edit?gid=1597502373#gid=1597502373",
+        api: "https://script.google.com/macros/s/AKfycbxBhYjPWMBYWo9wA0gxONxZL1f8KbrtyHb_lpuABeJdTOyM31Ns0n_Gz1dRiS7rjkfFnQ/exec"
     },
 
     {
