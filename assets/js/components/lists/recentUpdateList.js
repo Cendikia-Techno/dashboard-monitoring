@@ -36,7 +36,7 @@ export function createRecentUpdateList(items = []) {
 
                     <span class="recent-revision">
 
-                        Rev ${item.revision}
+                        Update ke-${item.revision}
 
                     </span>
 
