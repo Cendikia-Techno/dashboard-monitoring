@@ -306,6 +306,7 @@ export const QA_APPLICATIONS = [
     {
         id: "qar",
         title: "Quality Acceptance Ratio",
+        description: "Digital monitoring system untuk mengukur, menganalisis, dan melaporkan Quality Acceptance Ratio berdasarkan data hasil inspeksi secara terintegrasi",
         category: "nonproject",
         icon: "fa-chart-column",
         type: "external",
