@@ -14,10 +14,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
 
-    <link rel="stylesheet" href="https://cdn.datatables.net/v/bs5/dt-2.3.2/r-3.0.4/datatables.min.css" />
-
-    <script src="https://cdn.datatables.net/v/bs5/dt-2.3.2/r-3.0.4/datatables.min.js">
     </script>
     <style>
         :root {
@@ -134,7 +133,42 @@ FILTER CARD
 
         }
 
+        @media (min-width: 992px) {
+
+            .filter-card .row.g-3 {
+
+                display: grid;
+
+                grid-template-columns: repeat(7, minmax(0, 1fr));
+
+                gap: 16px;
+
+                margin: 0;
+
+            }
+
+            .filter-card .row.g-3>div {
+
+                width: 100%;
+
+                max-width: none;
+
+                padding-left: 0;
+
+                padding-right: 0;
+
+            }
+
+            .filter-card .row.g-3>.col-lg-12 {
+
+                grid-column: 1 / -1;
+
+            }
+
+        }
+
         .form-select,
+
         .form-control {
 
             border-radius: 10px;
@@ -144,6 +178,66 @@ FILTER CARD
         }
 
         .form-select:focus,
+        .month-multiselect {
+            position: relative;
+        }
+
+        #monthFilterButton {
+            width: 100%;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-right: 2.25rem;
+        }
+
+        .month-multiselect-menu {
+            display: none;
+            position: absolute;
+            z-index: 1050;
+            top: calc(100% + 6px);
+            left: 0;
+            width: 100%;
+            min-width: 190px;
+            max-height: 330px;
+            overflow-y: auto;
+            padding: 8px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .month-multiselect-menu.show {
+            display: block;
+        }
+
+        .filter-card .month-option-row {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin: 0;
+            padding: 7px 8px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: 400;
+        }
+
+        .month-option-row:hover {
+            background: #F1F5F9;
+        }
+
+        .month-option-row .form-check-input {
+            flex: 0 0 auto;
+            margin: 0;
+        }
+
+        .month-divider {
+            height: 1px;
+            margin: 5px 4px;
+            background: var(--border);
+        }
+
         .form-control:focus {
 
             box-shadow: none;
@@ -420,103 +514,67 @@ TABLE CARD
 
         }
 
-        .sidebar {
-
-            width: 260px;
-
-            background: #1E293B;
-
-            color: white;
-
-            position: fixed;
-
-            top: 0;
-
-            left: 0;
-
-            bottom: 0;
-
-            padding: 25px 20px;
-
-            overflow-y: auto;
-
-        }
-
         .main-content {
-
-            margin-left: 260px;
-
-            width: calc(100% - 260px);
-
+            width: 100%;
             padding: 25px;
-
-        }
-
-        .sidebar-title {
-
-            font-size: 22px;
-
-            font-weight: bold;
-
-            margin-bottom: 30px;
-
-            text-align: center;
-
-        }
-
-        .sidebar-menu {
-
-            list-style: none;
-
-            padding: 0;
-
-        }
-
-        .sidebar-menu li {
-
-            margin-bottom: 10px;
-
-        }
-
-        .sidebar-menu a {
-
-            color: #E2E8F0;
-
-            text-decoration: none;
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 10px;
-
-            padding: 12px 15px;
-
-            border-radius: 10px;
-
-            transition: .3s;
-
-        }
-
-        .sidebar-menu a:hover {
-
-            background: #0B5ED7;
-
-            color: white;
-
-        }
-
-        .sidebar-menu a.active {
-
-            background: #0B5ED7;
-
-            color: white;
-
         }
 
         canvas {
 
             height: 300px !important;
+
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .last-update {
+            margin-bottom: 0;
+            text-align: right;
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        .last-update strong {
+            display: block;
+            color: #1E293B;
+            font-size: 14px;
+            margin-top: 3px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .header-actions button {
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 992px) {
+
+            .header-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .header-right {
+                width: 100%;
+                flex-wrap: wrap;
+            }
 
         }
     </style>
@@ -527,102 +585,8 @@ TABLE CARD
 
     <body>
 
-        <div id="loadingOverlay">
-
-            ...
-        </div>
-
         <div class="wrapper">
 
-            <!-- SIDEBAR -->
-
-            <aside class="sidebar">
-
-                <div class="sidebar-title">
-
-                    <i class="bi bi-award-fill"></i>
-
-                    QAR Dashboard
-
-                </div>
-
-                <ul class="sidebar-menu">
-
-                    <li>
-
-                        <a href="#" class="active">
-
-                            <i class="bi bi-house-door-fill"></i>
-
-                            Dashboard
-
-                        </a>
-
-                    </li>
-
-                    <li>
-
-                        <a href="#">
-
-                            <i class="bi bi-speedometer2"></i>
-
-                            Summary
-
-                        </a>
-
-                    </li>
-
-                    <li>
-
-                        <a href="#">
-
-                            <i class="bi bi-graph-up"></i>
-
-                            Trend
-
-                        </a>
-
-                    </li>
-
-                    <li>
-
-                        <a href="#">
-
-                            <i class="bi bi-table"></i>
-
-                            Detail HPP
-
-                        </a>
-
-                    </li>
-
-                    <li>
-
-                        <a href="#">
-
-                            <i class="bi bi-file-earmark-pdf"></i>
-
-                            Generate Report
-
-                        </a>
-
-                    </li>
-
-                    <li>
-
-                        <a href="#">
-
-                            <i class="bi bi-gear-fill"></i>
-
-                            Settings
-
-                        </a>
-
-                    </li>
-
-                </ul>
-
-            </aside>
 
             <!-- MAIN -->
 
@@ -652,43 +616,43 @@ TABLE CARD
 
                             </div>
 
-                            <div class="text-end">
+                            <div class="header-right">
 
-                                <div>
+                                <div class="header-info">
 
-                                    <span class="badge bg-success">
+                                    <div class="last-update">
+                                        <span id="dataStatus" class="badge bg-success">
+                                            <i class="bi bi-circle-fill"></i>
+                                            DATA ONLINE
+                                        </span><br>
+                                        <div>Last HPP Update</div>
+                                        <strong id="lastUpdate">-</strong>
+                                    </div>
 
-                                        <i class="bi bi-circle-fill"></i>
 
-                                        Live Data
-
-                                    </span>
-
-                                </div>
-
-                                <br>
-
-                                <div class="last-update">
-
-                                    Last Update
-
-                                    <br>
-
-                                    <strong id="lastUpdate">
-
-                                        09 Juli 2026
-
-                                    </strong>
 
                                 </div>
 
-                                <button class="btn btn-primary refresh-btn">
+                                <div class="header-actions">
 
-                                    <i class="bi bi-arrow-clockwise"></i>
+                                    <button type="button" id="generateReport"
+                                        class="btn btn-outline-primary report-btn">
 
-                                    Refresh Data
+                                        <i class="bi bi-file-earmark-pdf me-2"></i>
 
-                                </button>
+                                        Generate Report
+
+                                    </button>
+
+                                    <button type="button" class="btn btn-primary refresh-btn">
+
+                                        <i class="bi bi-arrow-clockwise me-2"></i>
+
+                                        Refresh Data
+
+                                    </button>
+
+                                </div>
 
                             </div>
 
@@ -734,7 +698,90 @@ TABLE CARD
                                     </select>
 
                                 </div>
+                                <div class="col-lg col-md-4">
 
+                                    <label>Month</label>
+
+                                    <div class="month-multiselect" id="monthMultiselect">
+
+                                        <button type="button" id="monthFilterButton" class="form-select">
+                                            All Month
+                                        </button>
+
+                                        <div class="month-multiselect-menu" id="monthFilterMenu">
+
+                                            <label class="month-option-row">
+                                                <input type="checkbox" class="form-check-input" id="monthAll" checked>
+                                                <span>All Month</span>
+                                            </label>
+
+                                            <div class="month-divider"></div>
+
+                                            <label class="month-option-row">
+                                                <input type="checkbox" class="form-check-input month-option" value="1">
+                                                <span>Januari</span>
+                                            </label>
+
+                                            <label class="month-option-row">
+                                                <input type="checkbox" class="form-check-input month-option" value="2">
+                                                <span>Februari</span>
+                                            </label>
+
+                                            <label class="month-option-row">
+                                                <input type="checkbox" class="form-check-input month-option" value="3">
+                                                <span>Maret</span>
+                                            </label>
+
+                                            <label class="month-option-row">
+                                                <input type="checkbox" class="form-check-input month-option" value="4">
+                                                <span>April</span>
+                                            </label>
+
+                                            <label class="month-option-row">
+                                                <input type="checkbox" class="form-check-input month-option" value="5">
+                                                <span>Mei</span>
+                                            </label>
+
+                                            <label class="month-option-row">
+                                                <input type="checkbox" class="form-check-input month-option" value="6">
+                                                <span>Juni</span>
+                                            </label>
+
+                                            <label class="month-option-row">
+                                                <input type="checkbox" class="form-check-input month-option" value="7">
+                                                <span>Juli</span>
+                                            </label>
+
+                                            <label class="month-option-row">
+                                                <input type="checkbox" class="form-check-input month-option" value="8">
+                                                <span>Agustus</span>
+                                            </label>
+
+                                            <label class="month-option-row">
+                                                <input type="checkbox" class="form-check-input month-option" value="9">
+                                                <span>September</span>
+                                            </label>
+
+                                            <label class="month-option-row">
+                                                <input type="checkbox" class="form-check-input month-option" value="10">
+                                                <span>Oktober</span>
+                                            </label>
+
+                                            <label class="month-option-row">
+                                                <input type="checkbox" class="form-check-input month-option" value="11">
+                                                <span>November</span>
+                                            </label>
+
+                                            <label class="month-option-row">
+                                                <input type="checkbox" class="form-check-input month-option" value="12">
+                                                <span>Desember</span>
+                                            </label>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
                                 <div class="col-lg-2 col-md-4">
 
                                     <label>Year</label>
@@ -863,16 +910,12 @@ TABLE CARD
                                 <div class="chart-card">
 
                                     <div class="chart-title">
-
                                         Recommendation Distribution
-
                                     </div>
 
-                                    <div class="chart-placeholder">
+                                    <div style="height:340px;">
 
-                                        <i class="bi bi-diagram-3"></i>
-
-                                        Chart akan tampil di sini
+                                        <canvas id="recommendationChart"></canvas>
 
                                     </div>
 
@@ -991,12 +1034,32 @@ TABLE CARD
             let trendChart = null;
             let paretoChart = null;
             let hppTable = null;
+            let recommendationChart = null;
             // ===============================
             // TABLE PAGINATION
             // ===============================
             let currentPage = 1;
             let rowsPerPage = 10;
             let searchKeyword = "";
+
+            /*function loadData() {
+                return new Promise((resolve, reject) => {
+                    google.script.run
+                        .withSuccessHandler(function (data) {
+                            rawData = data;
+                            filteredData = [...rawData];
+                            fillFilters();
+
+                            console.log(rawData);
+                            resolve();
+                        })
+                        .withFailureHandler(function (error) {
+                            console.error(error);
+                            reject(error);
+                        })
+                        .getQARData();
+                });
+            }*/
 
             async function loadData() {
 
@@ -1010,7 +1073,10 @@ TABLE CARD
 
                     rawData = await response.json();
 
+                    updateDataStatus("online");
+
                     filteredData = [...rawData];
+                    updateLastHPPUpdate();
 
                     fillFilters();
 
@@ -1024,6 +1090,143 @@ TABLE CARD
 
                 }
 
+            }
+
+            function updateDataStatus(status) {
+
+                const statusElement =
+                    document.getElementById("dataStatus");
+
+                if (!statusElement) return;
+
+                if (status === "online") {
+
+                    statusElement.className = "badge bg-success";
+
+                    statusElement.innerHTML = `
+            <i class="bi bi-circle-fill"></i>
+            DATA ONLINE
+        `;
+
+                }
+
+                else if (status === "updating") {
+
+                    statusElement.className = "badge bg-warning text-dark";
+
+                    statusElement.innerHTML = `
+            <i class="bi bi-arrow-repeat"></i>
+            UPDATING DATA
+        `;
+
+                }
+
+                else if (status === "error") {
+
+                    statusElement.className = "badge bg-danger";
+
+                    statusElement.innerHTML = `
+            <i class="bi bi-exclamation-circle-fill"></i>
+            CONNECTION ERROR
+        `;
+
+                }
+
+            }
+
+            async function refreshDashboard() {
+
+                const button = document.querySelector(".refresh-btn");
+
+                if (!button) return;
+
+                // Simpan tampilan tombol
+                const originalHTML = button.innerHTML;
+
+                try {
+
+                    // Disable tombol
+                    button.disabled = true;
+
+                    // Animasi loading
+                    button.innerHTML = `
+                        <span class="spinner-border spinner-border-sm me-2"></span>
+                        Updating...
+                    `;
+
+                    console.log("Refresh data dimulai...");
+
+                    updateDataStatus("updating");
+
+                    // Ambil data terbaru
+                    await loadData();
+
+                    // Reset halaman tabel
+                    currentPage = 1;
+
+                    // Reset search tabel
+                    searchKeyword = "";
+
+                    const tableSearch =
+                        document.getElementById("tableSearch");
+
+                    if (tableSearch) {
+                        tableSearch.value = "";
+                    }
+
+                    // Terapkan kembali seluruh filter
+                    applyFilter();
+
+                    console.log("Refresh data selesai");
+
+                } catch (error) {
+
+                    console.error("Refresh gagal:", error);
+
+                    alert(
+                        "Data gagal diperbarui.\n\n" +
+                        "Silakan periksa koneksi atau Apps Script."
+                    );
+
+                } finally {
+
+                    // Kembalikan tombol
+                    button.disabled = false;
+
+                    button.innerHTML = originalHTML;
+
+                }
+
+            }
+
+            function updateLastHPPUpdate() {
+
+                if (!Array.isArray(rawData) || rawData.length === 0) {
+                    return;
+                }
+
+                const dates = rawData
+                    .map(item => item.tanggal)
+                    .filter(date => date);
+
+                if (dates.length === 0) {
+                    document.getElementById("lastUpdate").textContent =
+                        "No HPP Date";
+                    return;
+                }
+
+                const latestDate = dates
+                    .sort()
+                    .at(-1);
+
+                const date = new Date(latestDate + "T00:00:00");
+
+                document.getElementById("lastUpdate").textContent =
+                    date.toLocaleDateString("id-ID", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric"
+                    });
             }
 
             function getSearchData() {
@@ -1108,54 +1311,98 @@ TABLE CARD
             }
 
             function renderPagination(data) {
+
+                const pagination =
+                    document.getElementById("pagination");
+
                 if (rowsPerPage == -1) {
-
-                    document.getElementById("pagination").innerHTML = "";
-
+                    pagination.innerHTML = "";
                     return;
-
                 }
-                const searchData = getSearchData();
 
-                const totalPages = Math.ceil(data.length / rowsPerPage);
+                const totalPages =
+                    Math.ceil(data.length / rowsPerPage);
+
+                if (totalPages <= 1) {
+                    pagination.innerHTML = "";
+                    return;
+                }
 
                 let html = "";
 
+                // PREVIOUS
                 html += `
-                <button class="btn btn-outline-secondary btn-sm"
-                    ${currentPage == 1 ? "disabled" : ""}
-                    onclick="changePage(${currentPage - 1})">
+        <button
+            class="btn btn-outline-secondary btn-sm"
+            ${currentPage === 1 ? "disabled" : ""}
+            onclick="changePage(${currentPage - 1})">
+            Previous
+        </button>
+    `;
 
-                    Previous
+                const pages = new Set([
+                    1,
+                    currentPage - 2,
+                    currentPage - 1,
+                    currentPage,
+                    currentPage + 1,
+                    currentPage + 2,
+                    totalPages
+                ]);
 
-                </button>
-                `;
+                const visiblePages = [...pages]
+                    .filter(page =>
+                        page >= 1 &&
+                        page <= totalPages
+                    )
+                    .sort((a, b) => a - b);
 
-                for (let i = 1; i <= totalPages; i++) {
+                let previousPage = 0;
+
+                visiblePages.forEach(page => {
+
+                    if (
+                        previousPage &&
+                        page - previousPage > 1
+                    ) {
+
+                        html += `
+                <span class="px-2 text-muted">
+                    ...
+                </span>
+            `;
+
+                    }
 
                     html += `
-                    <button
-                        class="btn ${i == currentPage ? "btn-primary" : "btn-outline-primary"} btn-sm"
-                        onclick="changePage(${i})">
+            <button
+                class="btn ${page === currentPage
+                            ? "btn-primary"
+                            : "btn-outline-primary"
+                        } btn-sm"
+                onclick="changePage(${page})">
+                ${page}
+            </button>
+        `;
 
-                        ${i}
+                    previousPage = page;
 
-                    </button>
-                    `;
+                });
 
-                }
-
+                // NEXT
                 html += `
-                <button class="btn btn-outline-secondary btn-sm"
-                    ${currentPage == totalPages ? "disabled" : ""}
-                    onclick="changePage(${currentPage + 1})">
+        <button
+            class="btn btn-outline-secondary btn-sm"
+            ${currentPage === totalPages
+                        ? "disabled"
+                        : ""
+                    }
+            onclick="changePage(${currentPage + 1})">
+            Next
+        </button>
+    `;
 
-                    Next
-
-                </button>
-                `;
-
-                document.getElementById("pagination").innerHTML = html;
+                pagination.innerHTML = html;
 
             }
 
@@ -1248,6 +1495,150 @@ TABLE CARD
                 fillSelect("inspectorFilter", "inspector", "All Inspector");
 
             }
+            const FILTER_MONTH_NAMES = [
+                "Januari",
+                "Februari",
+                "Maret",
+                "April",
+                "Mei",
+                "Juni",
+                "Juli",
+                "Agustus",
+                "September",
+                "Oktober",
+                "November",
+                "Desember"
+            ];
+
+            function getSelectedMonths() {
+
+                return [...document.querySelectorAll(".month-option:checked")]
+                    .map(input => Number(input.value));
+
+            }
+
+            function updateMonthFilterLabel() {
+
+                const button =
+                    document.getElementById("monthFilterButton");
+
+                const allMonth =
+                    document.getElementById("monthAll");
+
+                const selectedMonths =
+                    getSelectedMonths();
+
+                if (
+                    allMonth.checked ||
+                    selectedMonths.length === 0
+                ) {
+
+                    button.textContent = "All Month";
+
+                    return;
+
+                }
+
+                if (selectedMonths.length <= 2) {
+
+                    button.textContent =
+                        selectedMonths
+                            .map(
+                                month =>
+                                    FILTER_MONTH_NAMES[month - 1]
+                            )
+                            .join(", ");
+
+                    return;
+
+                }
+
+                button.textContent =
+                    `${selectedMonths.length} Months Selected`;
+
+            }
+
+            function initMonthFilter() {
+
+                const wrapper =
+                    document.getElementById("monthMultiselect");
+
+                const button =
+                    document.getElementById("monthFilterButton");
+
+                const menu =
+                    document.getElementById("monthFilterMenu");
+
+                const allMonth =
+                    document.getElementById("monthAll");
+
+                const monthOptions =
+                    [...document.querySelectorAll(".month-option")];
+
+                button.addEventListener("click", event => {
+
+                    event.stopPropagation();
+
+                    menu.classList.toggle("show");
+
+                });
+
+                menu.addEventListener("click", event => {
+
+                    event.stopPropagation();
+
+                });
+
+                allMonth.addEventListener("change", () => {
+
+                    if (allMonth.checked) {
+
+                        monthOptions.forEach(
+                            option => option.checked = false
+                        );
+
+                    } else if (
+                        getSelectedMonths().length === 0
+                    ) {
+
+                        allMonth.checked = true;
+
+                    }
+
+                    updateMonthFilterLabel();
+
+                    applyFilter();
+
+                });
+
+                monthOptions.forEach(option => {
+
+                    option.addEventListener("change", () => {
+
+                        allMonth.checked =
+                            getSelectedMonths().length === 0;
+
+                        updateMonthFilterLabel();
+
+                        applyFilter();
+
+                    });
+
+                });
+
+                document.addEventListener("click", event => {
+
+                    if (!wrapper.contains(event.target)) {
+
+                        menu.classList.remove("show");
+
+                    }
+
+                });
+
+                updateMonthFilterLabel();
+
+            }
 
             /* ========================================================== FILTER ENGINE ========================================================== */
 
@@ -1258,6 +1649,8 @@ TABLE CARD
                 const biro = document.getElementById("biroFilter").value;
 
                 const triwulan = document.getElementById("quarterFilter").value;
+
+                const selectedMonths = getSelectedMonths();
 
                 const tahun = document.getElementById("yearFilter").value;
 
@@ -1283,6 +1676,13 @@ TABLE CARD
                         &&
 
                         (!triwulan || item.triwulan === triwulan)
+
+                        &&
+
+                        (
+                            selectedMonths.length === 0 ||
+                            selectedMonths.includes(Number(item.bulan))
+                        )
 
                         &&
 
@@ -1324,7 +1724,9 @@ TABLE CARD
                 renderTrendChart();
                 renderProjectChart();
                 renderParetoChart();
+                renderRecommendationChart();
                 renderTable();
+
 
                 console.log(filteredData.length);
 
@@ -1367,7 +1769,7 @@ TABLE CARD
 
             function getQARStatus(qar) {
 
-                if (qar >= 96) {
+                if (qar >= 98.25) {
 
                     return {
 
@@ -1495,7 +1897,7 @@ TABLE CARD
 
                     const yScale = scales.y;
 
-                    const target = options.target || 96;
+                    const target = options.target || 98.25;
 
                     const x = xScale.getPixelForValue(target);
 
@@ -1523,7 +1925,7 @@ TABLE CARD
 
                     ctx.font = "bold 12px Arial";
 
-                    ctx.fillText(`Target ${target}%`, x + 6, yScale.top + 15);
+                    ctx.fillText(`Target ${target}%`, x + 6, yScale.top - 10);
 
                     ctx.restore();
 
@@ -1562,7 +1964,7 @@ TABLE CARD
 
                             backgroundColor: data.map(item => {
 
-                                if (item.qar >= 96) return "#198754";   // Hijau
+                                if (item.qar >= 98.25) return "#198754";   // Hijau
 
                                 if (item.qar >= 90) return "#fd7e14";   // Orange
 
@@ -1594,10 +1996,17 @@ TABLE CARD
 
                         indexAxis: "y",
 
+                        layout: {
+                            padding: {
+                                top: 25,
+                                right: 20
+                            }
+                        },
+
                         plugins: {
 
                             targetLine: {
-                                target: 96
+                                target: 98.25
                             },
 
                             legend: {
@@ -1626,10 +2035,34 @@ TABLE CARD
 
                                 align: "right",
 
+                                offset: function (context) {
+
+                                    const value = Number(
+                                        context.dataset.data[context.dataIndex]
+                                    );
+
+                                    if (value >= 94 && value < 96) {
+                                        return 24;
+                                    }
+
+                                    return 10;
+                                },
+
                                 formatter: (value) => value + "%",
 
+                                color: "#444",
+
+                                clip: false,
+
+                                backgroundColor: "rgba(255,255,255,0.9)",
+
+                                borderRadius: 3,
+
+                                padding: 3,
+
                                 font: {
-                                    weight: "bold"
+                                    weight: "bold",
+                                    size: 11
                                 }
 
                             }
@@ -1640,11 +2073,14 @@ TABLE CARD
 
                             x: {
 
-                                min: 90,
+                                min: 80,
 
                                 max: 100,
 
                                 ticks: {
+                                    stepSize: 5,
+                                    minRotation: 0,
+                                    maxRotation: 0,
                                     callback: (value) => value + "%"
                                 }
 
@@ -1692,20 +2128,52 @@ TABLE CARD
 
                                 datalabels: {
 
-                                    anchor: "end",
+                                    formatter: (value) => value,
 
-                                    align: "top",
+                                    anchor: function (context) {
+                                        const value = Number(
+                                            context.dataset.data[context.dataIndex]
+                                        );
+
+                                        return value === 0 ? "center" : "end";
+                                    },
+
+                                    align: function (context) {
+                                        const value = Number(
+                                            context.dataset.data[context.dataIndex]
+                                        );
+
+                                        if (value < 20) {
+                                            return "top";
+                                        }
+
+                                        return "start";
+                                    },
+
+                                    offset: function (context) {
+                                        const value = Number(
+                                            context.dataset.data[context.dataIndex]
+                                        );
+
+                                        if (value === 0) {
+                                            return 22;
+                                        }
+
+                                        if (value < 20) {
+                                            return 4;
+                                        }
+
+                                        return 8;
+                                    },
 
                                     color: "#333",
 
                                     font: {
-
-                                        weight: "bold"
-
+                                        weight: "bold",
+                                        size: 11
                                     }
 
                                 }
-
                             },
 
                             {
@@ -1730,29 +2198,42 @@ TABLE CARD
 
                                     formatter: (value) => value + "%",
 
-                                    anchor: "end",
+                                    anchor: "center",
 
                                     align: "top",
 
+                                    offset: function (context) {
+
+                                        const value = Number(
+                                            context.dataset.data[context.dataIndex]
+                                        );
+
+                                        if (value === 0) {
+                                            return 22;
+                                        }
+
+                                        return context.dataIndex % 2 === 0 ? 8 : 26;
+                                    },
+
                                     color: "red",
 
+                                    clip: false,
+
                                     font: {
-
-                                        weight: "bold"
-
+                                        weight: "bold",
+                                        size: 11
                                     }
 
                                 }
-
                             },
 
                             {
 
                                 type: "line",
 
-                                label: "Target 96%",
+                                label: "Target 98.25%",
 
-                                data: new Array(12).fill(96),
+                                data: new Array(12).fill(98.25),
 
                                 yAxisID: "y1",
 
@@ -1783,7 +2264,9 @@ TABLE CARD
 
                             padding: {
 
-                                top: 30
+                                top: 45,
+                                right: 10,
+                                left: 5
 
                             }
 
@@ -1965,13 +2448,188 @@ PARETO TARGET LINE
                     ctx.fillStyle = "#dc3545";
                     ctx.font = "bold 12px Arial";
 
-                    ctx.fillText("Pareto 80%", chartArea.left + 10, y - 8);
+                    ctx.textAlign = "right";
+                    ctx.fillText("Pareto 80%", chartArea.right - 8, y - 8);
 
                     ctx.restore();
 
                 }
 
             };
+
+            function getRecommendationDistribution() {
+
+                const recommendations = [
+                    "ACC",
+                    "DEF",
+                    "W/G",
+                    "INSTAL"
+                ];
+
+                return recommendations.map(code => {
+
+                    return {
+                        code: code,
+                        total: filteredData.filter(
+                            item => item.rekomendasi === code
+                        ).length
+                    };
+
+                });
+
+            }
+
+            function renderRecommendationChart() {
+
+                const data = getRecommendationDistribution();
+
+                const ctx = document.getElementById(
+                    "recommendationChart"
+                );
+
+                if (!ctx) return;
+
+                if (recommendationChart) {
+
+                    recommendationChart.destroy();
+
+                }
+
+                recommendationChart = new Chart(ctx, {
+
+                    type: "doughnut",
+
+                    data: {
+
+                        labels: data.map(item => item.code),
+
+                        datasets: [{
+
+                            data: data.map(item => item.total),
+
+                            backgroundColor: [
+                                "#198754",
+                                "#dc3545",
+                                "#fd7e14",
+                                "#0dcaf0"
+                            ],
+
+                            borderWidth: 2,
+
+                            borderColor: "#ffffff"
+
+                        }]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        cutout: "65%",
+
+                        plugins: {
+
+                            legend: {
+
+                                position: "bottom"
+
+                            },
+
+                            tooltip: {
+
+                                callbacks: {
+
+                                    label: function (context) {
+
+                                        const row =
+                                            data[context.dataIndex];
+
+                                        const total =
+                                            data.reduce(
+                                                (sum, item) =>
+                                                    sum + item.total,
+                                                0
+                                            );
+
+                                        const percent =
+                                            total === 0
+                                                ? 0
+                                                : (
+                                                    row.total /
+                                                    total *
+                                                    100
+                                                ).toFixed(1);
+
+                                        return (
+                                            row.code +
+                                            " : " +
+                                            row.total +
+                                            " (" +
+                                            percent +
+                                            "%)"
+                                        );
+
+                                    }
+
+                                }
+
+                            },
+
+                            datalabels: {
+
+                                formatter: function (value, context) {
+
+                                    const total =
+                                        data.reduce(
+                                            (sum, item) =>
+                                                sum + item.total,
+                                            0
+                                        );
+
+                                    if (!total) return "";
+
+                                    const percent =
+                                        value /
+                                        total *
+                                        100;
+
+                                    return (
+                                        value +
+                                        "\n" +
+                                        percent.toFixed(1) +
+                                        "%"
+                                    );
+
+                                },
+
+                                color: "#fff",
+
+                                font: {
+
+                                    weight: "bold",
+
+                                    size: 12
+
+                                }
+
+                            }
+
+                        }
+
+                    },
+
+                    plugins: [
+
+                        ChartDataLabels
+
+                    ]
+
+                });
+
+            }
 
             function renderParetoChart() {
 
@@ -2135,6 +2793,26 @@ PARETO TARGET LINE
 
                         scales: {
 
+                            x: {
+                                ticks: {
+                                    minRotation: 0,
+                                    maxRotation: 0,
+                                    autoSkip: false,
+                                    padding: 10,
+
+                                    callback: function (value) {
+                                        const label = this.getLabelForValue(value);
+                                        return label.split(" - ")[0];
+                                    },
+
+                                    font: {
+                                        size: 11,
+                                        weight: "600"
+                                    }
+                                }
+                            },
+
+
                             y: {
 
                                 beginAtZero: true,
@@ -2155,7 +2833,7 @@ PARETO TARGET LINE
 
                                 min: 0,
 
-                                max: 100,
+                                max: 110,
 
                                 grid: {
 
@@ -2331,10 +3009,1469 @@ PARETO TARGET LINE
 
             }
 
+            async function generateReport(event) {
+                if (event) event.preventDefault();
+
+                if (!Array.isArray(rawData) || rawData.length === 0) {
+                    try {
+                        await loadData();
+                        applyFilter();
+                    } catch (error) {
+                        console.error(error);
+                        alert("Data gagal dimuat. Silakan refresh dashboard.");
+                        return;
+                    }
+                }
+
+                const data =
+                    Array.isArray(filteredData) && filteredData.length
+                        ? [...filteredData]
+                        : [...rawData];
+
+                if (!data.length) {
+                    alert("Tidak ada data yang dapat dibuat menjadi laporan.");
+                    return;
+                }
+
+                if (!window.jspdf || !window.jspdf.jsPDF) {
+                    alert("Library PDF belum termuat. Refresh halaman lalu coba lagi.");
+                    return;
+                }
+
+                const { jsPDF } = window.jspdf;
+
+                const doc = new jsPDF({
+                    orientation: "portrait",
+                    unit: "mm",
+                    format: "a4"
+                });
+
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                const tableWidth = 110;
+                const tableX =
+                    (210 - tableWidth) / 2;
+                const marginX = 14;
+                const contentWidth = pageWidth - marginX * 2;
+
+                const MONTHS = [
+                    "JANUARI",
+                    "FEBRUARI",
+                    "MARET",
+                    "APRIL",
+                    "MEI",
+                    "JUNI",
+                    "JULI",
+                    "AGUSTUS",
+                    "SEPTEMBER",
+                    "OKTOBER",
+                    "NOVEMBER",
+                    "DESEMBER"
+                ];
+
+                const BIRO_ORDER = ["HC", "HO", "MO", "EO"];
+
+                const clean = value =>
+                    String(value ?? "").trim();
+
+                const unique = values => [
+                    ...new Set(
+                        values
+                            .map(clean)
+                            .filter(Boolean)
+                    )
+                ];
+
+                const stats = rows => {
+                    const total = rows.length;
+
+                    const accepted = rows.filter(row =>
+                        clean(row.rekomendasi)
+                            .toUpperCase() === "ACC"
+                    ).length;
+
+                    const recommendation = total - accepted;
+
+                    const qar = total
+                        ? accepted / total * 100
+                        : 0;
+
+                    return {
+                        total,
+                        accepted,
+                        recommendation,
+                        qar
+                    };
+                };
+
+                const percent = value =>
+                    Number(value || 0)
+                        .toFixed(2)
+                        .replace(".", ",") + "%";
+
+                const sortBureaus = values =>
+                    unique(values).sort((a, b) => {
+                        const ai = BIRO_ORDER.indexOf(a);
+                        const bi = BIRO_ORDER.indexOf(b);
+
+                        if (ai < 0 && bi < 0) {
+                            return a.localeCompare(b);
+                        }
+
+                        if (ai < 0) return 1;
+                        if (bi < 0) return -1;
+
+                        return ai - bi;
+                    });
+
+                const projects = unique(
+                    data.map(row => row.project)
+                ).sort((a, b) =>
+                    a.localeCompare(b)
+                );
+
+                const bureaus = sortBureaus(
+                    data.map(row => row.biro)
+                );
+
+                const overall = stats(data);
+
+                const periodMap = new Map();
+
+                data.forEach(row => {
+                    const year = Number(row.tahun);
+                    const month = Number(row.bulan);
+
+                    // Abaikan tahun tidak wajar seperti 226 atau 263
+                    if (
+                        year >= 2000 &&
+                        year <= 2100 &&
+                        month >= 1 &&
+                        month <= 12
+                    ) {
+                        const key =
+                            year +
+                            "-" +
+                            String(month).padStart(2, "0");
+
+                        periodMap.set(key, {
+                            year,
+                            month
+                        });
+                    }
+                });
+
+                const periods = [...periodMap.values()]
+                    .sort((a, b) =>
+                        a.year - b.year ||
+                        a.month - b.month
+                    );
+
+                const firstPeriod = periods[0];
+                const lastPeriod =
+                    periods[periods.length - 1];
+
+                const periodText =
+                    firstPeriod && lastPeriod
+                        ? firstPeriod.year === lastPeriod.year
+                            ? MONTHS[firstPeriod.month - 1] +
+                            " - " +
+                            MONTHS[lastPeriod.month - 1] +
+                            " " +
+                            firstPeriod.year
+                            : MONTHS[firstPeriod.month - 1] +
+                            " " +
+                            firstPeriod.year +
+                            " - " +
+                            MONTHS[lastPeriod.month - 1] +
+                            " " +
+                            lastPeriod.year
+                        : "PERIODE TERPILIH";
+
+                const yearText = unique(
+                    periods.map(period => period.year)
+                ).join(" - ");
+
+                const quarterValues = unique(
+                    data.map(row => row.triwulan)
+                );
+
+                const quarterText =
+                    quarterValues.length === 1
+                        ? quarterValues[0]
+                        : "PERIODE";
+
+                const satisfaction =
+                    overall.qar >= 96
+                        ? "Sangat Memuaskan"
+                        : overall.qar >= 90
+                            ? "Memuaskan"
+                            : "Perlu Perbaikan";
+
+                const recommendationCounts = {};
+
+                data.forEach(row => {
+                    const code = clean(
+                        row.rekomendasi
+                    ).toUpperCase();
+
+                    if (
+                        code &&
+                        code !== "ACC" &&
+                        code !== "-"
+                    ) {
+                        recommendationCounts[code] =
+                            (recommendationCounts[code] || 0) + 1;
+                    }
+                });
+
+                const recommendationEntries =
+                    Object.entries(recommendationCounts)
+                        .sort((a, b) => b[1] - a[1]);
+
+                const dominantRecommendation =
+                    recommendationEntries.length
+                        ? recommendationEntries[0][0]
+                        : "-";
+
+                const setNormal = (size = 10) => {
+                    doc.setFont("times", "normal");
+                    doc.setFontSize(size);
+                    doc.setTextColor(20, 20, 20);
+                };
+
+                const setBold = (size = 10) => {
+                    doc.setFont("times", "bold");
+                    doc.setFontSize(size);
+                    doc.setTextColor(20, 20, 20);
+                };
+
+                const centeredTitle = (
+                    lines,
+                    y = 14,
+                    size = 14
+                ) => {
+                    setBold(size);
+
+                    lines.forEach((line, index) => {
+                        doc.text(
+                            line,
+                            pageWidth / 2,
+                            y + index * 6,
+                            { align: "center" }
+                        );
+                    });
+                };
+
+                const sectionHeading = (
+                    roman,
+                    title,
+                    y
+                ) => {
+                    setNormal(10);
+                    doc.text(roman, marginX, y);
+
+                    setBold(10);
+                    doc.text(title, marginX + 14, y);
+                };
+
+                const wrappedText = (
+                    text,
+                    x,
+                    y,
+                    width,
+                    lineHeight = 5
+                ) => {
+                    setNormal(9.5);
+
+                    const lines =
+                        doc.splitTextToSize(
+                            text,
+                            width
+                        );
+
+                    doc.text(lines, x, y, {
+                        lineHeightFactor:
+                            lineHeight / 3.35
+                    });
+
+                    return y +
+                        lines.length *
+                        lineHeight;
+                };
+
+                const addPage = () => {
+                    doc.addPage("a4", "portrait");
+                };
+
+                const drawBars = (
+                    entries,
+                    startX,
+                    startY,
+                    maxWidth,
+                    denominator,
+                    maxHeight = 65
+                ) => {
+
+                    // =====================================================
+                    // NO DATA
+                    // =====================================================
+
+                    if (!entries.length) {
+
+                        setNormal(10);
+
+                        doc.text(
+                            "Tidak ada data rekomendasi.",
+                            startX + maxWidth / 2,
+                            startY + 8,
+                            {
+                                align: "center"
+                            }
+                        );
+
+                        return startY + 15;
+                    }
+
+
+                    // =====================================================
+                    // CALCULATION
+                    // =====================================================
+
+                    const maxValue = Math.max(
+                        ...entries.map(([, count]) => count),
+                        1
+                    );
+
+                    const rowHeight = Math.min(
+                        15,
+                        maxHeight / entries.length
+                    );
+
+
+                    // =====================================================
+                    // LAYOUT
+                    // =====================================================
+
+                    const labelX = startX;
+
+                    const barX = startX + 30;
+
+                    const barWidth = 90;
+
+                    const qtyX = barX + barWidth + 8;
+
+                    const percentX = qtyX + 27;
+
+                    const rowsStartY = startY + 14;
+
+
+                    // =====================================================
+                    // TITLE
+                    // =====================================================
+
+                    setBold(9);
+
+                    doc.setTextColor(
+                        40,
+                        50,
+                        60
+                    );
+
+                    doc.text(
+                        "JENIS REKOMENDASI",
+                        startX + maxWidth / 2,
+                        startY,
+                        {
+                            align: "center"
+                        }
+                    );
+
+
+                    // =====================================================
+                    // HEADER
+                    // =====================================================
+
+                    setBold(7.5);
+
+                    doc.setTextColor(
+                        100,
+                        100,
+                        100
+                    );
+
+                    doc.text(
+                        "JENIS",
+                        labelX,
+                        startY + 8
+                    );
+
+                    doc.text(
+                        "JUMLAH",
+                        qtyX,
+                        startY + 8
+                    );
+
+                    doc.text(
+                        "%",
+                        percentX,
+                        startY + 8
+                    );
+
+
+                    // =====================================================
+                    // ROW
+                    // =====================================================
+
+                    entries.forEach(
+                        ([label, count], index) => {
+
+                            const y =
+                                rowsStartY +
+                                index * rowHeight;
+
+
+                            // -------------------------------------------------
+                            // PERCENTAGE
+                            // -------------------------------------------------
+
+                            const share =
+                                denominator
+                                    ? count /
+                                    denominator *
+                                    100
+                                    : 0;
+
+
+                            // -------------------------------------------------
+                            // BAR WIDTH
+                            // -------------------------------------------------
+
+                            const valueBarWidth =
+                                count /
+                                maxValue *
+                                barWidth;
+
+
+                            // -------------------------------------------------
+                            // LABEL
+                            // -------------------------------------------------
+
+                            setBold(8);
+
+                            doc.setTextColor(
+                                45,
+                                55,
+                                65
+                            );
+
+                            doc.text(
+                                String(label),
+                                labelX,
+                                y + 5
+                            );
+
+
+                            // -------------------------------------------------
+                            // BACKGROUND BAR
+                            // -------------------------------------------------
+
+                            doc.setFillColor(
+                                235,
+                                238,
+                                242
+                            );
+
+                            doc.rect(
+                                barX,
+                                y,
+                                barWidth,
+                                7,
+                                "F"
+                            );
+
+
+                            // -------------------------------------------------
+                            // VALUE BAR
+                            // -------------------------------------------------
+
+                            if (valueBarWidth > 0) {
+
+                                doc.setFillColor(
+                                    52,
+                                    101,
+                                    164
+                                );
+
+                                doc.rect(
+                                    barX,
+                                    y,
+                                    valueBarWidth,
+                                    7,
+                                    "F"
+                                );
+
+                            }
+
+
+                            // -------------------------------------------------
+                            // QTY
+                            // -------------------------------------------------
+
+                            setBold(8);
+
+                            doc.setTextColor(
+                                45,
+                                55,
+                                65
+                            );
+
+                            doc.text(
+                                String(count),
+                                qtyX,
+                                y + 5
+                            );
+
+
+                            // -------------------------------------------------
+                            // PERCENTAGE
+                            // -------------------------------------------------
+
+                            setNormal(8);
+
+                            doc.setTextColor(
+                                90,
+                                90,
+                                90
+                            );
+
+                            doc.text(
+                                percent(share),
+                                percentX,
+                                y + 5
+                            );
+
+                        }
+                    );
+
+
+                    // =====================================================
+                    // SUMMARY
+                    // =====================================================
+
+                    const summaryY =
+                        rowsStartY +
+                        entries.length *
+                        rowHeight +
+                        7;
+
+
+                    const summaryWidth =
+                        170;
+
+
+                    doc.setFillColor(
+                        248,
+                        250,
+                        252
+                    );
+
+                    doc.setDrawColor(
+                        225,
+                        228,
+                        232
+                    );
+
+                    doc.roundedRect(
+                        startX,
+                        summaryY,
+                        summaryWidth,
+                        18,
+                        2,
+                        2,
+                        "FD"
+                    );
+
+
+                    // -----------------------------------------------------
+                    // SUMMARY TITLE
+                    // -----------------------------------------------------
+
+                    setBold(7.5);
+
+                    doc.setTextColor(
+                        80,
+                        90,
+                        100
+                    );
+
+                    doc.text(
+                        "TOTAL REKOMENDASI",
+                        startX + 6,
+                        summaryY + 7
+                    );
+
+
+                    // -----------------------------------------------------
+                    // TOTAL
+                    // -----------------------------------------------------
+
+                    setBold(11);
+
+                    doc.setTextColor(
+                        35,
+                        50,
+                        65
+                    );
+
+                    doc.text(
+                        String(denominator),
+                        startX + 6,
+                        summaryY + 14
+                    );
+
+
+                    // =====================================================
+                    // RETURN POSITION
+                    // =====================================================
+
+                    return summaryY + 18;
+
+                };
+
+                // HALAMAN 1
+                centeredTitle([
+                    "EVALUASI KEPUASAN PELANGGAN",
+                    "PADA PROSES PEMBANGUNAN KAPAL DI DIVISI KAPAL NIAGA",
+                    "PERIODE: " + periodText
+                ]);
+
+                let y = 39;
+
+                sectionHeading(
+                    "I.",
+                    "DASAR / REFERENSI",
+                    y
+                );
+
+                setNormal(9.5);
+
+                doc.text(
+                    "1. RKAP tahun " + yearText,
+                    marginX + 18,
+                    y + 6
+                );
+
+                doc.text(
+                    "2. SO No. 2 QB 011 R0 tanggal terbit 25 Juli 2023 tentang Quality Acceptance Ratio",
+                    marginX + 18,
+                    y + 12
+                );
+
+                y += 24;
+
+                sectionHeading(
+                    "II.",
+                    "MAKSUD DAN TUJUAN",
+                    y
+                );
+
+                y = wrappedText(
+                    "Evaluasi kepuasan pelanggan ini dimaksudkan untuk mengetahui tingkat kepuasan pelanggan dalam proses produksi yang diukur dari tingkat keberterimaan pemeriksaan dan pengujian oleh pihak Class/OS. Hasil evaluasi digunakan untuk mengidentifikasi penyebab ketidaksesuaian dan menentukan langkah perbaikan guna meningkatkan kepuasan pelanggan.",
+                    marginX + 14,
+                    y + 6,
+                    contentWidth - 14
+                ) + 4;
+
+                sectionHeading(
+                    "III.",
+                    "SUMBER DATA",
+                    y
+                );
+
+                y = wrappedText(
+                    "Dokumen HPP proyek " +
+                    projects.join(", ") +
+                    " periode " +
+                    periodText +
+                    ".",
+                    marginX + 14,
+                    y + 6,
+                    contentWidth - 14
+                ) + 4;
+
+                sectionHeading(
+                    "IV.",
+                    "ANALISA DATA",
+                    y
+                );
+
+                setNormal(9.5);
+
+                doc.text(
+                    "Dari HPP pada periode terpilih diperoleh data sebagai berikut:",
+                    marginX + 14,
+                    y + 6
+                );
+
+                doc.autoTable({
+                    startY: y + 10,
+
+                    margin: {
+                        left: marginX + 14
+                    },
+
+                    tableWidth: 140,
+
+                    theme: "plain",
+
+                    styles: {
+                        font: "times",
+                        fontSize: 9.5,
+                        cellPadding: 1.2,
+                        textColor: [20, 20, 20]
+                    },
+
+                    columnStyles: {
+                        0: {
+                            cellWidth: 82
+                        },
+
+                        1: {
+                            cellWidth: 8,
+                            halign: "center"
+                        },
+
+                        2: {
+                            cellWidth: 50
+                        }
+                    },
+
+                    body: [
+                        [
+                            "Jumlah total HPP",
+                            "=",
+                            overall.total
+                        ],
+
+                        [
+                            "Jumlah keberterimaan",
+                            "=",
+                            overall.accepted
+                        ],
+
+                        [
+                            "Jumlah ketidaksesuaian rekomendasi",
+                            "=",
+                            overall.recommendation
+                        ],
+
+                        [
+                            "Perhitungan Kepuasan Pelanggan",
+                            "=",
+                            "Jumlah Keberterimaan / Jumlah yang diperiksa" +
+                            " x 100%"
+                        ],
+                        [
+                            "",
+                            "=",
+                            overall.accepted +
+                            " / " +
+                            overall.total +
+                            " x 100%"
+                        ],
+
+                        [
+                            "",
+                            "=",
+                            percent(overall.qar) +
+                            " (" +
+                            satisfaction +
+                            ")"
+                        ]
+                    ],
+
+                    didParseCell: hook => {
+                        if (hook.row.index === 5) {
+                            hook.cell.styles.fontStyle =
+                                "bold";
+                        }
+                    }
+                });
+
+                // HALAMAN 2
+                addPage();
+
+                centeredTitle([
+                    "JENIS-JENIS REKOMENDASI CLASS/OS",
+                    "PERIODE: " + periodText
+                ]);
+
+                setNormal(10);
+
+                doc.text(
+                    "Dari " +
+                    overall.recommendation +
+                    "jumlah ketidaksesuaian/rekomendasi Class/OS terdiri dari:",
+                    tableX + tableWidth / 2,
+                    35,
+                    {
+                        align: "center"
+                    }
+                );
+
+                doc.autoTable({
+                    startY: 41,
+
+                    margin: {
+                        left: tableX,
+                        right: tableX
+                    },
+
+                    tableWidth: 110,
+
+                    theme: "grid",
+
+                    headStyles: {
+                        fillColor: [31, 41, 55],
+                        textColor: 255,
+                        fontStyle: "bold",
+                        halign: "center"
+                    },
+
+                    styles: {
+                        font: "times",
+                        fontSize: 9,
+                        cellPadding: 2,
+                        halign: "center",
+                        lineColor: [80, 80, 80],
+                        lineWidth: 0.2
+                    },
+
+                    head: [[
+                        "JENIS REKOMENDASI",
+                        "PERSENTASE",
+                        "JUMLAH"
+                    ]],
+
+                    body: recommendationEntries.map(
+                        ([code, count]) => [
+                            code,
+
+                            percent(
+                                count /
+                                Math.max(
+                                    overall.recommendation,
+                                    1
+                                ) *
+                                100
+                            ),
+
+                            count
+                        ]
+                    )
+                });
+
+                setBold(10);
+
+                doc.text(
+                    "Secara Grafik dapat digambarkan sebagai berikut :",
+                    100.5,
+                    105,
+                    {
+                        align: "center"
+                    }
+                );
+
+                const recommendationChartBottom = drawBars(
+                    recommendationEntries,
+                    28,
+                    115,
+                    145,
+                    overall.recommendation,
+                    65
+                );
+
+                // HALAMAN 3
+                addPage();
+
+                sectionHeading(
+                    "V.",
+                    "KESIMPULAN",
+                    24
+                );
+
+                let conclusionY = wrappedText(
+                    "1. Tingkat keberterimaan pemeriksaan oleh Class/OS pada format HPP sebesar " +
+                    percent(overall.qar) +
+                    " dengan kategori " +
+                    satisfaction +
+                    ".",
+                    marginX + 14,
+                    32,
+                    contentWidth - 14
+                ) + 4;
+
+                conclusionY = wrappedText(
+                    "2. Jenis rekomendasi yang paling banyak ditemukan adalah " +
+                    dominantRecommendation +
+                    ". Kondisi ini perlu menjadi perhatian dalam penentuan tindakan koreksi dan pencegahan.",
+                    marginX + 14,
+                    conclusionY,
+                    contentWidth - 14
+                ) + 12;
+
+                sectionHeading(
+                    "VI.",
+                    "SARAN",
+                    conclusionY
+                );
+
+                let adviceY =
+                    conclusionY + 8;
+
+                [
+                    "1. Melaksanakan preventive action yang konkret dari pihak produksi dan QA serta memantau pelaksanaannya.",
+
+                    "2. Meningkatkan konsistensi evaluasi ketidaksesuaian untuk mempercepat penentuan langkah perbaikan.",
+
+                    "3. Meningkatkan pemahaman standar mutu dan persyaratan pemeriksaan pada Worker maupun QA."
+                ].forEach(text => {
+                    adviceY =
+                        wrappedText(
+                            text,
+                            marginX + 14,
+                            adviceY,
+                            contentWidth - 14
+                        ) + 3;
+                });
+
+                // HALAMAN PER BULAN
+                periods.forEach(period => {
+                    addPage();
+
+                    centeredTitle([
+                        MONTHS[period.month - 1] +
+                        " " +
+                        period.year
+                    ]);
+
+                    const monthData =
+                        data.filter(row =>
+                            Number(row.tahun) ===
+                            period.year &&
+                            Number(row.bulan) ===
+                            period.month
+                        );
+
+                    const firstHead = [
+                        {
+                            content: "NO",
+                            rowSpan: 2,
+                            styles: {
+                                valign: "middle"
+                            }
+                        },
+
+                        {
+                            content: "PROJECT",
+                            rowSpan: 2,
+                            styles: {
+                                valign: "middle"
+                            }
+                        },
+
+                        ...bureaus.map(biro => ({
+                            content: biro,
+                            colSpan: 3
+                        }))
+                    ];
+
+                    const secondHead =
+                        bureaus.flatMap(() => [
+                            "JML HPP",
+                            "HPP ACC.",
+                            "% ACC."
+                        ]);
+
+                    const body = projects.map(
+                        (project, index) => {
+                            const cells =
+                                bureaus.flatMap(biro => {
+                                    const groupStats =
+                                        stats(
+                                            monthData.filter(
+                                                row =>
+                                                    row.project ===
+                                                    project &&
+                                                    row.biro === biro
+                                            )
+                                        );
+
+                                    return [
+                                        groupStats.total,
+                                        groupStats.accepted,
+                                        groupStats.qar.toFixed(2)
+                                    ];
+                                });
+
+                            return [
+                                index + 1,
+                                project,
+                                ...cells
+                            ];
+                        }
+                    );
+
+                    const totalRow = [
+                        {
+                            content: "TOTAL",
+                            colSpan: 2,
+
+                            styles: {
+                                fontStyle: "bold",
+                                halign: "center"
+                            }
+                        },
+
+                        ...bureaus.flatMap(biro => {
+                            const groupStats =
+                                stats(
+                                    monthData.filter(
+                                        row =>
+                                            row.biro === biro
+                                    )
+                                );
+
+                            return [
+                                groupStats.total,
+                                groupStats.accepted,
+                                groupStats.qar.toFixed(2)
+                            ];
+                        })
+                    ];
+
+                    body.push(totalRow);
+
+                    doc.autoTable({
+                        startY: 25,
+
+                        margin: {
+                            left: 8,
+                            right: 8
+                        },
+
+                        theme: "grid",
+
+                        head: [
+                            firstHead,
+                            secondHead
+                        ],
+
+                        body,
+
+                        headStyles: {
+                            fillColor: [31, 41, 55],
+                            textColor: 255,
+                            fontStyle: "bold",
+                            halign: "center",
+                            valign: "middle"
+                        },
+
+                        styles: {
+                            font: "times",
+
+                            fontSize:
+                                bureaus.length > 5
+                                    ? 6.5
+                                    : 7.5,
+
+                            cellPadding: 1.4,
+                            halign: "center",
+                            valign: "middle",
+                            overflow: "linebreak"
+                        },
+
+                        columnStyles: {
+                            0: {
+                                cellWidth: 9
+                            },
+
+                            1: {
+                                cellWidth: 37,
+                                halign: "left"
+                            }
+                        },
+
+                        didParseCell: hook => {
+                            if (
+                                hook.section === "body" &&
+                                hook.row.index ===
+                                body.length - 1
+                            ) {
+                                hook.cell.styles.fontStyle =
+                                    "bold";
+                            }
+                        }
+                    });
+
+                    const monthStats =
+                        stats(monthData);
+
+                    const summaryY = Math.min(
+                        (doc.lastAutoTable?.finalY || 120) + 10,
+                        170
+                    );
+
+                    setBold(10);
+
+                    doc.text(
+                        "KEBERTERIMAAN HPP BULAN " +
+                        MONTHS[period.month - 1],
+                        marginX,
+                        summaryY
+                    );
+
+                    setNormal(9.5);
+
+                    doc.text(
+                        "JUMLAH TOTAL HPP  : " +
+                        monthStats.total,
+                        marginX,
+                        summaryY + 7
+                    );
+
+                    doc.text(
+                        "JUMLAH HPP ACC.   : " +
+                        monthStats.accepted,
+                        marginX,
+                        summaryY + 13
+                    );
+
+                    doc.text(
+                        "% ACC             : " +
+                        percent(monthStats.qar),
+                        marginX,
+                        summaryY + 19
+                    );
+                });
+
+                // REKAP PERIODE
+                addPage();
+
+                centeredTitle([
+                    "KEBERTERIMAAN HPP " +
+                    quarterText,
+
+                    "PERIODE: " +
+                    periodText
+                ]);
+
+                const monthSummary =
+                    periods.map(period => {
+                        const rows =
+                            data.filter(row =>
+                                Number(row.tahun) ===
+                                period.year &&
+                                Number(row.bulan) ===
+                                period.month
+                            );
+
+                        const value = stats(rows);
+
+                        return [
+                            MONTHS[period.month - 1] +
+                            " " +
+                            period.year,
+
+                            value.total,
+                            value.accepted,
+                            value.recommendation,
+                            percent(value.qar)
+                        ];
+                    });
+
+                doc.autoTable({
+                    startY: 35,
+
+                    margin: {
+                        left: 45,
+                        right: 45
+                    },
+
+                    theme: "grid",
+
+                    head: [[
+                        "BULAN",
+                        "TOTAL HPP",
+                        "HPP ACC.",
+                        "REKOMENDASI",
+                        "% ACC."
+                    ]],
+
+                    body: [
+                        ...monthSummary,
+
+                        [
+                            "TOTAL",
+                            overall.total,
+                            overall.accepted,
+                            overall.recommendation,
+                            percent(overall.qar)
+                        ]
+                    ],
+
+                    headStyles: {
+                        fillColor: [31, 41, 55],
+                        textColor: 255,
+                        fontStyle: "bold",
+                        halign: "center"
+                    },
+
+                    styles: {
+                        font: "times",
+                        fontSize: 9,
+                        cellPadding: 2,
+                        halign: "center"
+                    },
+
+                    didParseCell: hook => {
+                        if (
+                            hook.section === "body" &&
+                            hook.row.index ===
+                            monthSummary.length
+                        ) {
+                            hook.cell.styles.fontStyle =
+                                "bold";
+                        }
+                    }
+                });
+
+                setBold(14);
+
+                doc.text(
+                    "KEBERTERIMAAN HPP " +
+                    quarterText +
+                    " = " +
+                    percent(overall.qar),
+
+                    pageWidth / 2,
+
+                    (doc.lastAutoTable?.finalY || 100) +
+                    18,
+
+                    {
+                        align: "center"
+                    }
+                );
+
+                // HALAMAN PER PROYEK
+                projects.forEach(project => {
+                    addPage();
+
+                    centeredTitle([
+                        project,
+                        "REKAP JUMLAH HPP DAN JENIS REKOMENDASI"
+                    ]);
+
+                    const projectData =
+                        data.filter(row =>
+                            row.project === project
+                        );
+
+                    const projectStats =
+                        stats(projectData);
+
+                    const bureauRows =
+                        bureaus.map(biro => {
+                            const value =
+                                stats(
+                                    projectData.filter(
+                                        row =>
+                                            row.biro === biro
+                                    )
+                                );
+
+                            return [
+                                biro,
+                                value.total,
+                                value.accepted,
+                                value.recommendation,
+                                percent(value.qar)
+                            ];
+                        });
+
+                    doc.autoTable({
+                        startY: 35,
+
+                        margin: {
+                            left: 45,
+                            right: 45
+                        },
+
+                        tableWidth: 125,
+
+                        theme: "grid",
+
+                        head: [[
+                            "BIRO",
+                            "JML HPP",
+                            "ACC",
+                            "REK",
+                            "% ACC"
+                        ]],
+
+                        body: [
+                            ...bureauRows,
+
+                            [
+                                "TOTAL",
+                                projectStats.total,
+                                projectStats.accepted,
+                                projectStats.recommendation,
+                                percent(projectStats.qar)
+                            ]
+                        ],
+
+                        headStyles: {
+                            fillColor: [31, 41, 55],
+                            textColor: 255,
+                            fontStyle: "bold",
+                            halign: "center"
+                        },
+
+                        styles: {
+                            font: "times",
+                            fontSize: 9,
+                            cellPadding: 2,
+                            halign: "center"
+                        },
+
+                        didParseCell: hook => {
+                            if (
+                                hook.section === "body" &&
+                                hook.row.index ===
+                                bureauRows.length
+                            ) {
+                                hook.cell.styles.fontStyle =
+                                    "bold";
+                            }
+                        }
+                    });
+
+                    const projectRecommendationCounts = {};
+
+                    projectData.forEach(row => {
+                        const code = clean(
+                            row.rekomendasi
+                        ).toUpperCase();
+
+                        if (
+                            code &&
+                            code !== "ACC" &&
+                            code !== "-"
+                        ) {
+                            projectRecommendationCounts[code] =
+                                (
+                                    projectRecommendationCounts[code] ||
+                                    0
+                                ) + 1;
+                        }
+                    });
+
+                    const projectEntries =
+                        Object.entries(
+                            projectRecommendationCounts
+                        ).sort((a, b) =>
+                            b[1] - a[1]
+                        );
+
+                    setBold(10);
+
+                    const recommendationChartBottom = drawBars(
+                        projectEntries,
+                        28,
+                        115,
+                        145,
+                        projectStats.recommendation,
+                        65
+                    );
+                });
+
+                // FOOTER
+                const pageCount =
+                    doc.getNumberOfPages();
+
+                for (
+                    let page = 1;
+                    page <= pageCount;
+                    page++
+                ) {
+                    doc.setPage(page);
+
+                    doc.setDrawColor(
+                        160,
+                        160,
+                        160
+                    );
+
+                    doc.line(
+                        marginX,
+                        pageHeight - 11,
+                        pageWidth - marginX,
+                        pageHeight - 11
+                    );
+
+                    setNormal(7.5);
+
+                    doc.setTextColor(
+                        90,
+                        90,
+                        90
+                    );
+
+                    doc.text(
+                        "Quality Acceptance Ratio - Periode " +
+                        periodText,
+                        marginX,
+                        pageHeight - 6
+                    );
+
+                    doc.text(
+                        page +
+                        " / " +
+                        pageCount,
+                        pageWidth - marginX,
+                        pageHeight - 6,
+                        {
+                            align: "right"
+                        }
+                    );
+                }
+
+                const safePeriod =
+                    periodText
+                        .replace(
+                            /[^a-zA-Z0-9]+/g,
+                            "_"
+                        )
+                        .replace(
+                            /^_|_$/g,
+                            ""
+                        );
+
+                doc.save(
+                    "QAR_Report_" +
+                    (safePeriod || "Periode") +
+                    ".pdf"
+                );
+            }
 
             document.addEventListener("DOMContentLoaded", async () => {
 
                 try {
+
+                    initMonthFilter();
 
                     await loadData();
 
@@ -2364,6 +4501,12 @@ PARETO TARGET LINE
             document
                 .getElementById("searchInput")
                 .addEventListener("keyup", applyFilter);
+            document
+                .querySelector(".refresh-btn")
+                .addEventListener("click", refreshDashboard);
+            document
+                .getElementById("generateReport")
+                .addEventListener("click", generateReport);
 
         </script>
 
