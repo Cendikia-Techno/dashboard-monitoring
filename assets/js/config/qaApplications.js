@@ -295,15 +295,6 @@ export const QA_APPLICATIONS = [
     // NON PROJECT
     // ==================================================
     {
-        id: "warranty",
-        title: "Warranty",
-        category: "nonproject",
-        icon: "fa-chart-column",
-        type: "external",
-        url: "apps/warranty/index.html"
-    },
-
-    {
         id: "qar",
         title: "Quality Acceptance Ratio",
         description: "Digital monitoring system untuk mengukur, menganalisis, dan melaporkan Quality Acceptance Ratio berdasarkan data hasil inspeksi secara terintegrasi",
@@ -324,24 +315,14 @@ export const QA_APPLICATIONS = [
     },
 
     {
-        id: "calibration",
-        title: "Calibration Management",
+        id: "drawing",
+        title: "e-Drawing Control",
+        description : "Platform kontrol kualitas dan manajemen revisi gambar teknik terpadu lintas proyek, memastikan standarisasi dokumen Released dan pencegahan penggunaan drawing usang (Obsolete) di area produksi.",
         category: "nonproject",
         icon: "fa-chart-column",
         type: "external",
-        url: "apps/create/index.html"
+        url: "apps/nonproject/drawing/index.html"
     },
-
-    {
-        id: "standarisasi",
-        title: "Document Standarisasi Dashbaord",
-        description: "Memonitoring Status Dokumen Standarisasi",
-        category: "nonproject",
-        icon: "fa-chart-column",
-        type: "external",
-        url: "apps/nonproject/standar/index.html"
-    },
-
     {
         id: "selflearning",
         title: "QA Self Learning",
@@ -350,6 +331,15 @@ export const QA_APPLICATIONS = [
         icon: "fa-chart-column",
         type: "external",
         url: "https://notebook.google.com/notebook/aeadedef-e05d-4e95-bac6-87849bac8cf3"
+    },
+       {
+        id: "standarisasi",
+        title: "Document Standarisasi Dashbaord",
+        description: "Memonitoring Status Dokumen Standarisasi",
+        category: "nonproject",
+        icon: "fa-chart-column",
+        type: "external",
+        url: "apps/nonproject/standar/index.html"
     }
 
 ];

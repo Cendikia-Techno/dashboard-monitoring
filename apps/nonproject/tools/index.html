@@ -10,82 +10,215 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
 
     <style>
+        :root {
+            --primary-navy: #0f172a;
+            --secondary-navy: #1e293b;
+            --accent-blue: #0284c7;
+            --bg-color: #f8fafc;
+            --border-color: #cbd5e1;
+            --text-main: #334155;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f2f5;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
         }
 
         .container {
-            background: white;
+            background: #ffffff;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            border-top: 6px solid #003366;
+            border-left: 1px solid #94a3b8;
+            border-right: 1px solid #94a3b8;
+            border-bottom: 1px solid #94a3b8;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Kop Dokumen ala PT PAL / QA */
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px double #0f172a;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+
+        .doc-title-area h2 {
+            margin: 0;
+            color: #0f172a;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border: none;
+            padding: 0;
+        }
+
+        .doc-meta {
+            font-size: 11px;
+            color: #475569;
+            text-align: right;
+            font-family: monospace;
         }
 
         h2 {
             margin-top: 0;
-            color: #333;
+            color: var(--primary-navy);
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
             border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 10px;
+            padding-bottom: 12px;
+            text-transform: uppercase;
         }
 
+        /* KPI Card Style Enterprise */
+        .kpi-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            padding: 12px 15px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            border-left: 4px solid #64748b;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .kpi-card h4 {
+            margin: 0;
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-card p {
+            margin: 4px 0 0 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-navy);
+        }
+
+        .kpi-exp {
+            border-left-color: #dc2626;
+        }
+
+        .kpi-warn {
+            border-left-color: #d97706;
+        }
+
+        .kpi-cal {
+            border-left-color: #7c3aed;
+        }
+
+        .kpi-loan {
+            border-left-color: #2563eb;
+        }
+
+        .kpi-total {
+            border-left-color: #0f172a;
+        }
+
+        /* Controls Bar */
         .controls {
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
             align-items: center;
             flex-wrap: wrap;
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
         }
 
         .search-box {
-            padding: 8px 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 250px;
-            font-size: 14px;
+            padding: 7px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: 280px;
+            font-size: 13px;
+            background: white;
         }
 
+        .search-box:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+        }
+
+        /* Tabel dengan garis grid tegas ala form drawing/control */
         .table-responsive {
             overflow-x: auto;
-            border-radius: 5px;
-            border: 1px solid #e2e8f0;
+            border-radius: 0px;
+            border: 2px solid #003366;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             white-space: nowrap;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         th,
         td {
-            border: 1px solid #e2e8f0;
-            padding: 10px;
+            border: 1px solid #475569;
+            /* Garis grid lebih tegas */
+            padding: 6px 8px;
             text-align: left;
         }
 
         th {
-            background: #0f172a;
+            background: #003366;
             color: white;
-            position: sticky;
-            top: 0;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border: 1px solid #1e293b;
         }
 
+        tr:nth-child(even) {
+            background-color: #f1f5f9;
+        }
+
+        tr:hover {
+            background-color: #e2e8f0;
+        }
+
+        /* Tombol Standar Korporat */
         .btn {
-            padding: 8px 12px;
+            padding: 6px 10px;
             border: none;
-            border-radius: 4px;
+            border-radius: 3px;
             cursor: pointer;
             color: white;
-            font-weight: bold;
-            display: flex;
+            font-weight: 600;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
-            font-size: 13px;
+            gap: 4px;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
         }
 
         .btn-pinjam {
@@ -97,48 +230,48 @@
         }
 
         .btn-refresh {
-            background: #10b981;
+            background: #059669;
         }
 
         .btn-scan {
-            background: #f59e0b;
+            background: #d97706;
         }
 
         .btn-kalibrasi {
-            background: #8b5cf6;
+            background: #7c3aed;
         }
 
-        /* Wadah untuk menumpuk tombol aksi di tabel */
         .aksi-container {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
 
-        /* Pagination CSS */
+        /* Pagination */
         .pagination-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 15px;
-            padding: 10px;
+            padding: 8px 12px;
             background: #f8fafc;
-            border-radius: 5px;
-            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            font-size: 13px;
         }
 
         .btn-page {
-            background: #cbd5e1;
-            color: #1e293b;
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
+            background: #e2e8f0;
+            color: #334155;
+            padding: 5px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
         }
 
         .btn-page:hover:not(:disabled) {
-            background: #94a3b8;
+            background: #cbd5e1;
         }
 
         .btn-page:disabled {
@@ -147,35 +280,38 @@
             cursor: not-allowed;
         }
 
-        /* Badge Status */
+        /* Badge Status ala Industrial */
         .badge-aman {
-            background: #d1fae5;
-            color: #065f46;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 12px;
+            background: #dcfce7;
+            color: #166534;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: 700;
+            font-size: 11px;
+            border: 1px solid #bbf7d0;
         }
 
         .badge-warning {
-            background: #fef08a;
+            background: #fef9c3;
             color: #854d0e;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: 700;
+            font-size: 11px;
+            border: 1px solid #fef08a;
         }
 
         .badge-danger {
             background: #fee2e2;
             color: #991b1b;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: 700;
+            font-size: 11px;
+            border: 1px solid #fecaca;
         }
 
-        /* Modal Popup */
+        /* Modal Enterprise */
         .modal {
             display: none;
             position: fixed;
@@ -184,17 +320,19 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(2px);
         }
 
         .modal-content {
             background-color: #fff;
-            margin: 5% auto;
-            padding: 25px;
-            border-radius: 8px;
+            margin: 4% auto;
+            padding: 20px 25px;
+            border-radius: 6px;
             width: 450px;
             max-width: 90%;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-top: 4px solid var(--primary-navy);
             max-height: 85vh;
             overflow-y: auto;
         }
@@ -202,24 +340,27 @@
         .modal input,
         .modal select {
             width: 100%;
-            padding: 10px;
-            margin: 8px 0 15px 0;
-            border: 1px solid #ccc;
+            padding: 8px 10px;
+            margin: 6px 0 12px 0;
+            border: 1px solid var(--border-color);
             border-radius: 4px;
             box-sizing: border-box;
             font-family: inherit;
+            font-size: 13px;
         }
 
         .modal label {
-            font-weight: bold;
-            font-size: 14px;
-            color: #333;
+            font-weight: 600;
+            font-size: 12px;
+            color: #475569;
+            text-transform: uppercase;
         }
 
         #loading {
             display: none;
-            color: #2563eb;
-            font-weight: bold;
+            color: var(--accent-blue);
+            font-weight: 600;
+            font-size: 13px;
             margin-left: 10px;
         }
 
@@ -229,65 +370,68 @@
             margin: auto;
         }
 
-        .kpi-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+        /* --- HEADER NAVBAR ALA QA DRAWING CONTROL --- */
+        .app-header-bar {
+            background-color: #003366;
+            color: #ffffff;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #f59e0b;
+            /* Aksen garis bawah kuning */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             margin-bottom: 20px;
+            border-radius: 4px;
         }
 
-        .kpi-cal {
-            border-left-color: #6366f1;
+        .app-title-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
-        /* Warna Indigo untuk Kalibrasi */
-
-        .kpi-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #ccc;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .app-title-left span.highlight {
+            color: #f59e0b;
+            /* Warna kuning emas khas QA Drawing Control */
         }
 
-        .kpi-card h4 {
-            margin: 0;
-            color: #64748b;
-            font-size: 12px;
-            text-transform: uppercase;
+        .app-div-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #cbd5e1;
+            font-weight: 600;
         }
-
-        .kpi-card p {
-            margin: 5px 0 0 0;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .kpi-exp {
-            border-left-color: #dc2626;
-        }
-
-        .kpi-warn {
-            border-left-color: #f59e0b;
-        }
-
-        .kpi-loan {
-            border-left-color: #2563eb;
-        }
-
-        .kpi-total {
-            border-left-color: #64748b;
-        }
-
-        /* Warna abu-abu/netral untuk Total */
     </style>
 </head>
 
 <body>
+    <!-- NAVBAR / HEADER UTAMA ALA QA DRAWING CONTROL -->
+    <div class="app-header-bar">
+        <div class="app-title-left">
+            <!-- Ikon tameng/centang kecil (bisa pakai SVG atau emoji) -->
+            <span>🛡️</span>
+            <span>PT PAL INDONESIA</span>
+            <span style="color: #94a3b8; font-weight: 400;">|</span>
+            <span class="highlight">QA Tools Management</span>
+        </div>
+        <div class="app-div-right">
+            <span>👤</span>
+            <span>Quality Assurance Div.</span>
+        </div>
+    </div>
 
     <div class="container">
-        <h2>Quality Tools Management</h2>
+        <!-- Kop Dokumen Kontrol ala Engineering / QA -->
+        
 
+        <!-- KPI CARDS 5 KOLOM -->
         <div class="kpi-container">
             <div class="kpi-card kpi-exp">
                 <h4>Expired</h4>
@@ -311,6 +455,7 @@
             </div>
         </div>
 
+        <!-- CONTROLS & SEARCH -->
         <div class="controls">
             <button class="btn btn-refresh" onclick="loadData()">🔄 Muat Ulang</button>
             <button class="btn btn-scan" onclick="openScanner()">📷 Scan QR Code</button>
@@ -318,7 +463,7 @@
                 placeholder="🔍 Cari Tool ID, Nama Alat, atau Merk...">
 
             <select id="rowsSelect" onchange="changeRowsPerPage()"
-                style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                style="padding: 7px; border-radius: 4px; border: 1px solid #cbd5e1; font-size:12px;">
                 <option value="5">5 Baris</option>
                 <option value="10" selected>10 Baris</option>
                 <option value="25">25 Baris</option>
@@ -328,6 +473,7 @@
             <span id="loading">Memproses data... Mohon tunggu.</span>
         </div>
 
+        <!-- TABEL UTAMA -->
         <div class="table-responsive">
             <table id="tabelAlat">
                 <thead>
