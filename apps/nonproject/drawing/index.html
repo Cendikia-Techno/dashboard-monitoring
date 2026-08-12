@@ -337,12 +337,10 @@
             const tbody = document.getElementById("tableBody");
             tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted"><div class="spinner-border text-primary" role="status"></div><br>Sinkronisasi Database...</td></tr>';
 
-            // 🛡️ TAMBAHKAN CORS PROXY DI SINI UNTUK BYPASS BLOKIR GITHUB PAGES
-            const proxyUrl = "https://corsproxy.io/?";
-            const targetUrl = APPS_SCRIPT_URL + "?action=read";
-
-            fetch(proxyUrl + encodeURIComponent(targetUrl), {
-                method: 'GET'
+            // Kembali menggunakan POST ke URL Apps Script langsung (Tanpa Proxy)
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: "read" })
             })
                 .then(response => response.json())
                 .then(res => {
