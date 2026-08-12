@@ -337,10 +337,12 @@
             const tbody = document.getElementById("tableBody");
             tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted"><div class="spinner-border text-primary" role="status"></div><br>Sinkronisasi Database...</td></tr>';
 
-            // Menggunakan GET agar memanggil fungsi doGet(e) di Apps Script
-            fetch(APPS_SCRIPT_URL + "?action=read", {
-                method: 'GET',
-                redirect: 'follow'
+            // 🛡️ TAMBAHKAN CORS PROXY DI SINI UNTUK BYPASS BLOKIR GITHUB PAGES
+            const proxyUrl = "https://corsproxy.io/?";
+            const targetUrl = APPS_SCRIPT_URL + "?action=read";
+
+            fetch(proxyUrl + encodeURIComponent(targetUrl), {
+                method: 'GET'
             })
                 .then(response => response.json())
                 .then(res => {
