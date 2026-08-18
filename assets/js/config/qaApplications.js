@@ -19,6 +19,64 @@ export const QA_APPLICATIONS = [
 
         type: "dashboard",
 
+        milestones: [
+            {
+                date: "2022-01-1",
+                title: "Effective Date Contract",
+                status: "completed"
+            },
+            {
+                date: "2023-08-10",
+                title: "First Cutting",
+                status: "completed"
+            },
+            {
+                date: "2024-01-22",
+                title: "Keel Laying",
+                status: "completed"
+            },
+            {
+                date: "2026-02-13",
+                title: "M/E Loading",
+                status: "completed"
+            },
+            {
+                date: "2026-07-01",
+                title: "Launching",
+                status: "completed"
+            },
+            {
+                date: "2026-10-13",
+                title: "Inclining Test",
+                status: "upcoming"
+            },
+            {
+                date: "2026-10-20",
+                title: "Sea Trial",
+                status: "upcoming"
+            },
+            {
+                date: "2026-11-03",
+                title: "Completion Work After Sea Trial",
+                status: "upcoming"
+            },
+            {
+                date: "2026-11-10",
+                title: "Sailing Document & Preparation",
+                status: "upcoming"
+            },
+            {
+                date: "2026-11-23",
+                title: "Voyage to Manila",
+                status: "upcoming"
+            },
+            {
+                date: "2026-12-01",
+                title: "Delivery",
+                status: "upcoming"
+            }
+        ],
+
         dataSource: "https://docs.google.com/spreadsheets/d/1AbiM8peLWOFzytEVvMn-6Etyvv7r65Sqimp2jtXN6S0/edit?gid=5623554#gid=5623554",
         dataRingkas: "https://docs.google.com/spreadsheets/d/1oI5_FoUdNSm9uMb4IBA6MZkOgNtrVyQ-3ZjMrMRRo68/edit?gid=1750372807#gid=1750372807",
         api: "https://script.google.com/macros/s/AKfycby-LLgoFRwN7RjxXyZV5oGu-O9elZwi08AY_4_SkFAxkOCjs4yVsv0br5ZnMV2ZfUFM/exec"
@@ -57,6 +115,99 @@ export const QA_APPLICATIONS = [
         color: "#0B2E59",
 
         type: "dashboard",
+
+        milestones: [
+            {
+                date: "2021-05-1",
+                title: "Effective Date Contract",
+                status: "completed"
+            },
+            {
+                date: "2022-02-01",
+                title: "Training Combat System",
+                status: "overdue"
+            },
+            {
+                date: "2022-12-01",
+                title: "First Steel Cutting",
+                status: "completed"
+            },
+            {
+                date: "2023-08-25",
+                title: "Keel Laying",
+                status: "completed"
+            },
+            {
+                date: "2024-09-26",
+                title: "Loading Block to Dock",
+                status: "completed"
+            },
+            {
+                date: "2025-04-10",
+                title: "M/E Loading",
+                status: "completed"
+            },
+            {
+                date: "2025-12-18",
+                title: "Launching",
+                status: "completed"
+            },
+            {
+                date: "2026-06-17",
+                title: "Commisioning of Platform",
+                status: "overdue"
+            },
+            {
+                date: "2026-07-22",
+                title: "Training Platform",
+                status: "overdue"
+            },
+            {
+                date: "2026-08-21",
+                title: "Final Docking & Inclining Test",
+                status: "upcoming"
+            },
+            {
+                date: "2026-08-29",
+                title: "SAT Platform",
+                status: "upcoming"
+            },
+            {
+                date: "2026-09-10",
+                title: "Completion After SAT",
+                status: "upcoming"
+            },
+            {
+                date: "2026-09-17",
+                title: "Commodore Inspection Platform",
+                status: "upcoming"
+            },
+            {
+                date: "2026-09-30",
+                title: "Delivery Platform",
+                status: "upcoming"
+            },
+            {
+                date: "2027-11-02",
+                title: "Commisioning of Combat System",
+                status: "upcoming"
+            },
+            {
+                date: "2027-11-04",
+                title: "Final Docking",
+                status: "upcoming"
+            },
+            {
+                date: "2028-01-24",
+                title: "SAT/LFT Combat System",
+                status: "upcoming"
+            },
+            {
+                date: "2028-04-28",
+                title: "Delivery",
+                status: "upcoming"
+            }
+        ],
         dataRingkas: "https://docs.google.com/spreadsheets/d/1U6_BVsscMxL1B4XqpGuNJWsGC0nhSOiQzoufOi6quD8/edit?gid=0#gid=0",
         dataSource: "https://docs.google.com/spreadsheets/d/1AHQ61TYKFsyB34QoiF83-JG4hDpJCDnRma9G5TJs7rE/edit?gid=61200208#gid=61200208",
         api: "https://script.google.com/macros/s/AKfycbwwS9C43rB54vilk--7OtAUeRC66yCVumJ4jRp3ORfvDJZ6VZTFIQVKObIa9Gn0MEmQWA/exec"
@@ -94,6 +245,99 @@ export const QA_APPLICATIONS = [
         color: "#0B2E59",
 
         type: "dashboard",
+
+        milestones: [
+            {
+                date: "2023-02-17",
+                title: "Effective Date Contract",
+                status: "completed"
+            },
+            {
+                date: "2024-01-10",
+                title: "First Cutting",
+                status: "completed"
+            },
+            {
+                date: "2024-04-24",
+                title: "Keel Laying",
+                status: "completed"
+            },
+            {
+                date: "2025-04-22",
+                title: "M/E Loading",
+                status: "completed"
+            },
+            {
+                date: "2026-09-08",
+                title: "Loading GUN",
+                status: "upcoming"
+            },
+            {
+                date: "2026-09-09",
+                title: "Loading Sewaco",
+                status: "upcoming"
+            },
+            {
+                date: "2026-10-30",
+                title: "Launching",
+                status: "upcoming"
+            },
+            {
+                date: "2026-11-02",
+                title: "Setting to Work/Commisioning",
+                status: "upcoming"
+            },
+            {
+                date: "2027-02-10",
+                title: "HAT (Platform)",
+                status: "upcoming"
+            },
+            {
+                date: "2027-04-01",
+                title: "Crews Familiarization",
+                status: "upcoming"
+            },
+            {
+                date: "2027-04-26",
+                title: "SAT (Official)",
+                status: "upcoming"
+            },
+            {
+                date: "2027-04-26",
+                title: "SAT",
+                status: "upcoming"
+            },
+            {
+                date: "2027-05-10",
+                title: "Sailing from Indonesia to UAE",
+                status: "upcoming"
+            },
+            {
+                date: "2027-06-07",
+                title: "SAT (Arabian Gulf)",
+                status: "upcoming"
+            },
+            {
+                date: "2027-06-17",
+                title: "Delivery",
+                status: "upcoming"
+            },
+            {
+                date: "2027-09-16",
+                title: "Setting to Work/Commisioning",
+                status: "upcoming"
+            },
+            {
+                date: "2028-02-05",
+                title: "HAT (Combat System)",
+                status: "upcoming"
+            },
+            {
+                date: "2028-03-01",
+                title: "SAT Combat",
+                status: "upcoming"
+            }
+        ],
         dataRingkas: "https://docs.google.com/spreadsheets/d/19QHf_chaGtoXORgh5CPVEnl02F2Rrv1BK-9eJAf9Z3Q/edit?gid=421171808#gid=421171808",
         dataSource: "https://docs.google.com/spreadsheets/d/19QHf_chaGtoXORgh5CPVEnl02F2Rrv1BK-9eJAf9Z3Q/edit?gid=301492703#gid=301492703",
         api: "https://script.google.com/macros/s/AKfycbxSye4UMbfKg7-9F3TAQPF2x_wwXj26uJztTWcnMboATAyrnGPto8L9axNaetZTenyE2g/exec"
@@ -175,7 +419,7 @@ export const QA_APPLICATIONS = [
         category: "general",
         icon: "fa-industry",
         color: "#2563EB",
-       type: "external",
+        type: "external",
         url: "apps/general/pltal/index.html"
     },
     // =================================================
@@ -317,7 +561,7 @@ export const QA_APPLICATIONS = [
     {
         id: "drawing",
         title: "e-Drawing Control",
-        description : "Platform kontrol kualitas dan manajemen revisi gambar teknik terpadu lintas proyek, memastikan standarisasi dokumen Released dan pencegahan penggunaan drawing usang (Obsolete) di area produksi.",
+        description: "Platform kontrol kualitas dan manajemen revisi gambar teknik terpadu lintas proyek, memastikan standarisasi dokumen Released dan pencegahan penggunaan drawing usang (Obsolete) di area produksi.",
         category: "nonproject",
         icon: "fa-chart-column",
         type: "external",
@@ -332,7 +576,7 @@ export const QA_APPLICATIONS = [
         type: "external",
         url: "https://notebook.google.com/notebook/aeadedef-e05d-4e95-bac6-87849bac8cf3"
     },
-       {
+    {
         id: "standarisasi",
         title: "Document Standarisasi Dashbaord",
         description: "Memonitoring Status Dokumen Standarisasi",
