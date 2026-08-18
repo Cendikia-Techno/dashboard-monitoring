@@ -10,6 +10,7 @@ import { getCurrentProject } from "../../projectManager.js";
 import { createBreadcrumb } from "../../components/layout/breadcrumb.js";
 import { createRecentUpdateList } from "../../components/lists/recentUpdateList.js";
 import { getRecentUpdates } from "../../services/statistics.js";
+import { createMilestoneTimeline } from "../../components/timeline/milestoneTimeline.js";
 
 export function renderSummary() {
 
@@ -41,6 +42,11 @@ export function renderSummary() {
             new Date().toLocaleString("id-ID")
 
     });
+
+    const milestoneTimeline =
+    createMilestoneTimeline(
+        project?.milestones || []
+    );
 
     // ===========================
     // KPI
@@ -216,6 +222,7 @@ ${createKPICard({
         kpis,
 
         fullTop: [
+            milestoneTimeline,
             progress
         ],
 
@@ -227,7 +234,7 @@ ${createKPICard({
         ],
 
         fullBottom: [],
-        splitRatio: "2fr 1fr"
+        splitRatio: "1fr 1fr"
 
     });
 

@@ -1,0 +1,609 @@
+/* =====================================================
+   STRATEGIC MILESTONE TIMELINE
+===================================================== */
+
+.milestone-wrapper {
+
+    width: 100%;
+
+    margin-bottom: 24px;
+
+    padding: 18px 18px 10px;
+
+    background: #FFFFFF;
+
+    border: 1px solid #E2E8F0;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 2px 6px rgba(15, 23, 42, .04),
+        0 8px 20px rgba(15, 23, 42, .03);
+
+    overflow: hidden;
+
+}
+
+.milestone-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 4px;
+
+    padding-bottom: 12px;
+
+    border-bottom: 1px solid #F1F5F9;
+
+}
+
+.milestone-heading {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: .8px;
+
+    color: #0B2E59;
+
+}
+
+.milestone-heading i {
+
+    font-size: 14px;
+
+}
+
+.milestone-count {
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    color: #2563EB;
+
+    border: 1px solid #BFDBFE;
+
+    background: #EFF6FF;
+
+    padding: 4px 9px;
+
+    border-radius: 20px;
+
+}
+
+
+/* =====================================================
+   TIMELINE SCROLL AREA
+===================================================== */
+
+.milestone-scroll {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    overflow-y: visible;
+
+    padding: 30px 15px 55px;
+
+    scrollbar-width: thin;
+
+    scrollbar-color: #CBD5E1 transparent;
+
+}
+
+
+/* TRACK */
+
+.milestone-track {
+
+    position: relative;
+
+    width: max-content;
+
+    min-width: 1050px;
+
+    height: 220px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+}
+/* =====================================================
+   MAIN TIMELINE LINE
+===================================================== */
+
+.milestone-line {
+
+    position: absolute;
+
+    left: 50px;
+
+    right: 50px;
+
+    top: 108px;
+
+    height: 3px;
+
+    background: #CBD5E1;
+
+    border-radius: 10px;
+
+    z-index: 1;
+
+}
+
+
+/* POINT */
+
+.milestone-point {
+
+    position: relative;
+
+    width: 100px;
+
+    min-width: 100px;
+
+    flex: 0 0 100px;
+
+}
+
+
+/* NODE */
+
+.milestone-node {
+
+    position: absolute;
+
+    top: 96px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 25px;
+
+    height: 25px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    z-index: 5;
+
+    background: white;
+
+    border: 3px solid #CBD5E1;
+
+    color: #94A3B8;
+
+    font-size: 9px;
+
+}
+
+
+/* COMPLETED */
+
+.milestone-point.completed .milestone-node {
+
+    background: #16A34A;
+
+    border-color: #16A34A;
+
+    color: white;
+
+    box-shadow: 0 0 0 5px rgba(22, 163, 74, .12);
+
+}
+
+
+/* UPCOMING */
+
+.milestone-point.upcoming .milestone-node {
+
+    background: white;
+
+    border-color: #38BDF8;
+
+    color: #0284C7;
+
+}
+
+/* =====================================================
+   OVERDUE
+===================================================== */
+
+.milestone-point.overdue .milestone-node {
+
+    background: #FEF2F2;
+
+    border-color: #EF4444;
+
+    color: #DC2626;
+
+    box-shadow:
+        0 0 0 5px rgba(239, 68, 68, .10);
+
+}
+
+
+.milestone-status.overdue {
+
+    color: #B91C1C;
+
+    background: #FEF2F2;
+
+    border: 1px solid #FECACA;
+
+}
+
+
+/* HIGHLIGHT */
+
+.milestone-point.highlight .milestone-node {
+
+    width: 32px;
+
+    height: 32px;
+
+    top: 92px;
+
+    background: #FBBF24;
+
+    border-color: white;
+
+    color: #0B2E59;
+
+    box-shadow:
+
+        0 0 0 5px rgba(251, 191, 36, .18),
+
+        0 5px 20px rgba(251, 191, 36, .25);
+
+}
+
+
+/* CARD */
+
+.milestone-card {
+
+    position: absolute;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 155px;
+
+    min-height: 72px;
+
+    padding: 10px 11px;
+
+    border-radius: 10px;
+
+    background: #FFFFFF;
+
+    border: 1px solid #E2E8F0;
+
+    box-shadow: 0 4px 12px rgba(15, 23, 42, .06);
+
+    z-index: 3;
+
+}
+
+
+/* TOP CARD */
+
+.milestone-top .milestone-card {
+
+    bottom: 128px;
+
+}
+
+
+/* BOTTOM CARD */
+
+.milestone-bottom .milestone-card {
+
+    top: 128px;
+
+}
+
+
+/* CARD CONNECTOR */
+
+.milestone-top .milestone-card::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 1px;
+
+    height: 20px;
+
+    background: #CBD5E1;
+
+    left: 50%;
+
+    top: 100%;
+
+}
+
+.milestone-bottom .milestone-card::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 1px;
+
+    height: 20px;
+
+    background: #CBD5E1;
+
+    left: 50%;
+
+    bottom: 100%;
+
+}
+
+
+/* DATE */
+
+.milestone-card-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 5px;
+
+}
+
+.milestone-date {
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    color: #475569;
+
+}
+
+
+/* STATUS */
+
+.milestone-status {
+
+    font-size: 7px;
+
+    font-weight: 700;
+
+    padding: 2px 5px;
+
+    border-radius: 10px;
+
+    white-space: nowrap;
+
+}
+
+.milestone-status.completed {
+
+    color: #047857;
+
+    background: #ECFDF5;
+
+}
+
+.milestone-status.upcoming {
+
+    color: #0369A1;
+
+    background: #E0F2FE;
+
+}
+
+
+/* TITLE */
+
+.milestone-title {
+
+    margin-top: 9px;
+
+    font-size: 10px;
+
+    line-height: 1.35;
+
+    font-weight: 700;
+
+    color: #0F172A;
+
+    text-transform: uppercase;
+
+}
+
+
+/* CODE */
+
+.milestone-code {
+
+    position: absolute;
+
+    right: 8px;
+
+    bottom: 6px;
+
+    font-size: 7px;
+
+    color: #94A3B8;
+
+    font-weight: 600;
+
+}
+
+
+/* HIGHLIGHT CARD */
+
+.milestone-point.highlight .milestone-card {
+
+    border-color: #FBBF24;
+
+    box-shadow:
+
+        0 0 0 1px #FBBF24,
+
+        0 8px 25px rgba(251, 191, 36, .15);
+
+}
+
+
+/* EMPTY */
+
+.milestone-empty {
+
+    padding: 30px;
+
+    text-align: center;
+
+    color: #94A3B8;
+
+    font-size: 13px;
+
+}
+
+/* =====================================================
+   TODAY INDICATOR
+===================================================== */
+
+.milestone-today {
+
+    position: absolute;
+
+    top: 0;
+
+    height: 220px;
+
+    transform: translateX(-50%);
+
+    z-index: 20;
+
+    pointer-events: none;
+
+}
+
+
+/* TODAY LABEL */
+
+.milestone-today>span {
+
+    position: absolute;
+
+    top: 0;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    white-space: nowrap;
+
+    padding: 4px 8px;
+
+    border-radius: 12px;
+
+    background: #FEF2F2;
+
+    border: 1px solid #FECACA;
+
+    color: #DC2626;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: .5px;
+
+}
+
+
+/* TODAY DATE */
+
+.milestone-today>small {
+
+    position: absolute;
+
+    top: 18px;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    white-space: nowrap;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+    color: #DC2626;
+
+}
+
+
+/* RED TODAY LINE */
+
+.milestone-today-line {
+
+    position: absolute;
+
+    top: 43px;
+
+    bottom: 0;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 2px;
+
+    background: #DC2626;
+
+    z-index: 20;
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+
+    .milestone-wrapper {
+
+        margin-bottom: 16px;
+
+    }
+
+    .milestone-scroll {
+
+        padding-left: 5px;
+
+    }
+
+}
