@@ -127,7 +127,7 @@ ${createKPICard({
 
         icon: "fa-file-signature",
 
-        color: "#DC2626",
+        color: "#964B00",
 
         subtitle: "Documentation"
 
