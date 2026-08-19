@@ -96,6 +96,68 @@ export const QA_APPLICATIONS = [
         color: "#0B2E59",
 
         type: "dashboard",
+        milestones: [
+            {
+                date: "2022-01-1",
+                title: "Effective Date Contract",
+                status: "completed"
+            },
+            {
+                date: "2024-01-01",
+                title: "First Cutting",
+                status: "completed"
+            },
+            {
+                date: "2024-01-22",
+                title: "Keel Laying",
+                status: "completed"
+            },
+            {
+                date: "2025-09-24",
+                title: "M/E Loading",
+                status: "overdue"
+            },
+            {
+                date: "2026-04-23",
+                title: "Loading to Main Dock",
+                status: "overdue"
+            },
+            {
+                date: "2026-12-01",
+                title: "Launching",
+                status: "upcoming"
+            },
+            {
+                date: "2027-03-30",
+                title: "Delivery",
+                status: "upcoming"
+            },
+            {
+                date: "2027-08-09",
+                title: "Inclining Test",
+                status: "upcoming"
+            },
+            {
+                date: "2027-08-31",
+                title: "Sea Trial",
+                status: "upcoming"
+            },
+            {
+                date: "2027-09-20",
+                title: "Completion Work After Sea Trial",
+                status: "upcoming"
+            },
+            {
+                date: "2027-10-04",
+                title: "Sailing Document & Preparation",
+                status: "upcoming"
+            },
+            {
+                date: "2027-10-13",
+                title: "Voyage to Manila",
+                status: "upcoming"
+            }
+        ],
         dataRingkas: "https://docs.google.com/spreadsheets/d/1FdUw9S_eXnfFiiSem6tg72db12uqOET1DOvY3-Ux7hM/edit?usp=sharing",
         dataSource: "https://docs.google.com/spreadsheets/d/1dJF3-WVtDLAoQG2a4yhtANXywOugNrcjxd3KEVdFI40/edit?gid=417136588#gid=417136588",
         api: "https://script.google.com/macros/s/AKfycbzZme5dt5rmmaboKEOzwHrphAVBsyFFgFEO1uaFIlDQgv5XwxU9Zx94jDtE8Rj4rAX19g/exec"
@@ -227,6 +289,98 @@ export const QA_APPLICATIONS = [
         color: "#0B2E59",
 
         type: "dashboard",
+        milestones: [
+            {
+                date: "2021-05-1",
+                title: "Effective Date Contract",
+                status: "completed"
+            },
+            {
+                date: "2024-06-05",
+                title: "First Steel Cutting",
+                status: "completed"
+            },
+            {
+                date: "2026-07-03",
+                title: "Keel Laying",
+                status: "overdue"
+            },
+            {
+                date: "2026-07-03",
+                title: "Loading Block to Dock",
+                status: "overdue"
+            },
+            {
+                date: "2027-02-15",
+                title: "M/E Loading",
+                status: "upcoming"
+            },
+            {
+                date: "2027-08-30",
+                title: "Launching",
+                status: "upcoming"
+            },
+            {
+                date: "2027-10-07",
+                title: "Commisioning of Platform",
+                status: "upcoming"
+            },
+            {
+                date: "2027-11-15",
+                title: "Training Platform",
+                status: "upcoming"
+            },
+            {
+                date: "2027-12-13",
+                title: "Inclining Test",
+                status: "upcoming"
+            },
+            {
+                date: "2027-12-20",
+                title: "SAT Platform",
+                status: "upcoming"
+            },
+            {
+                date: "2028-01-12",
+                title: "Final Docking Platform",
+                status: "upcoming"
+            },
+            {
+                date: "2028-01-21",
+                title: "Commodore Inspection Platform",
+                status: "upcoming"
+            },
+            {
+                date: "2028-01-31",
+                title: "Delivery Platform",
+                status: "upcoming"
+            },
+            {
+                date: "2028-02-08",
+                title: "Combat System",
+                status: "upcoming"
+            },
+            {
+                date: "2028-06-27",
+                title: "Commisioning of Combat System",
+                status: "upcoming"
+            },
+            {
+                date: "2028-11-01",
+                title: "Training Combat System",
+                status: "upcoming"
+            },
+            {
+                date: "2028-12-27",
+                title: "SAT/LFT Combat System",
+                status: "upcoming"
+            },
+            {
+                date: "2029-03-21",
+                title: "Delivery",
+                status: "upcoming"
+            }
+        ],
         dataRingkas: "",
         dataSource: "https://docs.google.com/spreadsheets/d/11dq0Y82qz-lhSaimaNq1Wy5trgOng4nJy-GPQ8ZoEFU/edit?gid=89082007#gid=89082007",
         api: "https://script.google.com/macros/s/AKfycbzQbukAYz2i27Lvsj52JAi6G2xKmcpxiYCV0XHUO9E1xAilhSSRB6CkzRMEFzt5BqLG/exec"
@@ -343,6 +497,25 @@ export const QA_APPLICATIONS = [
         api: "https://script.google.com/macros/s/AKfycbxSye4UMbfKg7-9F3TAQPF2x_wwXj26uJztTWcnMboATAyrnGPto8L9axNaetZTenyE2g/exec"
     },
     {
+        id: "ksr",
+
+        title: "KSR",
+
+        description: "KAPAL SERBU RINGAN",
+
+        category: "surface",
+
+        icon: "fa-ship",
+
+        color: "#0B2E59",
+
+        type: "dashboard",
+        
+        dataRingkas: "",
+        dataSource: "https://docs.google.com/spreadsheets/d/1y1TZqAoExs8DXmS-12EOUlOhrVrQsqSMeFS-mAFfKUo/edit?gid=0#gid=0",
+        api: "https://script.google.com/macros/s/AKfycbxKyQrsm5uA8fZlj4NYallrp9ki_jqbd4JdnQxkTc5hyUGaM2jfjuzwveJFOeXsBBsaTQ/exec"
+    },
+    {
         id: "kssr",
 
         title: "KSSR",
@@ -374,6 +547,58 @@ export const QA_APPLICATIONS = [
         color: "#0B2E59",
 
         type: "dashboard",
+        milestones: [
+            {
+                date: "2026-04-25",
+                title: "Effective Date Contract",
+                status: "completed"
+            },
+            {
+                date: "2026-07-13",
+                title: "First Steel Cutting",
+                status: "completed"
+            },
+            {
+                date: "2026-07-31",
+                title: "Keel Laying",
+                status: "completed"
+            },
+            {
+                date: "2026-08-27",
+                title: "M/E Loading",
+                status: "upcoming"
+            },
+            {
+                date: "2026-11-10",
+                title: "Function & Commisioning",
+                status: "upcoming"
+            },
+            {
+                date: "2026-11-10",
+                title: "Launching",
+                status: "upcoming"
+            },
+            {
+                date: "2026-11-14",
+                title: "Familiarization",
+                status: "upcoming"
+            },
+            {
+                date: "2026-12-17",
+                title: "Sea Trial",
+                status: "upcoming"
+            },
+            {
+                date: "2026-12-23",
+                title: "Completion Work After Sea Trial",
+                status: "upcoming"
+            },
+            {
+                date: "2026-12-24",
+                title: "Delivery",
+                status: "upcoming"
+            }
+        ],
         dataRingkas: "",
         dataSource: "https://docs.google.com/spreadsheets/d/1Yh3p-2zc6KK3WrLl3w3SYmnl1zRmx5vwfdvT5hXo2AI/edit?gid=1609180914#gid=1609180914",
         api: "https://script.google.com/macros/s/AKfycbx4dPZfsNIlfvmo1dSIYKxXh-Rc9Ryx_pJpNoi5Ru6fsNMnpUxFQv6l6pfUeUOAVCBZ/exec"
@@ -392,6 +617,53 @@ export const QA_APPLICATIONS = [
         color: "#0B2E59",
 
         type: "dashboard",
+        milestones: [
+            {
+                date: "2026-10-12",
+                title: "Progress > 3%",
+                status: "upcoming"
+            },
+            {
+                date: "2026-11-23",
+                title: "Progress > 10,5%",
+                status: "upcoming"
+            },
+            {
+                date: "2026-12-14",
+                title: "Progress > 15,33%",
+                status: "upcoming"
+            },
+            {
+                date: "2027-03-08",
+                title: "Progress > 24,83%",
+                status: "upcoming"
+            },
+            {
+                date: "2027-05-10",
+                title: "Progress > 43,83%",
+                status: "upcoming"
+            },
+            {
+                date: "2027-07-05",
+                title: "Progress > 67,83%",
+                status: "upcoming"
+            },
+            {
+                date: "2027-09-13",
+                title: "Progress > 87,83%",
+                status: "upcoming"
+            },
+            {
+                date: "2027-11-01",
+                title: "Progress > 95,83%",
+                status: "upcoming"
+            },
+            {
+                date: "2027-12-31",
+                title: "Progress > 100%",
+                status: "upcoming"
+            }  
+        ],
         dataRingkas: "",
         dataSource: "https://docs.google.com/spreadsheets/d/1PPmEI14Zw728mPbWCCbDguqj9fsfXCB4o9Iep1s5ncA/edit?gid=966538218#gid=966538218",
         api: "https://script.google.com/macros/s/AKfycbyIEkVVwvkdn3l5a_hYQggra4rQXe5k4NprB6UCDvS258MJvqDrK4iHUefMPMFL_EhF/exec"
@@ -538,6 +810,15 @@ export const QA_APPLICATIONS = [
     // ==================================================
     // NON PROJECT
     // ==================================================
+    {
+        id: "warranty",
+        title: "WARRANTY",
+        description: "Warranty Monitoring System",
+        category: "nonproject",
+        icon: "fa-chart-column",
+        type: "external",
+        url: "apps/warranty/index.html"
+    },
     {
         id: "qar",
         title: "Quality Acceptance Ratio",
