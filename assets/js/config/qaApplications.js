@@ -842,7 +842,7 @@ export const QA_APPLICATIONS = [
     {
         id: "report",
         title: "HPM & HPP Control",
-        description: "Mengelola, mengarsipkan, mencari, dan mengunduh dokumen laporan inspeksi HPM & HPP Divisi QA secara terpusat dan terstruktur, baik secara online maupun offline.",
+        description: "Mengelola, mengarsipkan, mencari, dan mengunduh dokumen laporan inspeksi HPM & HPP Divisi QA secara terpusat dan terstruktur, baik secara online maupun offline untuk keseluruhan Project.",
         category: "nonproject",
         icon: "fa-chart-column",
         type: "external",
