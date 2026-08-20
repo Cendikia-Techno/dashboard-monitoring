@@ -16,7 +16,7 @@
         :root {
             --pal-navy: #003366;
             --pal-gold: #e6a800;
-            --bg-color: #f0f2f5;
+            --bg-color: #f4f6f9;
         }
 
         body {
@@ -73,6 +73,11 @@
             font-weight: 500;
         }
 
+        .btn-primary:hover {
+            background-color: #002244;
+            border-color: #002244;
+        }
+
         .table-responsive {
             max-height: 65vh;
             overflow-y: auto;
@@ -118,7 +123,7 @@
         }
 
         .filter-bar {
-            background-color: #f8f9fa;
+            background-color: #ffffff;
             padding: 15px;
             border-radius: 6px;
             border: 1px solid #dee2e6;
@@ -130,50 +135,66 @@
             border: none;
         }
 
-        /* --- LOGIN SCREEN E-DRAWING STYLE --- */
-        #loginScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-light);
-            z-index: 9999;
+        /* === KUSTOMISASI HALAMAN LOGIN HPM/HPP STYLE === */
+        #loginWrapper {
+            min-height: 85vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
         }
 
-        .login-box {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            width: 400px;
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 0;
             overflow: hidden;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
 
         .login-header {
-            background-color: var(--pal-blue);
-            padding: 30px 20px 25px;
-            text-align: center;
+            background-color: var(--pal-navy);
             color: white;
-            border-bottom: 4px solid var(--pal-yellow);
+            text-align: center;
+            padding: 35px 20px 25px;
+            border-bottom: 6px solid var(--pal-gold);
         }
 
-        .login-header h5 {
-            margin: 0;
-            font-size: 1.3rem;
-            font-weight: bold;
-            letter-spacing: 1px;
+        .shield-icon {
+            font-size: 2.5rem;
+            color: var(--pal-gold);
+            display: block;
+            margin-bottom: 5px;
         }
 
-        .login-header .highlight {
-            color: var(--pal-yellow);
-            font-weight: 500;
+        .login-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #555;
         }
 
-        .login-body {
-            padding: 30px 35px;
+        .login-input-group .input-group-text {
+            background-color: #fff;
+            border-right: none;
+            color: #6c757d;
+        }
+
+        .login-input-group .form-control {
+            border-left: none;
+            padding-left: 0;
+        }
+
+        .login-input-group .form-control:focus {
+            box-shadow: none;
+            border-color: #dee2e6;
+        }
+
+        .alert-login-error {
+            background-color: #f8d7da;
+            color: #842029;
+            border: 1px solid #f5c2c7;
+            border-radius: 6px;
+            font-size: 0.85rem;
         }
     </style>
 </head>
@@ -182,10 +203,12 @@
     <!-- TOP NAVBAR (Disembunyikan saat di halaman login) -->
     <nav id="topNavbar" class="navbar navbar-expand-lg navbar-custom mb-4" style="display: none;">
         <div class="container-fluid px-4">
-            <a class="navbar-brand" href="#"><i class="bi bi-shield-check me-2"></i>PT PAL INDONESIA <span>| QA Drawing
+            <a class="navbar-brand" href="#"><i class="bi bi-shield-check me-2"></i>PT PAL INDONESIA <span>| e-Drawing
                     Control</span></a>
-            <div class="d-flex text-white align-items-center">
-                <i class="bi bi-person-circle me-2"></i><span style="font-size: 0.9rem;">Quality Assurance Div.</span>
+            <div id="userSessionInfo" class="text-white align-items-center">
+                <span id="roleBadge" class="badge bg-warning text-dark me-3">Role: GUEST</span>
+                <button class="btn btn-sm btn-outline-light" onclick="logoutSystem()"><i
+                        class="bi bi-box-arrow-right me-1"></i> Logout</button>
             </div>
         </div>
     </nav>
@@ -286,14 +309,14 @@
                                     <input type="date" id="revDate" class="form-control" required>
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label">File PDF <small class="text-muted">(Kosongkan jika Data
-                                            Manual/Hardcopy)</small></label>
+                                    <label class="form-label">File PDF <small class="text-muted">(Kosongkan jika
+                                            Manual)</small></label>
                                     <input type="file" id="pdfFile" class="form-control" accept="application/pdf">
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Catatan Pemeriksaan QA</label>
                                     <textarea id="note" class="form-control" rows="2"
-                                        placeholder="Tulis catatan persetujuan atau perubahan dimensi..."></textarea>
+                                        placeholder="Catatan persetujuan..."></textarea>
                                 </div>
                             </div>
                             <hr class="mt-4 mb-3">
@@ -317,7 +340,7 @@
                         <div class="filter-bar row g-2 mb-3">
                             <div class="col-md-4">
                                 <div class="input-group input-group-sm">
-                                    <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                                    <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
                                     <input type="text" id="searchBox" class="form-control"
                                         placeholder="Cari No / Nama Drawing..." onkeyup="applyFilters()">
                                 </div>
@@ -492,11 +515,7 @@
             const tbody = document.getElementById("tableBody");
             tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted"><div class="spinner-border text-primary" role="status"></div><br>Sinkronisasi Database...</td></tr>';
 
-            // Kembali menggunakan POST ke URL Apps Script langsung (Tanpa Proxy)
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: "read" })
-            })
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "read" }) })
                 .then(response => response.json())
                 .then(res => {
                     if (res.status === "success" && res.data.length > 0) {
@@ -508,7 +527,6 @@
                     }
                 })
                 .catch(err => {
-                    console.error("Error:", err);
                     tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger py-4"><i class="bi bi-exclamation-triangle fs-2 d-block mb-2"></i>Koneksi ke server gagal.</td></tr>';
                 });
         }
@@ -601,7 +619,7 @@
             })
                 .then(response => response.json())
                 .then(res => {
-                    Swal.fire({ title: 'Berhasil!', text: 'Dokumen Drawing berhasil direkam ke Database.', icon: 'success', confirmButtonColor: '#003366' });
+                    Swal.fire({ title: 'Berhasil!', text: 'Dokumen Drawing berhasil direkam.', icon: 'success', confirmButtonColor: '#003366' });
                     document.getElementById("drawingForm").reset();
                     loadData();
                 })
