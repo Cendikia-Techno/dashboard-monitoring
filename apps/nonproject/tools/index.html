@@ -40,6 +40,61 @@
             box-sizing: border-box;
         }
 
+        /* Halaman Login Ala E-Drawing & HPM HPP */
+        #loginOverlay {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+            background: #ffffff;
+            width: 380px;
+            max-width: 90%;
+            padding: 30px;
+            border-radius: 6px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border-top: 6px solid #003366;
+            text-align: center;
+        }
+
+        .login-card h3 {
+            margin-top: 0;
+            color: #0f172a;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+
+        .login-card p {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .login-card input {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .login-card input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+        }
+
         /* Kop Dokumen ala PT PAL / QA */
         .doc-header {
             display: flex;
@@ -178,7 +233,6 @@
         th,
         td {
             border: 1px solid #475569;
-            /* Garis grid lebih tegas */
             padding: 6px 8px;
             text-align: left;
         }
@@ -379,7 +433,6 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 3px solid #f59e0b;
-            /* Aksen garis bawah kuning */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             margin-bottom: 20px;
@@ -397,7 +450,6 @@
 
         .app-title-left span.highlight {
             color: #f59e0b;
-            /* Warna kuning emas khas QA Drawing Control */
         }
 
         .app-div-right {
@@ -412,10 +464,23 @@
 </head>
 
 <body>
+    <!-- HALAMAN LOGIN TERINTEGRASI -->
+    <div id="loginOverlay">
+        <div class="login-card">
+            <h3>🔒 Autentikasi Sistem</h3>
+            <p>PT PAL Indonesia — Quality Assurance Tools Management</p>
+            <form onsubmit="handleLogin(event)">
+                <input type="password" id="loginPassword" placeholder="Masukkan Password Akses" required autofocus>
+                <button type="submit" class="btn btn-pinjam" style="width: 100%; padding: 10px;">Masuk Sistem</button>
+            </form>
+            <div id="loginError" style="color: #dc2626; font-size: 12px; margin-top: 10px; display: none;">Password
+                Salah!</div>
+        </div>
+    </div>
+
     <!-- NAVBAR / HEADER UTAMA ALA QA DRAWING CONTROL -->
     <div class="app-header-bar">
         <div class="app-title-left">
-            <!-- Ikon tameng/centang kecil (bisa pakai SVG atau emoji) -->
             <span>🛡️</span>
             <span>PT PAL INDONESIA</span>
             <span style="color: #94a3b8; font-weight: 400;">|</span>
@@ -423,14 +488,13 @@
         </div>
         <div class="app-div-right">
             <span>👤</span>
-            <span>Quality Assurance Div.</span>
+            <span id="userRoleBadge">Quality Assurance Div.</span>
+            <button onclick="logout()" class="btn btn-kembali"
+                style="padding: 2px 8px; font-size: 11px; margin-left: 10px;">Keluar</button>
         </div>
     </div>
 
     <div class="container">
-        <!-- Kop Dokumen Kontrol ala Engineering / QA -->
-        
-
         <!-- KPI CARDS 5 KOLOM -->
         <div class="kpi-container">
             <div class="kpi-card kpi-exp">
@@ -595,7 +659,6 @@
                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
                 <h3 style="margin: 0; color: #333;">📄 Preview Sertifikat</h3>
                 <div style="display: flex; gap: 10px;">
-                    <!-- Tombol cadangan jika iframe diblokir -->
                     <a id="linkTabBaru" href="#" target="_blank"
                         style="background: #0ea5e9; color: white; border: none; border-radius: 4px; padding: 5px 10px; text-decoration: none; font-size: 13px; font-weight: bold;">Buka
                         Tab Baru ↗</a>
@@ -610,17 +673,65 @@
     </div>
 
     <script>
-        // ==========================================
-        // ⚠️ MASUKKAN URL GOOGLE APPS SCRIPT DI BAWAH INI
-        // ==========================================
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzAuhnDuZARSET5MrU3QDGBepwB2V08fvqdaMyMgnMLNxqF3NDLk96tFdbTGrAOn_pe/exec";
 
-        // Variabel Global
         let globalDataAlat = [];
         let filteredData = [];
         let currentPage = 1;
         let rowsPerPage = 10;
         let html5QrCode;
+
+        // --- SISTEM AUTENTIKASI UI BARU ---
+        function checkRole() {
+            let role = sessionStorage.getItem('userRole');
+            if (!role) {
+                document.getElementById('loginOverlay').style.display = 'flex';
+                return false;
+            } else {
+                document.getElementById('loginOverlay').style.display = 'none';
+                updateRoleBadgeUI(role);
+                return true;
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            let pass = document.getElementById('loginPassword').value;
+            let errorDiv = document.getElementById('loginError');
+
+            if (pass === "adminQE1234") {
+                sessionStorage.setItem('userRole', 'admin');
+                document.getElementById('loginOverlay').style.display = 'none';
+                updateRoleBadgeUI('admin');
+                loadData();
+            } else if (pass === "12345678") {
+                sessionStorage.setItem('userRole', 'peminjam');
+                document.getElementById('loginOverlay').style.display = 'none';
+                updateRoleBadgeUI('peminjam');
+                loadData();
+            } else {
+                errorDiv.style.display = 'block';
+                document.getElementById('loginPassword').value = '';
+            }
+        }
+
+        function updateRoleBadgeUI(role) {
+            const badge = document.getElementById('userRoleBadge');
+            if (role === 'admin') {
+                badge.innerText = "Admin QA (Akses Penuh)";
+            } else {
+                badge.innerText = "Peminjam / Inspektor";
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('userRole');
+            location.reload();
+        }
+
+        function isAdmin() {
+            return sessionStorage.getItem('userRole') === 'admin';
+        }
 
         // --- 1. AMBIL DATA API ---
         async function loadData() {
@@ -654,17 +765,14 @@
             const dataHalamanIni = filteredData.slice(startIndex, endIndex);
 
             dataHalamanIni.forEach(alat => {
-                // A. Logika Status Peminjaman & Kalibrasi Dasar
                 let statusPinjam = alat['Status Peminjaman'] || "Tersedia";
                 let displayStatusPeminjaman = `<b>${statusPinjam}</b>`;
                 let statusKalibrasi = `<span class="badge-aman">Aman</span>`;
 
-                // Logika Status Khusus "Sedang Dikalibrasi"
                 if (statusPinjam === "Sedang Dikalibrasi") {
                     displayStatusPeminjaman = `<b style="color: #dc2626;">TIDAK BISA DIPINJAM</b>`;
                     statusKalibrasi = `<span style="background: #e0e7ff; color: #4338ca; padding: 4px 8px; border-radius: 20px; font-weight: bold; font-size: 11px;">SEDANG DIKALIBRASI</span>`;
                 } else {
-                    // Logika Kalibrasi Normal (Jika tidak sedang di lab)
                     if (alat['Tgl Expired Kalibrasi']) {
                         const tglExp = new Date(alat['Tgl Expired Kalibrasi']);
                         const diffDaysKalibrasi = Math.ceil((tglExp - today) / (1000 * 60 * 60 * 24));
@@ -678,7 +786,6 @@
                     }
                 }
 
-                // B. Logika Tanggal Pinjam (Jika sedang dipinjam)
                 if (statusPinjam === "Dipinjam" && alat['Tgl Kembali']) {
                     const tglKembali = new Date(alat['Tgl Kembali']);
                     tglKembali.setHours(0, 0, 0, 0);
@@ -689,45 +796,38 @@
                     displayStatusPeminjaman = `<b style="color: #2563eb;">Dipinjam</b>${notifKembali}`;
                 }
 
-                // C. Logika Tombol Aksi (Tersentralisasi)
                 let tombolUtama = "";
                 let tombolKalibrasi = "";
 
-                // 1. Tentukan tombol dasar berdasarkan status
                 if (statusPinjam === "Tersedia") {
-                    tombolUtama = `<button class="btn btn-pinjam" onclick="openPinjam('${alat['Tool ID']}')">Pinjam</button>
-                           <button class="btn" style="background: #475569;" onclick="kirimKalibrasi('${alat['Tool ID']}')">Kirim Kalibrasi</button>`;
-                    tombolKalibrasi = `<button class="btn btn-kalibrasi" onclick="openKalibrasi('${alat['Tool ID']}')">⚙️ Update Kalibrasi</button>`;
+                    tombolUtama = `<button class="btn btn-pinjam" onclick="openPinjam('${alat['Tool ID']}')">Pinjam</button>`;
+                    if (isAdmin()) {
+                        tombolUtama += `<button class="btn" style="background: #475569;" onclick="kirimKalibrasi('${alat['Tool ID']}')">Kirim Kalibrasi</button>`;
+                        tombolKalibrasi = `<button class="btn btn-kalibrasi" onclick="openKalibrasi('${alat['Tool ID']}')">⚙️ Update Kalibrasi</button>`;
+                    }
                 } else if (statusPinjam === "Dipinjam") {
-                    tombolUtama = `<button class="btn btn-kembali" onclick="openKembali('${alat['Tool ID']}')">Kembalikan</button>`;
-                    tombolKalibrasi = `<button class="btn btn-kalibrasi" onclick="openKalibrasi('${alat['Tool ID']}')">⚙️ Update Kalibrasi</button>`;
+                    tombolUtama = `<span style="color:  #64748b; font-weight: bold; border: 1px solid #64748b; padding: 6px; border-radius: 4px; text-align: center; font-size: 12px;">Tidak Tersedia</span>`;
+                    if (isAdmin()) {
+                        tombolUtama = `<button class="btn btn-kembali" onclick="openKembali('${alat['Tool ID']}')">Kembalikan</button>`;
+                        tombolKalibrasi = `<button class="btn btn-kalibrasi" onclick="openKalibrasi('${alat['Tool ID']}')">⚙️ Update Kalibrasi</button>`;
+                    }
                 } else if (statusPinjam === "Sedang Dikalibrasi") {
                     tombolUtama = `<span style="color: #8b5cf6; font-weight: bold; border: 1px solid #8b5cf6; padding: 6px; border-radius: 4px; text-align: center; font-size: 12px;">SEDANG DI LAB</span>`;
-                    tombolKalibrasi = `<button class="btn btn-kalibrasi" style="background: #10b981;" onclick="openKalibrasi('${alat['Tool ID']}')">✅ Selesai Kalibrasi</button>`;
+                    if (isAdmin()) {
+                        tombolKalibrasi = `<button class="btn btn-kalibrasi" style="background: #10b981;" onclick="openKalibrasi('${alat['Tool ID']}')">✅ Selesai Kalibrasi</button>`;
+                    }
                 } else {
-                    // Status Rusak/Hilang
                     tombolUtama = `<span style="color: #dc2626; font-weight: bold; border: 1px solid #dc2626; padding: 6px; border-radius: 4px; text-align: center; font-size: 12px;">${statusPinjam.toUpperCase()}</span>`;
-                    tombolKalibrasi = `<button class="btn btn-kalibrasi" onclick="openKalibrasi('${alat['Tool ID']}')">⚙️ Update Kalibrasi</button>`;
-                }
-
-                // 2. Filter Berdasarkan Role (Jika bukan Admin, hapus tombol Kalibrasi & limit tombol Utama)
-                if (!isAdmin()) {
-                    if (statusPinjam === "Tersedia") {
-                        tombolUtama = `<button class="btn btn-pinjam" onclick="openPinjam('${alat['Tool ID']}')">Pinjam</button>`;
-                        tombolKalibrasi = "";
-                    } else {
-                        tombolUtama = `<span style="color: #64748b; font-size: 12px;">Akses Terbatas</span>`;
-                        tombolKalibrasi = "";
+                    if (isAdmin()) {
+                        tombolKalibrasi = `<button class="btn btn-kalibrasi" onclick="openKalibrasi('${alat['Tool ID']}')">⚙️ Update Kalibrasi</button>`;
                     }
                 }
 
-                // D. Preview Link
                 let certLink = alat['Certificate Link'] || alat['certificate link'] || alat['Link Sertifikat'] || alat['certificate_link'] || "";
                 let linkSertifikat = certLink && certLink.toString().trim() !== ""
                     ? `<button onclick="openPreview('${certLink}')" style="background: #f1f5f9; padding: 4px 8px; border-radius: 4px; border: 1px solid #cbd5e1; font-weight:bold; color: #0284c7; cursor: pointer; font-size: 12px;">📄 Preview</button>`
                     : `<span style="color:#94a3b8; font-size:12px;">Belum Ada</span>`;
 
-                // E. Gabungkan ke Baris Tabel
                 html += `
             <tr>
                 <td><div class="aksi-container">${tombolUtama}${tombolKalibrasi}</div></td>
@@ -748,7 +848,6 @@
             renderPaginationControls();
         }
 
-        // --- (Fungsi Pagination, Search, Scanner tetap sama seperti sebelumnya) ---
         function renderPaginationControls() {
             const totalPages = Math.ceil(filteredData.length / rowsPerPage) || 1;
             let startItem = (currentPage - 1) * rowsPerPage + 1;
@@ -787,7 +886,6 @@
             renderTable();
         }
 
-        // --- FITUR SCANNER & MODAL (Tetap sama) ---
         function openScanner() {
             document.getElementById('modalScanner').style.display = 'block';
             html5QrCode = new Html5Qrcode("reader");
@@ -816,10 +914,9 @@
         function openKembali(id) { document.getElementById('kembali_id_alat').value = id; document.getElementById('modalKembali').style.display = 'block'; }
         function openKalibrasi(id) { document.getElementById('kalibrasi_id_alat').value = id; document.getElementById('modalKalibrasi').style.display = 'block'; }
         function closeModal() { document.getElementById('modalPinjam').style.display = 'none'; document.getElementById('modalKembali').style.display = 'none'; document.getElementById('modalKalibrasi').style.display = 'none'; }
-        // --- FUNGSI PREVIEW DOKUMEN ---
+
         function openPreview(url) {
             let embedUrl = url;
-            // Update link di tombol "Buka Tab Baru"
             document.getElementById('linkTabBaru').href = url;
 
             if (url.includes("drive.google.com/file/d/")) {
@@ -833,20 +930,15 @@
 
         function closePreview() {
             document.getElementById('modalPreview').style.display = 'none';
-            document.getElementById('iframePreview').src = ""; // Kosongkan iframe agar proses load berhenti
+            document.getElementById('iframePreview').src = "";
         }
 
-        // --- FUNGSI SUBMIT BARU ---
-        // Fungsi Baru: Kirim Kalibrasi (Mengunci Alat)
         async function kirimKalibrasi(id) {
-            // Pagar Keamanan: Cek apakah user adalah Admin
-            if (!isAdmin()) {
-                return alert("Akses Ditolak! Hanya Admin yang dapat mengirim alat untuk kalibrasi.");
-            }
-            if (confirm("Bawa alat ini untuk dikalibrasi? Alat akan dikunci dan tidak bisa dipinjam teknisi lain sampai proses kalibrasi selesai.")) {
+            if (!isAdmin()) return alert("Akses Ditolak! Hanya Admin.");
+            if (confirm("Bawa alat ini untuk dikalibrasi? Alat akan dikunci.")) {
                 document.getElementById('loading').style.display = "inline";
                 await fetch(`${APPS_SCRIPT_URL}?action=kirim_kalibrasi&id_alat=${id}`, { redirect: "follow" });
-                alert("Alat sekarang berstatus 'Sedang Dikalibrasi'.");
+                alert("Alat berstatus 'Sedang Dikalibrasi'.");
                 loadData();
             }
         }
@@ -867,10 +959,6 @@
         }
 
         async function submitKembali() {
-            // Pagar Keamanan: Cek apakah user adalah Admin
-            if (!isAdmin()) {
-                return alert("Akses Ditolak! Hanya Admin yang dapat mengirim alat untuk kalibrasi.");
-            }
             let id = document.getElementById('kembali_id_alat').value;
             let kondisi = document.getElementById('kembali_kondisi').value;
 
@@ -881,10 +969,9 @@
         }
 
         async function submitKalibrasi() {
-            // Pagar Keamanan: Hanya Admin yang bisa lanjut
             if (!isAdmin()) {
                 closeModal();
-                return alert("Akses Ditolak! Hanya Admin yang dapat memperbarui data kalibrasi.");
+                return alert("Akses Ditolak! Hanya Admin.");
             }
             let id = document.getElementById('kalibrasi_id_alat').value;
             let tgl = document.getElementById('kalibrasi_tgl').value;
@@ -892,16 +979,15 @@
             let vendor = document.getElementById('kalibrasi_vendor').value;
             let link = document.getElementById('kalibrasi_link').value;
 
-            if (!tgl || !expired || !vendor) return alert("Tanggal Kalibrasi, Expired, dan Vendor wajib diisi!");
+            if (!tgl || !expired || !vendor) return alert("Data wajib diisi!");
 
             document.getElementById('loading').style.display = "inline";
             closeModal();
             await fetch(`${APPS_SCRIPT_URL}?action=kalibrasi&id_alat=${id}&tgl_kalibrasi=${tgl}&tgl_expired=${expired}&vendor=${vendor}&link_sertifikat=${link}`, { redirect: "follow" });
-            alert("Data Kalibrasi berhasil diperbarui dan Alat kembali Tersedia!");
+            alert("Data Kalibrasi diperbarui!");
             loadData();
         }
 
-        // KPI 
         function updateKPIs() {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -911,16 +997,12 @@
 
             globalDataAlat.forEach(alat => {
                 let status = (alat['Status Peminjaman'] || "").toString().trim();
-
-                // Hitung Kalibrasi
                 if (alat['Tgl Expired Kalibrasi']) {
                     const tglExp = new Date(alat['Tgl Expired Kalibrasi']);
                     const diffDays = Math.ceil((tglExp - today) / (1000 * 60 * 60 * 24));
                     if (diffDays < 0) expired++;
                     else if (diffDays <= 30) warning++;
                 }
-
-                // Hitung Status
                 if (status === "Dipinjam") loan++;
                 if (status === "Sedang Dikalibrasi") calibrating++;
             });
@@ -932,49 +1014,12 @@
             document.getElementById('kpi-total').innerText = total;
         }
 
-        // Eksekusi load data saat HTML dibuka pertama kali
-        // --- FUNGSI LOGIN BERDASARKAN PASSWORD ---
-        function checkRole() {
-            let role = sessionStorage.getItem('userRole');
-
-            // Jika belum ada sesi login
-            if (!role) {
-                let pass = prompt("🔒 Masukkan Password Akses:");
-
-                if (pass === "adminQE1234") {
-                    sessionStorage.setItem('userRole', 'admin');
-                    alert("✅ Login berhasil sebagai Admin!");
-                    return true;
-                } else if (pass === "12345678") {
-                    sessionStorage.setItem('userRole', 'inspektor');
-                    alert("✅ Login berhasil sebagai Inspektor!");
-                    return true;
-                } else {
-                    alert("❌ Password Salah! Akses ditolak.");
-                    // Kosongkan layar jika password salah agar tidak bisa lihat apa-apa
-                    document.body.innerHTML = "<h2 style='text-align:center; margin-top:20%; color:red;'>Akses Ditolak. Silakan muat ulang (refresh) halaman.</h2>";
-                    return false; // Hentikan proses
-                }
-            }
-            return true; // Lanjut jika sudah login sebelumnya
-        }
-
-        // Pengecekan apakah user adalah Admin
-        function isAdmin() {
-            return sessionStorage.getItem('userRole') === 'admin';
-        }
-
-        // Eksekusi saat halaman dibuka
         window.onload = function () {
-            // Hanya muat data JIKA password benar
             if (checkRole()) {
                 loadData();
             }
         };
-
-
     </script>
-
 </body>
 
 </html>
