@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,49 +11,204 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <style>
-        :root { --pal-navy: #003366; --pal-gold: #e6a800; --bg-color: #f4f6f9; }
-        body { background-color: var(--bg-color); font-family: 'Segoe UI', system-ui, sans-serif; padding-bottom: 60px; }
-        .navbar-custom { background-color: var(--pal-navy); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .navbar-brand { font-weight: 700; letter-spacing: 0.5px; color: #ffffff !important; }
-        .navbar-brand span { color: var(--pal-gold); }
-        .card { border: none; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 25px; }
-        .card-header { background-color: #ffffff; color: var(--pal-navy); border-bottom: 3px solid var(--pal-navy); font-weight: 600; padding: 15px 20px; }
-        .form-label { font-weight: 500; color: #495057; font-size: 0.9rem; }
-        .form-control, .form-select { border-radius: 6px; font-size: 0.95rem; }
-        .btn-primary { background-color: var(--pal-navy); border-color: var(--pal-navy); font-weight: 500; }
-        .btn-primary:hover { background-color: #002244; border-color: #002244; }
-        .table-responsive { max-height: 65vh; overflow-y: auto; }
-        .table thead { background-color: var(--pal-navy); color: white; position: sticky; top: 0; z-index: 1;}
-        .badge { padding: 6px 10px; font-weight: 600; border-radius: 4px; font-size: 0.8rem; }
-        .badge-RELEASED { background-color: #198754; color: white; }
-        .badge-OBSOLETE { background-color: #dc3545; color: white; }
-        .badge-biro { background-color: #e2e8f0; color: #334155; border: 1px solid #cbd5e1; }
-        .badge-hardcopy { background-color: #6c757d; color: white; border-radius: 4px; padding: 6px 10px; font-size: 0.75rem; }
-        .filter-bar { background-color: #ffffff; padding: 15px; border-radius: 6px; border: 1px solid #dee2e6; }
-        #pdfIframe { width: 100%; height: 75vh; border: none; }
-        
+        :root {
+            --pal-navy: #003366;
+            --pal-gold: #e6a800;
+            --bg-color: #f4f6f9;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            padding-bottom: 60px;
+        }
+
+        .navbar-custom {
+            background-color: var(--pal-navy);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff !important;
+        }
+
+        .navbar-brand span {
+            color: var(--pal-gold);
+        }
+
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        .card-header {
+            background-color: #ffffff;
+            color: var(--pal-navy);
+            border-bottom: 3px solid var(--pal-navy);
+            font-weight: 600;
+            padding: 15px 20px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background-color: var(--pal-navy);
+            border-color: var(--pal-navy);
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background-color: #002244;
+            border-color: #002244;
+        }
+
+        .table-responsive {
+            max-height: 65vh;
+            overflow-y: auto;
+        }
+
+        .table thead {
+            background-color: var(--pal-navy);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .badge {
+            padding: 6px 10px;
+            font-weight: 600;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .badge-RELEASED {
+            background-color: #198754;
+            color: white;
+        }
+
+        .badge-OBSOLETE {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .badge-biro {
+            background-color: #e2e8f0;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+        }
+
+        .badge-hardcopy {
+            background-color: #6c757d;
+            color: white;
+            border-radius: 4px;
+            padding: 6px 10px;
+            font-size: 0.75rem;
+        }
+
+        .filter-bar {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+
+        #pdfIframe {
+            width: 100%;
+            height: 75vh;
+            border: none;
+        }
+
         /* === KUSTOMISASI HALAMAN LOGIN HPM/HPP STYLE === */
-        #loginWrapper { min-height: 85vh; display: flex; align-items: center; justify-content: center; }
-        .login-card { width: 100%; max-width: 400px; padding: 0; overflow: hidden; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        .login-header { background-color: var(--pal-navy); color: white; text-align: center; padding: 35px 20px 25px; border-bottom: 6px solid var(--pal-gold); }
-        .shield-icon { font-size: 2.5rem; color: var(--pal-gold); display: block; margin-bottom: 5px; }
-        .login-label { font-size: 0.85rem; font-weight: 700; color: #555; }
-        .login-input-group .input-group-text { background-color: #fff; border-right: none; color: #6c757d; }
-        .login-input-group .form-control { border-left: none; padding-left: 0; }
-        .login-input-group .form-control:focus { box-shadow: none; border-color: #dee2e6; }
-        .alert-login-error { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; border-radius: 6px; font-size: 0.85rem; }
+        #loginWrapper {
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 0;
+            overflow: hidden;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .login-header {
+            background-color: var(--pal-navy);
+            color: white;
+            text-align: center;
+            padding: 35px 20px 25px;
+            border-bottom: 6px solid var(--pal-gold);
+        }
+
+        .shield-icon {
+            font-size: 2.5rem;
+            color: var(--pal-gold);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .login-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #555;
+        }
+
+        .login-input-group .input-group-text {
+            background-color: #fff;
+            border-right: none;
+            color: #6c757d;
+        }
+
+        .login-input-group .form-control {
+            border-left: none;
+            padding-left: 0;
+        }
+
+        .login-input-group .form-control:focus {
+            box-shadow: none;
+            border-color: #dee2e6;
+        }
+
+        .alert-login-error {
+            background-color: #f8d7da;
+            color: #842029;
+            border: 1px solid #f5c2c7;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
     </style>
 </head>
+
 <body>
     <!-- TOP NAVBAR (Disembunyikan saat di halaman login) -->
     <nav id="topNavbar" class="navbar navbar-expand-lg navbar-custom mb-4" style="display: none;">
         <div class="container-fluid px-4">
-            <a class="navbar-brand" href="#"><i class="bi bi-shield-check me-2"></i>PT PAL INDONESIA <span>| e-Drawing Control</span></a>
+            <a class="navbar-brand" href="#"><i class="bi bi-shield-check me-2"></i>PT PAL INDONESIA <span>| e-Drawing
+                    Control</span></a>
             <div id="userSessionInfo" class="text-white align-items-center">
                 <span id="roleBadge" class="badge bg-warning text-dark me-3">Role: GUEST</span>
-                <button class="btn btn-sm btn-outline-light" onclick="logoutSystem()"><i class="bi bi-box-arrow-right me-1"></i> Logout</button>
+                <button class="btn btn-sm btn-outline-light" onclick="logoutSystem()"><i
+                        class="bi bi-box-arrow-right me-1"></i> Logout</button>
             </div>
         </div>
     </nav>
@@ -63,11 +219,13 @@
             <div class="login-header">
                 <i class="bi bi-shield-check shield-icon"></i>
                 <h4 class="fw-bold mt-2 mb-1" style="letter-spacing: 0.5px;">PT PAL INDONESIA</h4>
-                <p class="mb-0" style="font-size: 0.9rem;"><span style="color: var(--pal-gold);">e-Drawing</span> Control</p>
+                <p class="mb-0" style="font-size: 0.9rem;"><span style="color: var(--pal-gold);">e-Drawing</span>
+                    Control</p>
             </div>
             <div class="card-body p-4">
-                <p class="text-center text-muted mb-4" style="font-size: 0.85rem;">Silakan login untuk mengakses Master Log Document</p>
-                
+                <p class="text-center text-muted mb-4" style="font-size: 0.85rem;">Silakan login untuk mengakses Master
+                    Log Document</p>
+
                 <form id="loginForm">
                     <div class="mb-3">
                         <label class="form-label login-label">Hak Akses Login</label>
@@ -83,13 +241,14 @@
                             <input type="password" id="adminPassword" class="form-control" placeholder="••••••••">
                         </div>
                     </div>
-                    
+
                     <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-2">
                         <i class="bi bi-box-arrow-in-right me-2"></i> Masuk Aplikasi
                     </button>
-                    
+
                     <!-- Box Error (Hidden by default) -->
-                    <div id="loginError" class="alert alert-login-error mt-3 py-2 text-center" style="display: none; margin-bottom: 0;">
+                    <div id="loginError" class="alert alert-login-error mt-3 py-2 text-center"
+                        style="display: none; margin-bottom: 0;">
                         <i class="bi bi-exclamation-circle-fill me-1"></i> Password yang Anda masukkan salah!
                     </div>
                 </form>
@@ -103,7 +262,8 @@
             <!-- FORM INPUT (HANYA MUNCUL JIKA ADMIN) -->
             <div class="col-xl-4 col-lg-5" id="adminFormSection" style="display: none;">
                 <div class="card">
-                    <div class="card-header"><i class="bi bi-cloud-arrow-up me-2"></i> Form Registrasi & Update Revisi</div>
+                    <div class="card-header"><i class="bi bi-cloud-arrow-up me-2"></i> Form Registrasi & Update Revisi
+                    </div>
                     <div class="card-body">
                         <form id="drawingForm">
                             <div class="row g-3">
@@ -130,27 +290,33 @@
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Nomor Drawing <span class="text-danger">*</span></label>
-                                    <input type="text" id="drawingNo" class="form-control" required placeholder="Ex: PAL-DWG-26-001">
+                                    <input type="text" id="drawingNo" class="form-control" required
+                                        placeholder="Ex: PAL-DWG-26-001">
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label">Nama Drawing (Deskripsi) <span class="text-danger">*</span></label>
-                                    <input type="text" id="drawingName" class="form-control" required placeholder="Ex: Hull Assembly Section 3">
+                                    <label class="form-label">Nama Drawing (Deskripsi) <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" id="drawingName" class="form-control" required
+                                        placeholder="Ex: Hull Assembly Section 3">
                                 </div>
                                 <div class="col-md-5">
                                     <label class="form-label">Revisi <span class="text-danger">*</span></label>
                                     <input type="text" id="revision" class="form-control" required placeholder="Rev 00">
                                 </div>
                                 <div class="col-md-7">
-                                    <label class="form-label">Tgl. Revisi Drawing <span class="text-danger">*</span></label>
+                                    <label class="form-label">Tgl. Revisi Drawing <span
+                                            class="text-danger">*</span></label>
                                     <input type="date" id="revDate" class="form-control" required>
                                 </div>
                                 <div class="col-12">
-                                    <label class="form-label">File PDF <small class="text-muted">(Kosongkan jika Manual)</small></label>
+                                    <label class="form-label">File PDF <small class="text-muted">(Kosongkan jika
+                                            Manual)</small></label>
                                     <input type="file" id="pdfFile" class="form-control" accept="application/pdf">
                                 </div>
                                 <div class="col-12">
                                     <label class="form-label">Catatan Pemeriksaan QA</label>
-                                    <textarea id="note" class="form-control" rows="2" placeholder="Catatan persetujuan..."></textarea>
+                                    <textarea id="note" class="form-control" rows="2"
+                                        placeholder="Catatan persetujuan..."></textarea>
                                 </div>
                             </div>
                             <hr class="mt-4 mb-3">
@@ -167,14 +333,16 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div><i class="bi bi-server me-2"></i> Master Log Document</div>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="loadData()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="loadData()"><i
+                                class="bi bi-arrow-clockwise"></i> Refresh</button>
                     </div>
                     <div class="card-body p-3">
                         <div class="filter-bar row g-2 mb-3">
                             <div class="col-md-4">
                                 <div class="input-group input-group-sm">
                                     <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
-                                    <input type="text" id="searchBox" class="form-control" placeholder="Cari No / Nama Drawing..." onkeyup="applyFilters()">
+                                    <input type="text" id="searchBox" class="form-control"
+                                        placeholder="Cari No / Nama Drawing..." onkeyup="applyFilters()">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -215,7 +383,12 @@
                                     </tr>
                                 </thead>
                                 <tbody id="tableBody">
-                                    <tr><td colspan="8" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Memuat data dari server...</td></tr>
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4 text-muted">
+                                            <div class="spinner-border spinner-border-sm me-2"></div>Memuat data dari
+                                            server...
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -231,7 +404,8 @@
             <div class="modal-content border-0 shadow-lg">
                 <div class="modal-header text-white" style="background-color: var(--pal-navy);">
                     <h5 class="modal-title" id="pdfModalLabel">Document Viewer</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="closePdfModal()"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        onclick="closePdfModal()"></button>
                 </div>
                 <div class="modal-body p-0 bg-light">
                     <iframe id="pdfIframe" src=""></iframe>
@@ -248,25 +422,25 @@
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3093hdhNaUX9BuYF0EwJev2dpbI8c3TJjOuDv2Xq0m6AZn8cU7EX8h73J_vjITk3ojw/exec";
 
         let globalDrawingData = [];
-        let currentUserRole = ""; 
+        let currentUserRole = "";
 
         // --- SISTEM LOGIN & OTORISASI ---
         function togglePasswordInput() {
             let role = document.getElementById("loginRole").value;
             let pwdGroup = document.getElementById("passwordGroup");
             let errorBox = document.getElementById("loginError");
-            
+
             errorBox.style.display = "none"; // Sembunyikan error saat ganti dropdown
-            
+
             if (role === "admin") {
                 pwdGroup.style.display = "block";
             } else {
                 pwdGroup.style.display = "none";
-                document.getElementById("adminPassword").value = ""; 
+                document.getElementById("adminPassword").value = "";
             }
         }
 
-        document.getElementById("loginForm").addEventListener("submit", function(e) {
+        document.getElementById("loginForm").addEventListener("submit", function (e) {
             e.preventDefault();
             let role = document.getElementById("loginRole").value;
             let errorBox = document.getElementById("loginError");
@@ -287,7 +461,7 @@
             document.getElementById("loginWrapper").style.display = "none";
             document.getElementById("topNavbar").style.display = "flex";
             document.getElementById("appContainer").style.display = "block";
-            
+
             let roleBadge = document.getElementById("roleBadge");
             if (currentUserRole === "admin") {
                 roleBadge.className = "badge bg-danger text-white me-3";
@@ -298,7 +472,7 @@
                 roleBadge.className = "badge bg-info text-dark me-3";
                 roleBadge.innerHTML = "Role: VIEW ONLY (BIRO)";
                 document.getElementById("adminFormSection").style.display = "none";
-                document.getElementById("tableSectionContainer").className = "col-12"; 
+                document.getElementById("tableSectionContainer").className = "col-12";
             }
 
             loadData();
@@ -310,7 +484,7 @@
             document.getElementById("loginForm").reset();
             document.getElementById("loginRole").value = "admin"; // Kembalikan ke default admin
             togglePasswordInput();
-            
+
             document.getElementById("topNavbar").style.display = "none";
             document.getElementById("appContainer").style.display = "none";
             document.getElementById("loginWrapper").style.display = "flex";
@@ -340,21 +514,21 @@
         function loadData() {
             const tbody = document.getElementById("tableBody");
             tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted"><div class="spinner-border text-primary" role="status"></div><br>Sinkronisasi Database...</td></tr>';
-            
+
             fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "read" }) })
-            .then(response => response.json())
-            .then(res => {
-                if(res.status === "success" && res.data.length > 0) {
-                    globalDrawingData = res.data.reverse(); 
-                    populateProjectFilter(globalDrawingData); 
-                    applyFilters(); 
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted"><i class="bi bi-folder-x fs-2 d-block mb-2"></i>Belum ada record drawing di sistem.</td></tr>';
-                }
-            })
-            .catch(err => {
-                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger py-4"><i class="bi bi-exclamation-triangle fs-2 d-block mb-2"></i>Koneksi ke server gagal.</td></tr>';
-            });
+                .then(response => response.json())
+                .then(res => {
+                    if (res.status === "success" && res.data.length > 0) {
+                        globalDrawingData = res.data.reverse();
+                        populateProjectFilter(globalDrawingData);
+                        applyFilters();
+                    } else {
+                        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted"><i class="bi bi-folder-x fs-2 d-block mb-2"></i>Belum ada record drawing di sistem.</td></tr>';
+                    }
+                })
+                .catch(err => {
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger py-4"><i class="bi bi-exclamation-triangle fs-2 d-block mb-2"></i>Koneksi ke server gagal.</td></tr>';
+                });
         }
 
         function populateProjectFilter(data) {
@@ -364,7 +538,7 @@
             const defaultProjects = ["W.304-305 Frigate", "W.306-307 LDP", "W.308 LPD UAE", "W.311 KSSR", "M.312 Phinisi"];
             const allProjects = [...new Set([...defaultProjects, ...uniqueProjects])];
             allProjects.forEach(proj => {
-                if(proj && proj.trim() !== "") projectSelect.innerHTML += `<option value="${proj}">${proj}</option>`;
+                if (proj && proj.trim() !== "") projectSelect.innerHTML += `<option value="${proj}">${proj}</option>`;
             });
         }
 
@@ -379,7 +553,7 @@
                 const matchProj = filterProj === "" || row.project === filterProj;
                 const matchBiro = filterBiro === "" || row.biro === filterBiro;
                 const matchStatus = filterStatus === "" || row.status === filterStatus;
-                
+
                 return matchSearch && matchProj && matchBiro && matchStatus;
             });
 
@@ -398,7 +572,7 @@
             data.forEach(row => {
                 let badgeClass = row.status === 'RELEASED' ? 'badge-RELEASED' : 'badge-OBSOLETE';
                 let formattedRevDate = formatDate(row.revDate);
-                
+
                 let fileId = null;
                 if (row.fileUrl && row.fileUrl.trim() !== "") {
                     let match = row.fileUrl.match(/\/d\/(.+?)\//);
@@ -411,7 +585,7 @@
                     let cleanTitle = `${row.drawingNo} - ${row.drawingName}`;
                     let viewBtn = `<button onclick="openPdfModal('${fileId}', '${cleanTitle}')" class="btn btn-sm btn-outline-primary" title="Preview"><i class="bi bi-eye"></i></button>`;
                     let downloadBtn = '';
-                    
+
                     if (row.status === 'RELEASED') {
                         let directDownloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
                         downloadBtn = `<a href="${directDownloadUrl}" class="btn btn-sm btn-success ms-1" title="Download"><i class="bi bi-download"></i></a>`;
@@ -422,7 +596,7 @@
                 } else {
                     actionContent = `<span class="badge badge-hardcopy"><i class="bi bi-archive me-1"></i>HARDCOPY ONLY</span>`;
                 }
-                
+
                 let tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td class="fw-bold text-secondary" style="font-size:0.85rem;">${row.project}</td>
@@ -443,27 +617,27 @@
                 method: 'POST',
                 body: JSON.stringify({ action: "create", payload: payload })
             })
-            .then(response => response.json())
-            .then(res => {
-                Swal.fire({ title: 'Berhasil!', text: 'Dokumen Drawing berhasil direkam.', icon: 'success', confirmButtonColor: '#003366' });
-                document.getElementById("drawingForm").reset();
-                loadData();
-            })
-            .catch(err => {
-                Swal.fire('Gagal!', 'Terjadi kesalahan jaringan.', 'error');
-            })
-            .finally(() => {
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = '<i class="bi bi-send-check me-2"></i>Release Document';
-            });
+                .then(response => response.json())
+                .then(res => {
+                    Swal.fire({ title: 'Berhasil!', text: 'Dokumen Drawing berhasil direkam.', icon: 'success', confirmButtonColor: '#003366' });
+                    document.getElementById("drawingForm").reset();
+                    loadData();
+                })
+                .catch(err => {
+                    Swal.fire('Gagal!', 'Terjadi kesalahan jaringan.', 'error');
+                })
+                .finally(() => {
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerHTML = '<i class="bi bi-send-check me-2"></i>Release Document';
+                });
         }
 
-        document.getElementById("drawingForm").addEventListener("submit", function(e) {
+        document.getElementById("drawingForm").addEventListener("submit", function (e) {
             e.preventDefault();
             if (currentUserRole !== "admin") return;
 
             const btnSubmit = document.getElementById("btnSubmit");
-            
+
             Swal.fire({
                 title: 'Konfirmasi Release',
                 text: "Apakah data registrasi drawing sudah dipastikan benar?",
@@ -481,7 +655,7 @@
                     const file = fileInput.files[0];
 
                     const payload = {
-                        project: document.getElementById("project").value, 
+                        project: document.getElementById("project").value,
                         biro: document.getElementById("biro").value,
                         drawingNo: document.getElementById("drawingNo").value.toUpperCase(),
                         drawingName: document.getElementById("drawingName").value,
@@ -495,7 +669,7 @@
 
                     if (file) {
                         const reader = new FileReader();
-                        reader.onload = function(evt) {
+                        reader.onload = function (evt) {
                             payload.fileBase64 = evt.target.result.split(',')[1];
                             submitDataToBackend(payload, btnSubmit);
                         };
@@ -508,4 +682,5 @@
         });
     </script>
 </body>
+
 </html>
