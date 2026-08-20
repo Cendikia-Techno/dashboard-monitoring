@@ -840,6 +840,15 @@ export const QA_APPLICATIONS = [
     },
 
     {
+        id: "report",
+        title: "HPM & HPP Control",
+        description: "Mengelola, mengarsipkan, mencari, dan mengunduh dokumen laporan inspeksi HPM & HPP Divisi QA secara terpusat dan terstruktur, baik secara online maupun offline.",
+        category: "nonproject",
+        icon: "fa-chart-column",
+        type: "external",
+        url: "apps/nonproject/report/index.html"
+    },
+    {
         id: "drawing",
         title: "e-Drawing Control",
         description: "Platform kontrol kualitas dan manajemen revisi gambar teknik terpadu lintas proyek, memastikan standarisasi dokumen Released dan pencegahan penggunaan drawing usang (Obsolete) di area produksi.",
