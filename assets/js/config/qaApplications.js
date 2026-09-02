@@ -858,6 +858,15 @@ export const QA_APPLICATIONS = [
         url: "apps/nonproject/drawing/index.html"
     },
     {
+        id: "cuti",
+        title: "QA Leave Control",
+        description: "",
+        category: "nonproject",
+        icon: "fa-chart-column",
+        type: "external",
+        url: "apps/nonproject/cuti/index.html"
+    },
+    {
         id: "selflearning",
         title: "QA Self Learning",
         description: "Sistem pembelajaran QA berbasis AI yang memberikan jawaban secara cepat berdasarkan standar, prosedur, spesifikasi, dan dokumen teknis",
