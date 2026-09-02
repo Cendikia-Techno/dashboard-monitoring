@@ -47,7 +47,7 @@
         .main-card-header h5 { margin: 0; font-size: 1rem; font-weight: 700; color: var(--pal-blue); }
         .card-body-custom { padding: 20px; }
         
-        table.dataTable thead th { font-size: 0.85rem; text-transform: uppercase; }
+        table.dataTable thead th { font-size: 0.8rem; text-transform: uppercase; }
         table.dataTable tbody td { font-size: 0.9rem; vertical-align: middle; }
         .sync-loader { text-align: center; padding: 50px 0; color: #6c757d; }
     </style>
@@ -136,7 +136,8 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama Lengkap</th>
-                                        <th>Sisa Cuti</th>
+                                        <th>Sisa Cuti Awal</th>
+                                        <th>Sisa Cuti s.d Desember 2026</th>
                                         <th>Rencana Tanggal</th>
                                         <th>Total Diambil</th>
                                         <th>Backup Person</th>
@@ -203,13 +204,9 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Flatpickr JS -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
-        // ==========================================
-        // PASTE URL API GOOGLE APPS SCRIPT DI SINI
-        // ==========================================
         const scriptUrl = 'https://script.google.com/macros/s/AKfycbwarY95rbCm-wbOa4sG5zdns6c_1uHD7UiBB0oJQHdiBmesfkaSsAxb8yLfgBSCqPXkQA/exec'; 
         
         let currentRole = '';
@@ -223,7 +220,6 @@
         
         document.getElementById('kpi-plan-label').innerText = 'Plan Cuti (' + currentMonthName + ')';
 
-        // Inisialisasi Flatpickr Multi-Date Picker
         document.addEventListener("DOMContentLoaded", function() {
             calendarInstance = flatpickr("#editRencana", {
                 mode: "multiple",
@@ -233,10 +229,9 @@
                     document.getElementById('editDiambil').value = selectedDates.length + " Hari";
                 }
             });
-            togglePasswordInput(); // Atur kondisi awal password berdasarkan default dropdown (View Only)
+            togglePasswordInput();
         });
 
-        // Sembunyikan/Tampilkan kolom input password tergantung pilihan role
         function togglePasswordInput() {
             const role = document.getElementById('roleSelect').value;
             const passGroup = document.getElementById('passwordGroup');
@@ -263,7 +258,6 @@
                     Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Password Administrator salah!' });
                 }
             } else {
-                // View Only langsung masuk tanpa cek password
                 loginSuccess('VIEW ONLY', 'user');
             }
         });
@@ -319,12 +313,20 @@
 
                         const tr = document.createElement('tr');
                         
-                        let tdSisa = row['sisa_cuti_(hari)'] || row['sisa_cuti'] || '';
+                        let tdSisa = row['sisa_cuti_(hari)'] || row['sisa_cuti'] || '0';
                         let tdRencana = formatRencanaTanggal(row['rencana_tanggal_cuti_(mulai_-_selesai)'] || row['rencana_tanggal']);
-                        let tdAmbil = row['total_hari_diambil'] || row['total_diambil'] || '';
+                        let tdAmbil = row['total_hari_diambil'] || row['total_diambil'] || '0';
                         let tdBackup = row['backup_person_(pic_sementara)'] || row['backup'] || '';
                         let tdKontak = row['catatan_/_lokasi'] || row['kontak'] || '';
                         
+                        let angkaSisa = parseInt(tdSisa.toString().replace(/\D/g, '')) || 0;
+                        let angkaAmbil = parseInt(tdAmbil.toString().replace(/\D/g, '')) || 0;
+                        let saldoDesember = angkaSisa - angkaAmbil;
+                        if (saldoDesember < 0) saldoDesember = 0;
+
+                        // Logika warna badge: Hijau jika 0, Merah jika masih ada sisa cuti
+                        let badgeClass = (saldoDesember === 0) ? 'bg-success' : 'bg-danger';
+
                         let actionBtn = '';
                         if(currentRole === 'admin') {
                             actionBtn = `<button class="btn btn-sm btn-outline-primary" onclick="openEditModal(${index})"><i class="fa-solid fa-pen-to-square"></i> Edit</button>`;
@@ -333,11 +335,12 @@
                         let htmlContent = `
                             <td>${index + 1}</td>
                             <td class="fw-bold">${row.nama || '-'}</td>
-                            <td><span class="badge bg-secondary">${tdSisa || '-'}</span></td>
-                            <td>${tdRencana || '-'}</td>
-                            <td>${tdAmbil || '-'}</td>
-                            <td>${tdBackup || '-'}</td>
-                            <td>${tdKontak || '-'}</td>
+                            <td><span class="badge bg-secondary">${tdSisa}</span></td>
+                            <td><span class="badge ${badgeClass}">${saldoDesember} Hari</span></td>
+                            <td>${tdRencana}</td>
+                            <td>${tdAmbil}</td>
+                            <td>${tdBackup}</td>
+                            <td>${tdKontak}</td>
                             <td class="text-center">${actionBtn}</td>
                         `;
                         
@@ -357,7 +360,7 @@
                         "dom": '<"row"<"col-sm-12 col-md-6"f><"col-sm-12 col-md-6"l>>rt<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                         "columnDefs": [
                             {
-                                "targets": 7, 
+                                "targets": 8, 
                                 "visible": (currentRole === 'admin')
                             }
                         ]
