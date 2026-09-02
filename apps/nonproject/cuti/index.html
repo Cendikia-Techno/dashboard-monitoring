@@ -66,14 +66,14 @@
                 <form id="loginForm">
                     <div class="mb-3">
                         <label class="form-label" style="font-size: 0.85rem; font-weight: 600;">Hak Akses Login</label>
-                        <select class="form-select" id="roleSelect">
+                        <select class="form-select" id="roleSelect" onchange="togglePasswordInput()">
                             <option value="admin">Administrator (Full Access)</option>
-                            <option value="user">View Only (Biro)</option>
+                            <option value="user" selected>View Only</option>
                         </select>
                     </div>
-                    <div class="mb-4">
+                    <div class="mb-4" id="passwordGroup" style="display: none;">
                         <label class="form-label" style="font-size: 0.85rem; font-weight: 600;">Password System</label>
-                        <input type="password" class="form-control" id="passInput" placeholder="••••••••" required>
+                        <input type="password" class="form-control" id="passInput" placeholder="••••••••">
                     </div>
                     <button type="submit" class="btn btn-login"><i class="fa-solid fa-right-to-bracket me-2"></i> Masuk Aplikasi</button>
                 </form>
@@ -230,23 +230,41 @@
                 dateFormat: "Y-m-d",
                 conjunction: ", ",
                 onChange: function(selectedDates) {
-                    // Otomatis update Total Hari Diambil saat tanggal dipilih
                     document.getElementById('editDiambil').value = selectedDates.length + " Hari";
                 }
             });
+            togglePasswordInput(); // Atur kondisi awal password berdasarkan default dropdown (View Only)
         });
+
+        // Sembunyikan/Tampilkan kolom input password tergantung pilihan role
+        function togglePasswordInput() {
+            const role = document.getElementById('roleSelect').value;
+            const passGroup = document.getElementById('passwordGroup');
+            const passInput = document.getElementById('passInput');
+            
+            if (role === 'user') {
+                passGroup.style.display = 'none';
+                passInput.removeAttribute('required');
+            } else {
+                passGroup.style.display = 'block';
+                passInput.setAttribute('required', 'true');
+            }
+        }
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const role = document.getElementById('roleSelect').value;
             const pass = document.getElementById('passInput').value;
 
-            if (role === 'admin' && pass === 'adminQA1234') {
-                loginSuccess('ADMINISTRATOR', 'admin');
-            } else if (role === 'user' && pass === '12345678') {
-                loginSuccess('VIEW ONLY', 'user');
+            if (role === 'admin') {
+                if (pass === 'adminQA1234') {
+                    loginSuccess('ADMINISTRATOR', 'admin');
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Password Administrator salah!' });
+                }
             } else {
-                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: 'Password salah!' });
+                // View Only langsung masuk tanpa cek password
+                loginSuccess('VIEW ONLY', 'user');
             }
         });
 
@@ -262,6 +280,21 @@
             document.getElementById('dashboard-section').style.display = 'none';
             document.getElementById('login-section').style.display = 'flex';
             document.getElementById('passInput').value = '';
+            document.getElementById('roleSelect').value = 'user';
+            togglePasswordInput();
+        }
+
+        function formatRencanaTanggal(val) {
+            if (!val) return '-';
+            let strVal = val.toString();
+            if (strVal.includes('T') && strVal.includes('Z')) {
+                let dateObj = new Date(strVal);
+                let year = dateObj.getUTCFullYear();
+                let month = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
+                let day = String(dateObj.getUTCDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            return strVal;
         }
 
         function fetchData() {
@@ -287,7 +320,7 @@
                         const tr = document.createElement('tr');
                         
                         let tdSisa = row['sisa_cuti_(hari)'] || row['sisa_cuti'] || '';
-                        let tdRencana = row['rencana_tanggal_cuti_(mulai_-_selesai)'] || row['rencana_tanggal'] || '';
+                        let tdRencana = formatRencanaTanggal(row['rencana_tanggal_cuti_(mulai_-_selesai)'] || row['rencana_tanggal']);
                         let tdAmbil = row['total_hari_diambil'] || row['total_diambil'] || '';
                         let tdBackup = row['backup_person_(pic_sementara)'] || row['backup'] || '';
                         let tdKontak = row['catatan_/_lokasi'] || row['kontak'] || '';
