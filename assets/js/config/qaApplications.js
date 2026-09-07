@@ -492,7 +492,7 @@ export const QA_APPLICATIONS = [
                 status: "upcoming"
             }
         ],
-        dataRingkas: "https://docs.google.com/spreadsheets/d/19QHf_chaGtoXORgh5CPVEnl02F2Rrv1BK-9eJAf9Z3Q/edit?gid=421171808#gid=421171808",
+        dataRingkas: "https://docs.google.com/spreadsheets/d/1Ortrjok6kq6JiglCtUUIbeNTmHqK1c-yShQQdyz_i9A/edit?usp=sharing",
         dataSource: "https://docs.google.com/spreadsheets/d/19QHf_chaGtoXORgh5CPVEnl02F2Rrv1BK-9eJAf9Z3Q/edit?gid=301492703#gid=301492703",
         api: "https://script.google.com/macros/s/AKfycbxSye4UMbfKg7-9F3TAQPF2x_wwXj26uJztTWcnMboATAyrnGPto8L9axNaetZTenyE2g/exec"
     },
