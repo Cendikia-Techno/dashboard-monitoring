@@ -1769,7 +1769,7 @@ TABLE CARD
 
             function getQARStatus(qar) {
 
-                if (qar >= 98.25) {
+                if (qar >= 96) {
 
                     return {
 
@@ -1897,7 +1897,7 @@ TABLE CARD
 
                     const yScale = scales.y;
 
-                    const target = options.target || 98.25;
+                    const target = options.target || 96;
 
                     const x = xScale.getPixelForValue(target);
 
@@ -1964,7 +1964,7 @@ TABLE CARD
 
                             backgroundColor: data.map(item => {
 
-                                if (item.qar >= 98.25) return "#198754";   // Hijau
+                                if (item.qar >= 96) return "#198754";   // Hijau
 
                                 if (item.qar >= 90) return "#fd7e14";   // Orange
 
@@ -2006,7 +2006,7 @@ TABLE CARD
                         plugins: {
 
                             targetLine: {
-                                target: 98.25
+                                target: 96
                             },
 
                             legend: {
@@ -2231,9 +2231,9 @@ TABLE CARD
 
                                 type: "line",
 
-                                label: "Target 98.25%",
+                                label: "Target 96%",
 
-                                data: new Array(12).fill(98.25),
+                                data: new Array(12).fill(96),
 
                                 yAxisID: "y1",
 
