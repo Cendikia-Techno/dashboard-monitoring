@@ -727,7 +727,7 @@ export const QA_APPLICATIONS = [
         icon: "fa-screwdriver-wrench",
         color: "#F59E0B",
         type: "external",
-        url: "apps/create/index.html"
+        url: "apps/maintenance/non-kri/index.html"
     },
 
     {
@@ -738,7 +738,7 @@ export const QA_APPLICATIONS = [
         icon: "fa-screwdriver-wrench",
         color: "#F59E0B",
         type: "external",
-        url: "apps/create/index.html"
+        url: "apps/maintenance/non-kapal/index.html"
     },
     // =================================================
     // KAPAL SELAM
