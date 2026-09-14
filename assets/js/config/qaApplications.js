@@ -664,7 +664,7 @@ export const QA_APPLICATIONS = [
                 status: "upcoming"
             }  
         ],
-        dataRingkas: "",
+        dataRingkas: "https://docs.google.com/spreadsheets/d/10ylf2oACpVGEcr6548XFvrq_lST5_Otov_YEFO8hkDY/edit?usp=drive_link",
         dataSource: "https://docs.google.com/spreadsheets/d/1PPmEI14Zw728mPbWCCbDguqj9fsfXCB4o9Iep1s5ncA/edit?gid=966538218#gid=966538218",
         api: "https://script.google.com/macros/s/AKfycbyIEkVVwvkdn3l5a_hYQggra4rQXe5k4NprB6UCDvS258MJvqDrK4iHUefMPMFL_EhF/exec"
     },
