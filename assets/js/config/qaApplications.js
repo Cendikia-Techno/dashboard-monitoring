@@ -529,7 +529,7 @@ export const QA_APPLICATIONS = [
         color: "#0B2E59",
 
         type: "dashboard",
-        dataRingkas: "",
+        dataRingkas: "https://docs.google.com/spreadsheets/d/1RwHz7fpCHd49BtwGSqlnQY9idpsagoTeSRxHqgTbsCA/edit?usp=sharing",
         dataSource: "https://docs.google.com/spreadsheets/d/1_Bo3Fy5dpYhOWInu9k0gIJ2BSHojBDAVxMVhowu2rn0/edit?gid=1386686177#gid=1386686177",
         api: "https://script.google.com/macros/s/AKfycbwn6ivqxVdL87y9eUzjxUqNzOEXV-eoYYAdKmj8DiQk88XQLI3EloTUhaV-BIDtgWO9XA/exec"
     },
