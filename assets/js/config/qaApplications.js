@@ -511,7 +511,7 @@ export const QA_APPLICATIONS = [
 
         type: "dashboard",
         
-        dataRingkas: "",
+        dataRingkas: "https://docs.google.com/spreadsheets/d/1bB73RyYFPt6OqRsK4rZwWomZwcrirhOMx4Osko2xijU/edit?usp=sharing",
         dataSource: "https://docs.google.com/spreadsheets/d/1y1TZqAoExs8DXmS-12EOUlOhrVrQsqSMeFS-mAFfKUo/edit?gid=0#gid=0",
         api: "https://script.google.com/macros/s/AKfycbxKyQrsm5uA8fZlj4NYallrp9ki_jqbd4JdnQxkTc5hyUGaM2jfjuzwveJFOeXsBBsaTQ/exec"
     },
