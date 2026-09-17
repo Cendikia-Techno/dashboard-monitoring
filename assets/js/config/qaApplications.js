@@ -694,6 +694,16 @@ export const QA_APPLICATIONS = [
         type: "external",
         url: "apps/general/pltal/index.html"
     },
+    {
+        id: "ketenger",
+        title: "PLTA KETENGER",
+        description: "Revitalisasi Pipa Penstock proyek PLTA Ketenger",
+        category: "general",
+        icon: "fa-industry",
+        color: "#2563EB",
+        type: "external",
+        url: "apps/general/ketenger/index.html"
+    },
     // =================================================
     // HARKAN
     // =================================================
