@@ -706,8 +706,8 @@ export const QA_APPLICATIONS = [
     },
     {
         id: "bali",
-        title: "Rerouting Pipa UPB Bali",
-        description: "Rerouting pipa proyek PLN UPB Bali",
+        title: "Rerouting Pipa PLN Pesanggrahan Bali",
+        description: "Rerouting pipa proyek PLN Pesanggrahan Bali",
         category: "general",
         icon: "fa-industry",
         color: "#2563EB",
