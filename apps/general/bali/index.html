@@ -14,6 +14,7 @@
     body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     .card-stat { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
     .table-container { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .loader-wrapper { display: flex; justify-content: center; align-items: center; height: 150px; }
   </style>
 </head>
 <body>
@@ -52,8 +53,13 @@
     <!-- Tabel Data -->
     <div class="table-container">
       <h4 class="mb-3">Daftar Detail Pekerjaan</h4>
+      <div id="loading" class="loader-wrapper">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
       <div class="table-responsive">
-        <table id="projectTable" class="table table-striped table-bordered" style="width:100%">
+        <table id="projectTable" class="table table-striped table-bordered d-none" style="width:100%">
           <thead>
             <tr>
               <th>No</th>
@@ -64,7 +70,7 @@
             </tr>
           </thead>
           <tbody id="table-body">
-            <!-- Data akan dimuat via JavaScript Fetch -->
+            <!-- Data akan dimuat secara dinamis via fetch -->
           </tbody>
         </table>
       </div>
@@ -73,58 +79,69 @@
 
   <!-- jQuery & DataTables JS -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 
   <script>
-    // Ganti URL di bawah ini dengan URL Web App Apps Script Anda setelah di-deploy
+    // Ganti dengan URL Web App Google Apps Script Anda (/exec)
     const API_URL = "https://script.google.com/macros/s/AKfycbwgXUz47BzgMR1ZlkpLbUEXD0An5Lq-iohTBJVv3kI8ZIrgGLFpT9TmfmYDu6vnCOWLFQ/exec";
 
     function loadData() {
-      // Jika di-deploy sebagai Web App Google Script, Anda bisa menggunakan URL fetch API atau google.script.run
-      // Menggunakan fetch dari endpoint Web App:
       fetch(API_URL)
-        .then(response => response.json())
-        .then(data => {
+        .then(response => {
+          if (!response.ok) throw new Error('Gagal terhubung ke Google Sheets API');
+          return response.json();
+        })
+        .then(res => {
+          if (res.error) {
+            throw new Error(res.error);
+          }
+
+          let items = res.items;
+          let summary = res.summary;
+
           let tbody = document.getElementById('table-body');
           tbody.innerHTML = '';
-          
-          let total = data.length;
-          let completed = 0;
-          let totalProgress = 0;
 
-          data.forEach(row => {
-            if(row.Status === 'Completed') completed++;
-            totalProgress += Number(row.Progress) || 0;
-
+          items.forEach(row => {
             let badgeClass = 'bg-secondary';
-            if(row.Status === 'Completed') badgeClass = 'bg-success';
-            else if(row.Status === 'In Progress') badgeClass = 'bg-warning text-dark';
-            else if(row.Status === 'Not Started') badgeClass = 'bg-secondary';
+            if (row.status === 'Completed') badgeClass = 'bg-success';
+            else if (row.status === 'In Progress') badgeClass = 'bg-warning text-dark';
+            else if (row.status === 'Not Started') badgeClass = 'bg-secondary';
 
             let tr = `<tr>
-              <td>${row.No}</td>
-              <td>${row['Kategori Pekerjaan']}</td>
-              <td>${row['Sub Pekerjaan']}</td>
-              <td><span class="badge ${badgeClass}">${row.Status}</span></td>
+              <td>${row.no}</td>
+              <td>${row.kategori}</td>
+              <td>${row.subPekerjaan}</td>
+              <td><span class="badge ${badgeClass}">${row.status}</span></td>
               <td>
                 <div class="progress" style="height: 20px;">
-                  <div class="progress-bar" role="progressbar" style="width: ${row.Progress}%;" aria-valuenow="${row.Progress}" aria-valuemin="0" aria-valuemax="100">${row.Progress}%</div>
+                  <div class="progress-bar" role="progressbar" style="width: ${row.progress}%;" aria-valuenow="${row.progress}" aria-valuemin="0" aria-valuemax="100">${row.progress}%</div>
                 </div>
               </td>
             </tr>`;
             tbody.innerHTML += tr;
           });
 
-          // Update Summary Card
-          document.getElementById('total-items').innerText = total;
-          document.getElementById('completed-items').innerText = completed;
-          document.getElementById('avg-progress').innerText = (total > 0 ? (totalProgress / total).toFixed(1) : 0) + '%';
+          // Set Summary Cards
+          document.getElementById('total-items').innerText = summary.total_items;
+          document.getElementById('completed-items').innerText = summary.completed_items;
+          document.getElementById('avg-progress').innerText = summary.avg_progress + '%';
 
-          // Inisialisasi DataTable
-          $('#projectTable').DataTable();
+          // Sembunyikan loading, tampilkan tabel & aktifkan DataTables
+          document.getElementById('loading').style.display = 'none';
+          let tableElem = document.getElementById('projectTable');
+          tableElem.classList.remove('d-none');
+
+          if (!$.fn.DataTable.isDataTable('#projectTable')) {
+            $('#projectTable').DataTable();
+          }
         })
-        .catch(error => console.error('Error fetching data:', error));
+        .catch(error => {
+          console.error('Error fetching data:', error);
+          document.getElementById('loading').innerHTML = `<div class="alert alert-danger">Terjadi kesalahan: ${error.message}</div>`;
+        });
     }
 
     document.addEventListener("DOMContentLoaded", loadData);
