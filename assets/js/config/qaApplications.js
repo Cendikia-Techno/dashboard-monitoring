@@ -714,6 +714,16 @@ export const QA_APPLICATIONS = [
         type: "external",
         url: "apps/general/bali/index.html"
     },
+    {
+        id: "banten",
+        title: "HPH no.2 PLTU Labuan",
+        description: "HPH No.2 proyek PLTU Labuan Banten",
+        category: "general",
+        icon: "fa-industry",
+        color: "#2563EB",
+        type: "external",
+        url: "apps/general/banten/index.html"
+    },
     // =================================================
     // HARKAN
     // =================================================
