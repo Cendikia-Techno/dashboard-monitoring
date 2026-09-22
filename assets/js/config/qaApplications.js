@@ -704,6 +704,16 @@ export const QA_APPLICATIONS = [
         type: "external",
         url: "apps/general/ketenger/index.html"
     },
+    {
+        id: "bali",
+        title: "Rerouting Pipa UPB Bali",
+        description: "Rerouting pipa proyek PLN UPB Bali",
+        category: "general",
+        icon: "fa-industry",
+        color: "#2563EB",
+        type: "external",
+        url: "apps/general/bali/index.html"
+    },
     // =================================================
     // HARKAN
     // =================================================

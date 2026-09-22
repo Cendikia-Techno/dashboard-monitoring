@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Monitoring Proyek</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+  <style>
+    body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    .card-stat { border: none; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .table-container { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+  </style>
+</head>
+<body>
+
+  <div class="container py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+      <div class="col-md-12 text-center">
+        <h2><i class="fa-solid fa-chart-line text-primary"></i> Dashboard Monitoring Proyek</h2>
+        <p class="text-muted">Real-time tracking progress pekerjaan konstruksi & fasilitas</p>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row text-white mb-4">
+      <div class="col-md-4 mb-3">
+        <div class="card card-stat bg-primary p-3">
+          <h5>Total Item Pekerjaan</h5>
+          <h3 id="total-items">0</h3>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card card-stat bg-success p-3">
+          <h5>Pekerjaan Selesai (Completed)</h5>
+          <h3 id="completed-items">0</h3>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card card-stat bg-warning text-dark p-3">
+          <h5>Rata-Rata Progres Keseluruhan</h5>
+          <h3 id="avg-progress">0%</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabel Data -->
+    <div class="table-container">
+      <h4 class="mb-3">Daftar Detail Pekerjaan</h4>
+      <div class="table-responsive">
+        <table id="projectTable" class="table table-striped table-bordered" style="width:100%">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Kategori Pekerjaan</th>
+              <th>Sub Pekerjaan</th>
+              <th>Status</th>
+              <th>Progress</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- Data akan dimuat via JavaScript Fetch -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery & DataTables JS -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+  <script>
+    // Ganti URL di bawah ini dengan URL Web App Apps Script Anda setelah di-deploy
+    const API_URL = "https://script.google.com/macros/s/AKfycbwgXUz47BzgMR1ZlkpLbUEXD0An5Lq-iohTBJVv3kI8ZIrgGLFpT9TmfmYDu6vnCOWLFQ/exec";
+
+    function loadData() {
+      // Jika di-deploy sebagai Web App Google Script, Anda bisa menggunakan URL fetch API atau google.script.run
+      // Menggunakan fetch dari endpoint Web App:
+      fetch(API_URL)
+        .then(response => response.json())
+        .then(data => {
+          let tbody = document.getElementById('table-body');
+          tbody.innerHTML = '';
+          
+          let total = data.length;
+          let completed = 0;
+          let totalProgress = 0;
+
+          data.forEach(row => {
+            if(row.Status === 'Completed') completed++;
+            totalProgress += Number(row.Progress) || 0;
+
+            let badgeClass = 'bg-secondary';
+            if(row.Status === 'Completed') badgeClass = 'bg-success';
+            else if(row.Status === 'In Progress') badgeClass = 'bg-warning text-dark';
+            else if(row.Status === 'Not Started') badgeClass = 'bg-secondary';
+
+            let tr = `<tr>
+              <td>${row.No}</td>
+              <td>${row['Kategori Pekerjaan']}</td>
+              <td>${row['Sub Pekerjaan']}</td>
+              <td><span class="badge ${badgeClass}">${row.Status}</span></td>
+              <td>
+                <div class="progress" style="height: 20px;">
+                  <div class="progress-bar" role="progressbar" style="width: ${row.Progress}%;" aria-valuenow="${row.Progress}" aria-valuemin="0" aria-valuemax="100">${row.Progress}%</div>
+                </div>
+              </td>
+            </tr>`;
+            tbody.innerHTML += tr;
+          });
+
+          // Update Summary Card
+          document.getElementById('total-items').innerText = total;
+          document.getElementById('completed-items').innerText = completed;
+          document.getElementById('avg-progress').innerText = (total > 0 ? (totalProgress / total).toFixed(1) : 0) + '%';
+
+          // Inisialisasi DataTable
+          $('#projectTable').DataTable();
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    }
+
+    document.addEventListener("DOMContentLoaded", loadData);
+  </script>
+</body>
+</html>
