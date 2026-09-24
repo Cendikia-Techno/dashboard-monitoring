@@ -850,6 +850,15 @@ export const QA_APPLICATIONS = [
         url: "apps/warranty/index.html"
     },
     {
+        id: "server",
+        title: "Server Lokal Biro Quality Engineer",
+        description: "Penyimpanan semua dokumen terkait Proyek, File Umum, dll. untuk akses harus terhubung dengan jaringan lokal LAN PT PAL",
+        category: "nonproject",
+        icon: "fa-chart-column",
+        type: "external",
+        url: "http://10.14.4.17:8000"
+    },
+    {
         id: "qar",
         title: "Quality Acceptance Ratio",
         description: "Digital monitoring system untuk mengukur, menganalisis, dan melaporkan Quality Acceptance Ratio berdasarkan data hasil inspeksi secara terintegrasi",
