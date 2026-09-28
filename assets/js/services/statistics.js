@@ -752,51 +752,91 @@ export function getTPTRStatistics() {
 
     const total = items.length;
 
+
+    // ==============================
+    // FINISHED
+    // ==============================
+
     const finish = items.filter(
 
-        item => Number(item.approvedDansatgas) === 1
+        item =>
+            Number(item.approvedDansatgas) === 1
 
     ).length;
 
-    const remaining = total - finish;
+
+    // ==============================
+    // REMAINING
+    // ==============================
+
+    const remaining =
+        total - finish;
+
+
+    // ==============================
+    // PROGRESS
+    // Progress berdasarkan jumlah
+    // dokumen yang sudah Approved
+    // ==============================
 
     const progress = total
 
-        ? Math.round(
-
-            items.reduce(
-
-                (sum, item) => sum + calculateTPTRProgress(item),
-
-                0
-
-            ) / total
-
+        ? Number(
+            ((finish / total) * 100)
+                .toFixed(1)
         )
 
         : 0;
 
-    const critical = getLowestProgress(items, {
 
-        filter: item => item.remark?.trim() !== "",
+    // ==============================
+    // CRITICAL
+    // ==============================
 
-        title: item => item.namaDokumen,
+    const critical =
+        getLowestProgress(items, {
 
-        subtitle: item => item.remark,
+            filter:
+                item =>
+                    item.remark?.trim() !== "",
 
-        level: () => "high",
+            title:
+                item =>
+                    item.namaDokumen,
 
-        value: item => calculateTPTRProgress(item)
+            subtitle:
+                item =>
+                    item.remark,
 
-    });
+            level:
+                () =>
+                    "high",
 
-    const rows = items.map(item => ({
+            value:
+                item =>
+                    calculateTPTRProgress(item)
 
-        ...item,
+        });
 
-        progress: calculateTPTRProgress(item)
 
-    }));
+    // ==============================
+    // ROWS
+    // ==============================
+
+    const rows =
+        items.map(item => ({
+
+            ...item,
+
+            progress:
+                calculateTPTRProgress(item)
+
+        }));
+
+
+    // ==============================
+    // RETURN
+    // ==============================
 
     return createProgressStatistics({
 
@@ -810,11 +850,17 @@ export function getTPTRStatistics() {
 
         progress,
 
-        category: item => item.kategori.trim(),
+        category:
+            item =>
+                item.kategori.trim(),
 
-        progressSelector: item => item.progress,
+        progressSelector:
+            item =>
+                item.progress,
 
-        statusSelector: item => item.remark,
+        statusSelector:
+            item =>
+                item.remark,
 
         critical
 
