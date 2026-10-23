@@ -729,6 +729,16 @@ export const QA_APPLICATIONS = [
     // =================================================
 
     {
+        id: "dailyReportHarkan",
+        title: "Daily Report Harkan",
+        description: "Daily Report untuk kebutuhan proyek-proyek harkan serta dapat menganalisa beban kerja anggota",
+        category: "maintenance",
+        icon: "fa-screwdriver-wrench",
+        color: "#F59E0B",
+        type: "external",
+        url: "apps/maintenance/daily/index.html"
+    },
+    {
         id: "r41",
         title: "R41",
         description: "Maintenance Projects R41",
