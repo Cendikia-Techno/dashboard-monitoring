@@ -866,7 +866,7 @@ export const QA_APPLICATIONS = [
         category: "nonproject",
         icon: "fa-chart-column",
         type: "external",
-        url: "http://10.14.4.17:8000"
+        url: "http://10.14.4.10:8000"
     },
     {
         id: "qar",
