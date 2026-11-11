@@ -815,6 +815,16 @@ export const QA_APPLICATIONS = [
         type: "external",
         url: "apps/submarine/ksot/index.html"
     },
+    {
+        id: "ksot",
+        title: "KSOT New",
+        description: "Kapal Selam Opsi Teknologi",
+        category: "submarine",
+        icon: "fa-water",
+        color: "#0B2E59",
+        type: "external",
+        url: "apps/submarine/ksot/index1.html"
+    },
 
     {
         id: "torpedo",
