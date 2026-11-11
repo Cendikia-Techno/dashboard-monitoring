@@ -837,6 +837,16 @@ export const QA_APPLICATIONS = [
         url: "apps/submarine/torpedo/index.html"
     },
     {
+        id: "torpedo",
+        title: "Torpedo New",
+        description: "Torpedo Project",
+        category: "submarine",
+        icon: "fa-water",
+        color: "#0B2E59",
+        type: "external",
+        url: "apps/submarine/torpedo/index1.html"
+    },
+    {
         id: "shiplift",
         title: "SHIPLIFT",
         description: "Shiplift",
