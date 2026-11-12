@@ -951,7 +951,7 @@ export const QA_APPLICATIONS = [
         category: "nonproject",
         icon: "fa-chart-column",
         type: "external",
-        url: "apps/nonproject/standar/index.html"
+        url: "apps/nonproject/standar/maintenance.html"
     }
 
 ];
