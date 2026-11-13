@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QA Portal | Under Maintenance</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background:
+        linear-gradient(135deg, rgba(7, 23, 43, .96), rgba(12, 48, 76, .91)),
+        url('https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?auto=format&fit=crop&w=2000&q=85');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 50%;
+      top: -200px;
+      right: -100px;
+    }
+
+    body::after {
+      content: "";
+      position: absolute;
+      width: 650px;
+      height: 650px;
+      border: 1px solid rgba(255,255,255,.05);
+      border-radius: 50%;
+      bottom: -400px;
+      left: -200px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 850px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      padding: 55px 35px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 24px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 25px 80px rgba(0,0,0,.3);
+    }
+
+    .brand {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: #b9d8f2;
+      margin-bottom: 45px;
+    }
+
+    .icon {
+      width: 105px;
+      height: 105px;
+      margin: 0 auto 25px;
+      background: rgba(255, 183, 77, .13);
+      border: 1px solid rgba(255, 183, 77, .35);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      animation: pulse 2.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: rgba(255,183,77,.14);
+      color: #ffc66e;
+      padding: 9px 17px;
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      margin-bottom: 22px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffb74d;
+      box-shadow: 0 0 10px #ffb74d;
+    }
+
+    h1 {
+      font-size: clamp(32px, 6vw, 48px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      margin-bottom: 18px;
+      line-height: 1.2;
+    }
+
+    h1 span {
+      color: #63c5ff;
+    }
+
+    .description {
+      color: #c5d5e5;
+      font-size: 15px;
+      line-height: 1.9;
+      max-width: 590px;
+      margin: 0 auto 30px;
+    }
+
+    .divider {
+      width: 65px;
+      height: 4px;
+      background: #39a9e9;
+      border-radius: 10px;
+      margin: 0 auto 30px;
+    }
+
+    .info {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 35px;
+    }
+
+    .info-item {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.09);
+      padding: 15px 20px;
+      border-radius: 12px;
+      min-width: 190px;
+    }
+
+    .info-item strong {
+      display: block;
+      font-size: 12px;
+      margin-bottom: 7px;
+      color: #fff;
+    }
+
+    .info-item small {
+      color: #a9bfd3;
+      font-size: 11px;
+    }
+
+    .footer {
+      border-top: 1px solid rgba(255,255,255,.12);
+      padding-top: 22px;
+      color: #8fa9bf;
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .footer strong {
+      color: #dceaf6;
+    }
+
+    @media(max-width: 600px) {
+      .container {
+        padding: 40px 22px;
+      }
+
+      .brand {
+        margin-bottom: 35px;
+      }
+
+      .description {
+        font-size: 13px;
+      }
+
+      .info-item {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <div class="brand">
+      QUALITY ASSURANCE PORTAL
+    </div>
+
+    <div class="icon">⚙️</div>
+
+    <div class="status">
+      <span class="status-dot"></span>
+      SYSTEM UNDER MAINTENANCE
+    </div>
+
+    <h1>
+      We're Making<br>
+      <span>Things Better.</span>
+    </h1>
+
+    <div class="divider"></div>
+
+    <p class="description">
+      Mohon maaf atas ketidaknyamanan ini.
+      QA Portal sedang dalam proses pemeliharaan dan
+      peningkatan sistem untuk memberikan layanan yang
+      lebih optimal, terintegrasi, dan andal.
+      <br><br>
+      Kami akan segera kembali melayani Anda.
+      Terima kasih atas pengertian dan kesabarannya.
+    </p>
+
+    <div class="info">
+      <div class="info-item">
+        <strong>🛠 System Improvement</strong>
+        <small>Peningkatan performa dan fitur sistem</small>
+      </div>
+
+      <div class="info-item">
+        <strong>🔒 Data Security</strong>
+        <small>Menjaga keamanan dan integritas data</small>
+      </div>
+    </div>
+
+    <div class="footer">
+      <strong>QUALITY ENGINEER – PT PAL INDONESIA</strong>
+      <br>
+      Quality Assurance Digital Transformation
+      <br>
+      © 2026 QA Portal. All Rights Reserved.
+    </div>
+
+  </main>
+
+</body>
+</html>
