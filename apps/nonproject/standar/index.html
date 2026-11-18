@@ -1,526 +1,958 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Monitoring Pengajuan Dokumen</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-:root{
---primary:#003f7f;
---secondary:#0d6efd;
---success:#198754;
---warning:#ffc107;
---danger:#dc3545;
-}
-
-body{
-background:#eef3f8;
-font-family:Segoe UI,sans-serif;
-}
-
-.hero{
-background:linear-gradient(135deg,#003f7f,#0d6efd);
-color:white;
-padding:25px;
-border-radius:18px;
-margin-bottom:20px;
-}
-
-.card-kpi{
-border:none;
-border-radius:16px;
-box-shadow:0 3px 10px rgba(0,0,0,.1);
-}
-
-.kpi-value{
-font-size:2rem;
-font-weight:bold;
-color:var(--primary);
-}
-
-.section{
-background:white;
-border-radius:16px;
-padding:20px;
-margin-bottom:20px;
-box-shadow:0 3px 10px rgba(0,0,0,.08);
-}
-
-.progress-big{
-font-size:48px;
-font-weight:bold;
-text-align:center;
-color:var(--primary);
-}
-
-.table-container{
-max-height:500px;
-overflow:auto;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Kontrol & Monitoring Dokumen — BP, SOP & SK</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; color: #0f172a; }
+    .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04); }
+    .table-container::-webkit-scrollbar { height: 8px; width: 8px; }
+    .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
-<div class="container-fluid p-4">
+  <!-- Top Navbar -->
+  <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-sky-600 flex items-center justify-center font-bold text-lg shadow-inner">
+          QM
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight">Kontrol & Monitoring Dokumen Sistem Manajemen</h1>
+          <p class="text-xs text-slate-400">Bisnis Proses (BP), Standard Operating Procedure (SOP) & Surat Keputusan (SK)</p>
+        </div>
+      </div>
 
-<div class="hero">
-<h2>MONITORING PENGAJUAN DOKUMEN</h2>
-<h2>BP - SOP - SK</h2>
-<div>PT PAL Indonesia</div>
-<div id="lastUpdate"></div>
-</div>
+      <div class="flex items-center gap-2.5">
+        <span id="connectionBadge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
+          <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+          <span id="connectionText">Menghubungkan...</span>
+        </span>
+        <button onclick="fetchLiveData()" id="btnRefresh" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium border border-slate-700 transition flex items-center gap-1.5">
+          <span>↻</span> Sync Live
+        </button>
+        <button onclick="openConfigModal()" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-medium transition shadow-sm">
+          ⚙ API URL
+        </button>
+      </div>
+    </div>
+  </header>
 
-<div class="row g-3 mb-4">
-<div class="col-md-3"><div class="card card-kpi"><div class="card-body text-center"><div>Total Masterplan</div><div id="masterplan" class="kpi-value">0</div></div></div></div>
-<div class="col-md-3"><div class="card card-kpi"><div class="card-body text-center"><div>Pengajuan</div><div id="pengajuan" class="kpi-value">0</div></div></div></div>
-<div class="col-md-3"><div class="card card-kpi"><div class="card-body text-center"><div>Approval Direksi</div><div id="approval" class="kpi-value">0</div></div></div></div>
-<div class="col-md-3"><div class="card card-kpi"><div class="card-body text-center"><div>Disahkan</div><div id="disahkan" class="kpi-value">0</div></div></div></div>
-</div>
+  <!-- Loading / Error Alert Banner -->
+  <div id="statusBanner" class="hidden bg-sky-50 border-b border-sky-200 text-sky-800 px-4 py-2.5 text-xs">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2 font-medium" id="statusBannerText">
+        Memuat data langsung dari Google Sheets...
+      </div>
+    </div>
+  </div>
 
-<div class="row">
-<div class="col-lg-4">
-<div class="section">
-<h5>Overall Progress</h5>
-<div id="overallProgress" class="progress-big">0%</div>
-<canvas id="gaugeChart"></canvas>
-</div>
-</div>
+  <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1">
 
-<div class="col-lg-8">
-<div class="section">
-<h5>Funnel Progress</h5>
-<canvas id="funnelChart"></canvas>
-</div>
-</div>
-</div>
+    <!-- Global Control Filter Bar -->
+    <section class="card p-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center gap-3">
+        <div>
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">Filter Divisi</label>
+          <select id="filterDivisi" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-64 p-2">
+            <option value="ALL">Semua Divisi</option>
+          </select>
+        </div>
 
-<div class="row">
-<div class="col-lg-8">
-<div class="section">
-<h5>Ranking Divisi</h5>
-<canvas id="rankingChart"></canvas>
-</div>
-</div>
+        <div>
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1">Jenis Dokumen</label>
+          <div class="inline-flex rounded-lg border border-slate-300 bg-slate-50 p-0.5" id="docTypeGroup">
+            <button type="button" data-type="ALL" onclick="setDocType('ALL')" class="doc-type-btn px-3.5 py-1.5 text-xs font-semibold rounded-md bg-sky-600 text-white shadow-sm">Semua</button>
+            <button type="button" data-type="BP" onclick="setDocType('BP')" class="doc-type-btn px-3.5 py-1.5 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900">BP</button>
+            <button type="button" data-type="SOP" onclick="setDocType('SOP')" class="doc-type-btn px-3.5 py-1.5 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900">SOP</button>
+            <button type="button" data-type="SK" onclick="setDocType('SK')" class="doc-type-btn px-3.5 py-1.5 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900">SK</button>
+          </div>
+        </div>
+      </div>
 
-<div class="col-lg-4">
-<div class="section">
-<h5>Jenis Dokumen</h5>
-<canvas id="jenisChart"></canvas>
-</div>
-</div>
-</div>
+      <div class="flex items-center gap-3 self-end">
+        <div class="text-right hidden sm:block">
+          <div class="text-[11px] text-slate-400">Sinkronisasi Terakhir</div>
+          <div id="lastUpdatedText" class="text-xs font-semibold text-slate-700">-</div>
+        </div>
+        <button onclick="resetFilters()" class="px-3 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg transition">
+          Reset Filter
+        </button>
+      </div>
+    </section>
 
-<div class="section">
-<h5>Heatmap Progress Divisi</h5>
-<table class="table table-bordered">
-<thead><tr><th>Divisi</th><th>Progress</th></tr></thead>
-<tbody id="heatmapBody"></tbody>
-</table>
-</div>
+    <!-- KPI Cards -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div class="card p-4 border-l-4 border-l-slate-700">
+        <div class="text-xs font-medium text-slate-500">1. Rencana Pengajuan</div>
+        <div class="mt-1 flex items-baseline justify-between">
+          <span id="kpiRencana" class="text-2xl font-bold text-slate-900">0</span>
+          <span class="text-xs text-slate-400">Target Dokumen</span>
+        </div>
+        <div class="mt-2 text-[11px] text-slate-500" id="kpiRencanaSub">BP: 0 | SOP: 0 | SK: 0</div>
+      </div>
 
-<div class="row">
-<div class="col-lg-6">
-<div class="section">
-<h5>Top Performer</h5>
-<table class="table">
-<tbody id="topBody"></tbody>
-</table>
-</div>
-</div>
+      <div class="card p-4 border-l-4 border-l-sky-500">
+        <div class="text-xs font-medium text-slate-500">2. Diajukan E-Letter</div>
+        <div class="mt-1 flex items-baseline justify-between">
+          <span id="kpiDiajukan" class="text-2xl font-bold text-sky-600">0</span>
+          <span id="kpiPctPengajuan" class="text-xs font-bold px-2 py-0.5 rounded bg-sky-50 text-sky-700">0%</span>
+        </div>
+        <div class="w-full bg-slate-100 rounded-full h-1.5 mt-2.5">
+          <div id="barPengajuan" class="bg-sky-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+      </div>
 
-<div class="col-lg-6">
-<div class="section">
-<h5>Need Attention</h5>
-<table class="table">
-<tbody id="bottomBody"></tbody>
-</table>
-</div>
-</div>
-</div>
+      <!-- Interactive In-Progress Card -->
+      <div class="card p-4 border-l-4 border-l-amber-500">
+        <div class="text-xs font-medium text-slate-500 flex items-center justify-between">
+          <span>3-4. Dalam Proses Approval</span>
+          <button onclick="jumpToStatusIM4('IN_PROGRESS')" class="text-[10px] text-amber-700 font-semibold underline hover:text-amber-900">Semua &rarr;</button>
+        </div>
+        <div class="mt-1 flex items-baseline justify-between">
+          <span id="kpiProses" class="text-2xl font-bold text-amber-600">0</span>
+          <span class="text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded font-medium">In-Progress</span>
+        </div>
+        <div class="mt-2 flex flex-wrap gap-1 text-[10px]">
+          <button onclick="jumpToStatusIM4('Approval Kadiv')" class="px-1.5 py-0.5 rounded bg-violet-100 hover:bg-violet-200 text-violet-800 font-semibold transition" title="Lihat dokumen di tahap Approval Kadiv">
+            Kadiv: <span id="kpiKadivCount">0</span>
+          </button>
+          <button onclick="jumpToStatusIM4('Batch (Direksi)')" class="px-1.5 py-0.5 rounded bg-orange-100 hover:bg-orange-200 text-orange-800 font-semibold transition" title="Lihat dokumen di tahap Batch (Direksi)">
+            Ke Dir: <span id="kpiKeDirCount">0</span> | Proses: <span id="kpiProsesDirCount">0</span>
+          </button>
+        </div>
+      </div>
 
-<div class="section">
-<div class="row mb-3">
-<div class="col-md-4">
-<select id="filterDivisi" class="form-select">
-<option value="">Semua Divisi</option>
-</select>
-</div>
-</div>
+      <div onclick="jumpToStatusIM4('Active')" class="card p-4 border-l-4 border-l-emerald-500 cursor-pointer hover:bg-emerald-50/30 transition" title="Klik untuk melihat dokumen Active">
+        <div class="text-xs font-medium text-slate-500 flex items-center justify-between">
+          <span>5. Telah Disahkan</span>
+          <span class="text-[10px] text-emerald-700 font-semibold underline">Active &rarr;</span>
+        </div>
+        <div class="mt-1 flex items-baseline justify-between">
+          <span id="kpiDisahkan" class="text-2xl font-bold text-emerald-600">0</span>
+          <span id="kpiPctPengesahan" class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700">0%</span>
+        </div>
+        <div class="w-full bg-slate-100 rounded-full h-1.5 mt-2.5">
+          <div id="barPengesahan" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+      </div>
 
-<div class="table-container">
-<table class="table table-striped table-bordered">
-<thead>
-<tr>
-<th>Divisi</th>
-<th>Jenis</th>
-<th>Masterplan</th>
-<th>Pengajuan</th>
-<th>Approval</th>
-<th>Disahkan</th>
-<th>%</th>
-</tr>
-</thead>
-<tbody id="tableBody"></tbody>
-</table>
-</div>
-</div>
+      <div onclick="jumpToDueReview()" class="card p-4 border-l-4 border-l-rose-500 cursor-pointer hover:bg-rose-50/40 transition" title="Klik untuk melihat dokumen yang akan jatuh tempo">
+        <div class="text-xs font-medium text-slate-500 flex items-center justify-between">
+          <span>Alert Review Ulang</span>
+          <span class="text-[10px] text-rose-600 font-semibold underline">Lihat &rarr;</span>
+        </div>
+        <div class="mt-1 flex items-baseline justify-between">
+          <span id="kpiDueReview" class="text-2xl font-bold text-rose-600">0</span>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded bg-rose-100 text-rose-700">Akan Jatuh Tempo</span>
+        </div>
+        <div class="mt-2 text-[11px] text-slate-500" id="kpiTotalRegister">Total Register Dokumen: 0</div>
+      </div>
+    </section>
 
-</div>
+    <!-- Charts Section -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="card p-5 lg:col-span-5 flex flex-col">
+        <div class="mb-3">
+          <h2 class="text-sm font-bold text-slate-800">Pipeline Tahapan Pengajuan (Stage 1 &rarr; 5)</h2>
+          <p class="text-xs text-slate-500">Distribusi posisi dokumen berdasarkan alur pengesahan</p>
+        </div>
+        <div class="relative flex-1 min-h-[290px]">
+          <canvas id="pipelineChart"></canvas>
+        </div>
+      </div>
 
-<script>
+      <div class="card p-5 lg:col-span-7 flex flex-col">
+        <div class="mb-3 flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-bold text-slate-800">Realisasi Pengesahan per Divisi</h2>
+            <p class="text-xs text-slate-500">Perbandingan dokumen telah disahkan vs sisa belum disahkan</p>
+          </div>
+        </div>
+        <div class="relative flex-1 min-h-[290px]">
+          <canvas id="divisionChart"></canvas>
+        </div>
+      </div>
+    </section>
 
-const API_URL='https://script.google.com/macros/s/AKfycbzM5sl84YJI8X2AIWXRQ9uylBADDciGIunsqE9Z586CHQM_VHavq7t4Ndm4Ntezsvuq8A/exec';
+    <!-- Navigation Tabs for Detailed Tables -->
+    <section id="detailTableSection" class="card overflow-hidden">
+      <div class="border-b border-slate-200 bg-slate-50/70 px-4 pt-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex gap-2">
+          <button onclick="switchTab('register')" id="tabBtnRegister" class="px-4 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-sky-600 text-sky-700 bg-white rounded-t-lg flex items-center gap-2">
+            <span>📑 Detail Dokumen (Status IM4 & Review Ulang)</span>
+            <span id="badgeRegisterCount" class="px-2 py-0.5 text-[11px] rounded-full bg-sky-100 text-sky-800">0</span>
+          </button>
+          <button onclick="switchTab('summary')" id="tabBtnSummary" class="px-4 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 rounded-t-lg">
+            📊 Rekapitulasi Angka per Divisi
+          </button>
+        </div>
 
-let rawData=[];
-let divisiSummary=[];
+        <button onclick="exportCurrentTableCSV()" class="mb-2 px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-medium transition">
+          ⬇ Export CSV
+        </button>
+      </div>
 
-async function loadData(){
-const res=await fetch(API_URL);
-rawData=await res.json();
+      <!-- TAB 1: DETAIL DOKUMEN (STATUS IM4 & REGISTER PENGESAHAN) -->
+      <div id="panelRegister" class="p-4 space-y-3">
+        <!-- Quick Filter Pills sesuai kolom Status IM4 -->
+        <div class="flex flex-wrap items-center gap-1.5 pb-2 border-b border-slate-100">
+          <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mr-1">Status IM4:</span>
+          <button type="button" data-status="ALL" onclick="setStatusIM4Filter('ALL')" class="im4-pill-btn px-3 py-1 rounded-full text-xs font-bold bg-slate-900 text-white shadow-xs">
+            Semua (<span id="countAllDocs">0</span>)
+          </button>
+          <button type="button" data-status="IN_PROGRESS" onclick="setStatusIM4Filter('IN_PROGRESS')" class="im4-pill-btn px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">
+            ⏳ Semua In-Progress (<span id="countInProgress">0</span>)
+          </button>
+          <button type="button" data-status="Approval Kadiv" onclick="setStatusIM4Filter('Approval Kadiv')" class="im4-pill-btn px-3 py-1 rounded-full text-xs font-semibold bg-violet-50 text-violet-800 border border-violet-200 hover:bg-violet-100">
+            🟣 Approval Kadiv (<span id="countKadiv">0</span>)
+          </button>
+          <button type="button" data-status="Batch (Direksi)" onclick="setStatusIM4Filter('Batch (Direksi)')" class="im4-pill-btn px-3 py-1 rounded-full text-xs font-semibold bg-orange-50 text-orange-800 border border-orange-200 hover:bg-orange-100">
+            🟠 Batch (Direksi) (<span id="countDireksi">0</span>)
+          </button>
+          <button type="button" data-status="Review" onclick="setStatusIM4Filter('Review')" class="im4-pill-btn px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100">
+            🟡 Review (<span id="countReview">0</span>)
+          </button>
+          <button type="button" data-status="Active" onclick="setStatusIM4Filter('Active')" class="im4-pill-btn px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100">
+            🟢 Active (<span id="countActive">0</span>)
+          </button>
+        </div>
 
-buildSummary();
-buildKPI();
-buildCharts();
-buildHeatmap();
-buildTopBottom();
-buildFilter();
-renderTable();
+        <!-- Diagnostic info if API version is still old or raw values differ -->
+        <div id="apiDiagnosticBox" class="hidden px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-wrap items-center justify-between gap-2">
+          <span id="apiDiagnosticText"></span>
+          <button onclick="setStatusIM4Filter('ALL')" class="underline font-semibold text-amber-950">Tampilkan Semua</button>
+        </div>
 
-document.getElementById('lastUpdate').innerText='Update: '+new Date().toLocaleString('id-ID');
-}
+        <!-- Search & Review Due Filter -->
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-2 flex-1">
+            <input type="text" id="searchRegister" onkeyup="renderRegisterTable()" placeholder="Cari Nomor Dokumen, Judul Dokumen, Jenis, atau Divisi..." class="w-full sm:w-80 px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-sky-500 focus:border-sky-500">
+            
+            <select id="filterStatusReview" onchange="renderRegisterTable()" class="px-2.5 py-1.5 text-xs border border-slate-300 rounded-lg bg-white">
+              <option value="ALL">Semua Jadwal Review</option>
+              <option value="DUE">⚠ Hanya Akan Jatuh Tempo</option>
+            </select>
+          </div>
+          <span class="text-xs font-medium text-slate-600" id="registerRowInfo">Menampilkan 0 dokumen</span>
+        </div>
 
-function buildSummary(){
+        <div class="table-container overflow-x-auto border border-slate-200 rounded-lg">
+          <table class="min-w-full divide-y divide-slate-200 text-xs">
+            <thead class="bg-slate-800 text-white">
+              <tr>
+                <th class="px-3 py-2.5 text-left font-semibold">Nomor Dokumen</th>
+                <th class="px-3 py-2.5 text-left font-semibold">Judul Dokumen</th>
+                <th class="px-3 py-2.5 text-center font-semibold">Jenis</th>
+                <th class="px-3 py-2.5 text-left font-semibold">Divisi</th>
+                <th class="px-3 py-2.5 text-center font-semibold">Status IM4</th>
+                <th class="px-3 py-2.5 text-center font-semibold">Hal / Rev</th>
+                <th class="px-3 py-2.5 text-center font-semibold">Tgl E-Letter / Aktif</th>
+                <th class="px-3 py-2.5 text-center font-semibold">Jadwal Review Ulang</th>
+                <th class="px-3 py-2.5 text-center font-semibold">Status Review</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyRegister" class="divide-y divide-slate-200 bg-white">
+              <tr>
+                <td colspan="9" class="px-4 py-8 text-center text-slate-400">Menunggu sinkronisasi data dari Google Sheets...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-const map={};
+      <!-- TAB 2: SUMMARY TABLE -->
+      <div id="panelSummary" class="p-4 hidden">
+        <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <input type="text" id="searchSummary" onkeyup="renderSummaryTable()" placeholder="Cari nama divisi atau jenis dokumen..." class="w-full sm:w-72 px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-sky-500 focus:border-sky-500">
+          <span class="text-xs text-slate-500" id="summaryRowInfo">Menampilkan 0 baris</span>
+        </div>
 
-rawData.forEach(r=>{
+        <div class="table-container overflow-x-auto border border-slate-200 rounded-lg">
+          <table class="min-w-full divide-y divide-slate-200 text-xs">
+            <thead class="bg-slate-800 text-white">
+              <tr>
+                <th class="px-3 py-2.5 text-left font-semibold">Divisi</th>
+                <th class="px-3 py-2.5 text-center font-semibold">Jenis</th>
+                <th class="px-3 py-2.5 text-right font-semibold">Rencana (1)</th>
+                <th class="px-3 py-2.5 text-right font-semibold">E-Letter (2)</th>
+                <th class="px-3 py-2.5 text-right font-semibold">Appr. Kadiv (3)</th>
+                <th class="px-3 py-2.5 text-right font-semibold">Ke Direksi</th>
+                <th class="px-3 py-2.5 text-right font-semibold">Proses Dir (4)</th>
+                <th class="px-3 py-2.5 text-right font-semibold bg-emerald-900/60">Disahkan (5)</th>
+                <th class="px-3 py-2.5 text-center font-semibold w-32">% Pengajuan</th>
+                <th class="px-3 py-2.5 text-center font-semibold w-32">% Pengesahan</th>
+              </tr>
+            </thead>
+            <tbody id="tbodySummary" class="divide-y divide-slate-200 bg-white">
+              <tr>
+                <td colspan="10" class="px-4 py-8 text-center text-slate-400">Menunggu sinkronisasi data dari Google Sheets...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
 
-if(!map[r.divisi]){
-map[r.divisi]={
-divisi:r.divisi,
-masterplan:0,
-pengajuan:0,
-approval:0,
-disahkan:0
-};
-}
+  </main>
 
-map[r.divisi].masterplan+=Number(r.masterplan||0);
-map[r.divisi].pengajuan+=Number(r.pengajuanApproval||0);
-map[r.divisi].approval+=Number(r.approvalDireksi||0);
-map[r.divisi].disahkan+=Number(r.disahkanDireksi||0);
+  <!-- Modal Konfigurasi API URL -->
+  <div id="configModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-slate-200">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-bold text-slate-800">Hubungkan API Google Apps Script</h3>
+        <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-700 text-lg font-bold">&times;</button>
+      </div>
+      <div class="mt-4 space-y-3">
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Tempel URL Web App hasil deploy Google Apps Script (<code class="bg-slate-100 px-1 py-0.5 rounded">https://script.google.com/macros/s/.../exec</code>) untuk memuat data langsung dari Spreadsheet.
+        </p>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Web App URL</label>
+          <input type="url" id="inputApiUrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-sky-500 focus:border-sky-500">
+        </div>
+      </div>
+      <div class="mt-5 flex justify-end gap-2">
+        <button onclick="closeConfigModal()" class="px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Batal</button>
+        <button onclick="saveApiUrl()" class="px-4 py-2 text-xs font-semibold bg-sky-600 hover:bg-sky-500 text-white rounded-lg">Simpan & Muat Data</button>
+      </div>
+    </div>
+  </div>
 
-});
+  <script>
+    // =========================================================================
+    // 1. KONFIGURASI ENDPOINT LIVE GOOGLE APPS SCRIPT
+    // =========================================================================
+    const DEFAULT_API_URL = "";
 
-divisiSummary=Object.values(map).map(d=>({
-...d,
-progress:d.masterplan ? Math.round((d.pengajuan/d.masterplan)*100) : 0
-}));
+    const STORAGE_KEY_API = "QM_DOC_MONITOR_API_URL";
+    let APPS_SCRIPT_URL = localStorage.getItem(STORAGE_KEY_API) || DEFAULT_API_URL;
 
-}
+    // State Aplikasi
+    let rawSummary = [];
+    let rawDocuments = [];
+    let selectedDocType = "ALL";
+    let selectedStatusIM4 = "ALL";
+    let activeTab = "register";
+    let pipelineChartInstance = null;
+    let divisionChartInstance = null;
 
-function buildKPI(){
+    // =========================================================================
+    // 2. INISIALISASI & SINKRONISASI LIVE API
+    // =========================================================================
+    window.addEventListener("DOMContentLoaded", () => {
+      if (APPS_SCRIPT_URL && APPS_SCRIPT_URL.startsWith("http")) {
+        fetchLiveData();
+      } else {
+        setConnectionStatus("unconfigured", "API Belum Diatur");
+        showBanner("warning", "URL Web App Google Apps Script belum dikonfigurasi. Klik tombol ⚙ API URL untuk menghubungkan Spreadsheet.");
+        openConfigModal();
+      }
+    });
 
-let m=0,p=0,a=0,d=0;
+    function setConnectionStatus(state, label) {
+      const badge = document.getElementById("connectionBadge");
+      const text = document.getElementById("connectionText");
+      text.textContent = label;
 
-rawData.forEach(r=>{
-m+=Number(r.masterplan||0);
-p+=Number(r.pengajuanApproval||0);
-a+=Number(r.approvalDireksi||0);
-d+=Number(r.disahkanDireksi||0);
-});
-
-document.getElementById('masterplan').innerText=m;
-document.getElementById('pengajuan').innerText=p;
-document.getElementById('approval').innerText=a;
-document.getElementById('disahkan').innerText=d;
-
-const prog=Math.round((p/m)*100);
-document.getElementById('overallProgress').innerText=prog+'%';
-
-new Chart(document.getElementById('gaugeChart'),{
-type:'doughnut',
-data:{
-labels:['Progress','Sisa'],
-datasets:[{data:[prog,100-prog]}]
-},
-options:{
-plugins:{legend:{display:false}}
-}
-});
-}
-
-const chartLabelPlugin = {
-    id: 'chartLabelPlugin',
-
-    afterDatasetsDraw(chart) {
-
-        const { ctx } = chart;
-
-        chart.data.datasets.forEach((dataset, datasetIndex) => {
-
-            const meta = chart.getDatasetMeta(datasetIndex);
-
-            meta.data.forEach((element, index) => {
-
-                const value = dataset.data[index];
-
-                ctx.save();
-
-                ctx.font = 'bold 12px Segoe UI';
-                ctx.fillStyle = '#003f7f';
-
-                if(chart.options.indexAxis === 'y'){
-
-                    // Ranking Divisi
-                    ctx.textAlign = 'left';
-
-                    ctx.fillText(
-                        value + '%',
-                        element.x + 10,
-                        element.y + 4
-                    );
-
-                }else{
-
-                    // Funnel Chart
-                    const labelText =
-                        dataset.labelValues
-                        ? dataset.labelValues[index]
-                        : value;
-
-                    ctx.textAlign = 'center';
-
-                    ctx.fillText(
-                        labelText,
-                        element.x,
-                        element.y - 10
-                    );
-
-                }
-
-                ctx.restore();
-
-            });
-
-        });
-
+      if (state === "live") {
+        badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+        badge.querySelector("span").className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+      } else if (state === "loading") {
+        badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-sky-500/20 text-sky-300 border border-sky-500/30";
+        badge.querySelector("span").className = "w-2 h-2 rounded-full bg-sky-400 animate-ping";
+      } else {
+        badge.className = "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/20 text-rose-300 border border-rose-500/30";
+        badge.querySelector("span").className = "w-2 h-2 rounded-full bg-rose-400";
+      }
     }
-};
 
-function buildCharts(){
+    function showBanner(type, message) {
+      const banner = document.getElementById("statusBanner");
+      const bannerText = document.getElementById("statusBannerText");
+      banner.classList.remove("hidden", "bg-sky-50", "border-sky-200", "text-sky-800", "bg-rose-50", "border-rose-200", "text-rose-800", "bg-amber-50", "border-amber-200", "text-amber-800");
 
-const sorted =
-[...divisiSummary]
-.sort((a,b)=>b.progress-a.progress);
+      if (type === "loading") {
+        banner.classList.add("bg-sky-50", "border-sky-200", "text-sky-800");
+        bannerText.innerHTML = `<span class="inline-block animate-spin">↻</span> <span>${message}</span>`;
+      } else if (type === "error") {
+        banner.classList.add("bg-rose-50", "border-rose-200", "text-rose-800");
+        bannerText.innerHTML = `<span>⚠</span> <span>${message}</span>`;
+      } else {
+        banner.classList.add("bg-amber-50", "border-amber-200", "text-amber-800");
+        bannerText.innerHTML = `<span>ℹ</span> <span>${message}</span>`;
+      }
+    }
 
-new Chart(document.getElementById('rankingChart'),{
+    function hideBanner() {
+      document.getElementById("statusBanner").classList.add("hidden");
+    }
 
-    type:'bar',
+    function normalizeStatusClient(rawVal) {
+      const val = String(rawVal || "").trim();
+      const lower = val.toLowerCase();
+      if (!lower) return "Review";
+      if (lower.includes("kadiv")) return "Approval Kadiv";
+      if (lower.includes("batch") || lower.includes("direksi")) return "Batch (Direksi)";
+      if (lower.includes("active") || lower.includes("disahkan")) return "Active";
+      if (lower.includes("review")) return "Review";
+      return val;
+    }
 
-    data:{
+    function isDueReview(statusReviewText) {
+      const lower = String(statusReviewText || "").trim().toLowerCase();
+      return lower.includes("jatuh tempo") && !lower.includes("belum");
+    }
 
-        labels:sorted.map(x=>x.divisi),
+    async function fetchLiveData() {
+      if (!APPS_SCRIPT_URL || !APPS_SCRIPT_URL.startsWith("http")) {
+        openConfigModal();
+        return;
+      }
 
-        datasets:[{
+      const btn = document.getElementById("btnRefresh");
+      btn.innerHTML = `<span class="animate-spin inline-block">↻</span> Syncing...`;
+      btn.disabled = true;
+      setConnectionStatus("loading", "Mengambil Data...");
+      showBanner("loading", "Sedang menarik data terbaru dari Google Sheets...");
 
-            data:sorted.map(x=>x.progress),
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
 
-            backgroundColor:'#0d6efd',
-            borderRadius:8
+        const json = await res.json();
+        if (json.status === "success") {
+          loadLivePayload(json.summary || [], json.documents || [], json.updatedAt || "Baru saja");
+          hideBanner();
+        } else {
+          throw new Error(json.message || "Respon API tidak valid.");
+        }
+      } catch (err) {
+        console.error("Fetch Error:", err);
+        setConnectionStatus("error", "Gagal Terhubung");
+        showBanner("error", `Gagal mengambil data live: ${err.message}. Pastikan URL Web App benar dan akses diatur ke 'Anyone'.`);
+      } finally {
+        btn.innerHTML = `<span>↻</span> Sync Live`;
+        btn.disabled = false;
+      }
+    }
 
-        }]
+    function loadLivePayload(summary, documents, timestampLabel) {
+      rawSummary = summary.map(item => {
+        const rencana = Number(item.rencana) || 0;
+        const diajukan = Number(item.diajukan) || 0;
+        const disahkan = Number(item.disahkan) || 0;
+        return {
+          ...item,
+          divisi: String(item.divisi || "").trim(),
+          jenisDokumen: String(item.jenisDokumen || "").trim().toUpperCase(),
+          rencana,
+          diajukan,
+          disahkan,
+          approvalKadiv: Number(item.approvalKadiv) || 0,
+          approvalKeDireksi: Number(item.approvalKeDireksi) || 0,
+          prosesDireksi: Number(item.prosesDireksi) || 0,
+          pctPengajuan: rencana > 0 ? Number(((diajukan / rencana) * 100).toFixed(1)) : null,
+          pctPengesahan: rencana > 0 ? Number(((disahkan / rencana) * 100).toFixed(1)) : null
+        };
+      });
 
-    },
+      rawDocuments = documents.map(doc => ({
+        ...doc,
+        divisi: String(doc.divisi || "").trim(),
+        jenisDokumen: String(doc.jenisDokumen || "").trim().toUpperCase(),
+        cleanStatusIM4: normalizeStatusClient(doc.statusIM4Raw || doc.statusIM4)
+      }));
 
-    options:{
+      setConnectionStatus("live", "Live Google Sheets");
+      document.getElementById("lastUpdatedText").textContent = timestampLabel;
 
-        indexAxis:'y',
+      populateDivisionDropdown();
+      applyFilters();
+    }
 
-        responsive:true,
+    function populateDivisionDropdown() {
+      const select = document.getElementById("filterDivisi");
+      const currentVal = select.value;
+      const divisions = [...new Set([
+        ...rawSummary.map(d => d.divisi),
+        ...rawDocuments.map(d => d.divisi)
+      ])].filter(Boolean).sort();
 
-        plugins:{
-            legend:{
-                display:false
-            }
+      select.innerHTML = `<option value="ALL">Semua Divisi (${divisions.length} Unit)</option>`;
+      divisions.forEach(div => {
+        const opt = document.createElement("option");
+        opt.value = div;
+        opt.textContent = div;
+        select.appendChild(opt);
+      });
+
+      if (divisions.includes(currentVal)) select.value = currentVal;
+    }
+
+    // =========================================================================
+    // 3. LOGIKA FILTER & KALKULASI KPI
+    // =========================================================================
+    function setDocType(type) {
+      selectedDocType = type;
+      document.querySelectorAll(".doc-type-btn").forEach(btn => {
+        if (btn.dataset.type === type) {
+          btn.className = "doc-type-btn px-3.5 py-1.5 text-xs font-semibold rounded-md bg-sky-600 text-white shadow-sm";
+        } else {
+          btn.className = "doc-type-btn px-3.5 py-1.5 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900";
+        }
+      });
+      applyFilters();
+    }
+
+    function setStatusIM4Filter(status) {
+      selectedStatusIM4 = status;
+      document.querySelectorAll(".im4-pill-btn").forEach(btn => {
+        const isActive = btn.dataset.status === status;
+        if (isActive) {
+          btn.className = "im4-pill-btn px-3 py-1 rounded-full text-xs font-bold bg-slate-900 text-white shadow-xs ring-2 ring-sky-500/40";
+        } else {
+          const s = btn.dataset.status;
+          if (s === "Review") btn.className = "im4-pill-btn px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100";
+          else if (s === "Approval Kadiv") btn.className = "im4-pill-btn px-3 py-1 rounded-full text-xs font-semibold bg-violet-50 text-violet-800 border border-violet-200 hover:bg-violet-100";
+          else if (s === "Batch (Direksi)") btn.className = "im4-pill-btn px-3 py-1 rounded-full text-xs font-semibold bg-orange-50 text-orange-800 border border-orange-200 hover:bg-orange-100";
+          else if (s === "Active") btn.className = "im4-pill-btn px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100";
+          else btn.className = "im4-pill-btn px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200";
+        }
+      });
+      renderRegisterTable();
+    }
+
+    function resetFilters() {
+      document.getElementById("filterDivisi").value = "ALL";
+      document.getElementById("searchSummary").value = "";
+      document.getElementById("searchRegister").value = "";
+      document.getElementById("filterStatusReview").value = "ALL";
+      setStatusIM4Filter("ALL");
+      setDocType("ALL");
+    }
+
+    function getFilteredSummary() {
+      const divFilter = document.getElementById("filterDivisi").value.toLowerCase();
+      return rawSummary.filter(row => {
+        const matchDiv = divFilter === "all" || row.divisi.toLowerCase() === divFilter;
+        const matchType = selectedDocType === "ALL" || row.jenisDokumen === selectedDocType;
+        return matchDiv && matchType;
+      });
+    }
+
+    function getBaseDocsByDivAndType() {
+      const divFilter = document.getElementById("filterDivisi").value.toLowerCase();
+      return rawDocuments.filter(row => {
+        const matchDiv = divFilter === "all" || row.divisi.toLowerCase() === divFilter;
+        const matchType = selectedDocType === "ALL" || row.jenisDokumen === selectedDocType;
+        return matchDiv && matchType;
+      });
+    }
+
+    function getFilteredDocuments() {
+      const q = document.getElementById("searchRegister").value.toLowerCase();
+      const statusRev = document.getElementById("filterStatusReview").value;
+
+      return getBaseDocsByDivAndType().filter(d => {
+        const matchQ = (d.nomerStandard || "").toLowerCase().includes(q) ||
+                       (d.judulStandard || "").toLowerCase().includes(q) ||
+                       (d.jenisDokumen || "").toLowerCase().includes(q) ||
+                       (d.divisi || "").toLowerCase().includes(q);
+        const matchRev = statusRev === "ALL" || (statusRev === "DUE" && isDueReview(d.statusReviewUlang));
+
+        let matchIM4 = true;
+        if (selectedStatusIM4 === "IN_PROGRESS") {
+          matchIM4 = d.cleanStatusIM4 !== "Active";
+        } else if (selectedStatusIM4 !== "ALL") {
+          matchIM4 = d.cleanStatusIM4 === selectedStatusIM4;
+        }
+
+        return matchQ && matchRev && matchIM4;
+      });
+    }
+
+    function applyFilters() {
+      const filteredSummary = getFilteredSummary();
+      const baseDocs = getBaseDocsByDivAndType();
+
+      updateKPIs(filteredSummary, baseDocs);
+      updateStatusPillCounts(baseDocs);
+      updateCharts(filteredSummary);
+      renderSummaryTable();
+      renderRegisterTable();
+    }
+
+    function updateStatusPillCounts(docList) {
+      const total = docList.length;
+      const reviewCount = docList.filter(d => d.cleanStatusIM4 === "Review").length;
+      const kadivCount = docList.filter(d => d.cleanStatusIM4 === "Approval Kadiv").length;
+      const direksiCount = docList.filter(d => d.cleanStatusIM4 === "Batch (Direksi)").length;
+      const activeCount = docList.filter(d => d.cleanStatusIM4 === "Active").length;
+      const inProgressCount = total - activeCount;
+
+      document.getElementById("countAllDocs").textContent = total;
+      document.getElementById("countInProgress").textContent = inProgressCount;
+      document.getElementById("countReview").textContent = reviewCount;
+      document.getElementById("countKadiv").textContent = kadivCount;
+      document.getElementById("countDireksi").textContent = direksiCount;
+      document.getElementById("countActive").textContent = activeCount;
+    }
+
+    function updateKPIs(summaryList, docList) {
+      let totRencana = 0, totDiajukan = 0, totDisahkan = 0;
+      let totKadiv = 0, totKeDir = 0, totProsesDir = 0;
+      let rBP = 0, rSOP = 0, rSK = 0;
+
+      summaryList.forEach(r => {
+        totRencana += r.rencana;
+        totDiajukan += r.diajukan;
+        totDisahkan += r.disahkan;
+        totKadiv += r.approvalKadiv;
+        totKeDir += r.approvalKeDireksi;
+        totProsesDir += r.prosesDireksi;
+
+        if (r.jenisDokumen === "BP") rBP += r.rencana;
+        if (r.jenisDokumen === "SOP") rSOP += r.rencana;
+        if (r.jenisDokumen === "SK") rSK += r.rencana;
+      });
+
+      const pctAjuan = totRencana > 0 ? ((totDiajukan / totRencana) * 100).toFixed(1) : 0;
+      const pctSah = totRencana > 0 ? ((totDisahkan / totRencana) * 100).toFixed(1) : 0;
+      const totProses = totKadiv + totKeDir + totProsesDir;
+
+      document.getElementById("kpiRencana").textContent = totRencana;
+      document.getElementById("kpiRencanaSub").textContent = `BP: ${rBP} | SOP: ${rSOP} | SK: ${rSK}`;
+
+      document.getElementById("kpiDiajukan").textContent = totDiajukan;
+      document.getElementById("kpiPctPengajuan").textContent = `${pctAjuan}%`;
+      document.getElementById("barPengajuan").style.width = `${Math.min(pctAjuan, 100)}%`;
+
+      document.getElementById("kpiProses").textContent = totProses;
+      document.getElementById("kpiKadivCount").textContent = totKadiv;
+      document.getElementById("kpiKeDirCount").textContent = totKeDir;
+      document.getElementById("kpiProsesDirCount").textContent = totProsesDir;
+
+      document.getElementById("kpiDisahkan").textContent = totDisahkan;
+      document.getElementById("kpiPctPengesahan").textContent = `${pctSah}%`;
+      document.getElementById("barPengesahan").style.width = `${Math.min(pctSah, 100)}%`;
+
+      const dueCount = docList.filter(d => isDueReview(d.statusReviewUlang)).length;
+      document.getElementById("kpiDueReview").textContent = dueCount;
+      document.getElementById("kpiTotalRegister").textContent = `Total Register Dokumen: ${docList.length}`;
+    }
+
+    // =========================================================================
+    // 4. VISUALISASI GRAFIK (CHART.JS)
+    // =========================================================================
+    function updateCharts(summaryList) {
+      const types = ["BP", "SOP", "SK"];
+      const colors = {
+        BP: "#0284c7",
+        SOP: "#6366f1",
+        SK: "#f59e0b"
+      };
+
+      const datasetsPipeline = types.map(type => {
+        const subset = summaryList.filter(r => r.jenisDokumen === type);
+        return {
+          label: type,
+          backgroundColor: colors[type],
+          borderRadius: 4,
+          data: [
+            subset.reduce((a, b) => a + b.rencana, 0),
+            subset.reduce((a, b) => a + b.diajukan, 0),
+            subset.reduce((a, b) => a + b.approvalKadiv, 0),
+            subset.reduce((a, b) => a + b.approvalKeDireksi, 0),
+            subset.reduce((a, b) => a + b.prosesDireksi, 0),
+            subset.reduce((a, b) => a + b.disahkan, 0)
+          ]
+        };
+      });
+
+      const ctx1 = document.getElementById("pipelineChart").getContext("2d");
+      if (pipelineChartInstance) pipelineChartInstance.destroy();
+      pipelineChartInstance = new Chart(ctx1, {
+        type: "bar",
+        data: {
+          labels: ["Rencana (1)", "E-Letter (2)", "Kadiv (3)", "Ke Direksi", "Proses Dir (4)", "Disahkan (5)"],
+          datasets: datasetsPipeline
         },
-
-        scales:{
-            x:{
-                max:120
-            }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "top", labels: { boxWidth: 12, font: { size: 11 } } } },
+          scales: {
+            x: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 } } },
+            y: { stacked: true, beginAtZero: true, ticks: { font: { size: 11 } } }
+          }
         }
+      });
 
-    },
+      const divMap = {};
+      summaryList.forEach(r => {
+        if (!divMap[r.divisi]) divMap[r.divisi] = { disahkan: 0, sisa: 0, total: 0 };
+        divMap[r.divisi].disahkan += r.disahkan;
+        const sisa = Math.max(0, r.rencana - r.disahkan);
+        divMap[r.divisi].sisa += sisa;
+        divMap[r.divisi].total += r.rencana;
+      });
 
-    plugins:[chartLabelPlugin]
+      const sortedDivs = Object.keys(divMap)
+        .filter(d => divMap[d].total > 0)
+        .sort((a, b) => divMap[b].total - divMap[a].total);
 
-});
-
-let m=0,p=0,a=0,d=0;
-
-rawData.forEach(r=>{
-m+=Number(r.masterplan||0);
-p+=Number(r.pengajuanApproval||0);
-a+=Number(r.approvalDireksi||0);
-d+=Number(r.disahkanDireksi||0);
-});
-
-const funnelPercent = [
-
-    '100%',
-
-    Math.round((p/m)*100) + '%',
-
-    Math.round((a/p)*100) + '%',
-
-    Math.round((d/m)*100) + '%'
-
-];
-
-new Chart(document.getElementById('funnelChart'),{
-
-    type:'bar',
-
-    data:{
-        labels:[
-            'Masterplan',
-            'Pengajuan',
-            'Approval Direksi',
-            'Disahkan'
-        ],
-
-        datasets:[{
-
-            data:[m,p,a,d],
-
-            labelValues:[
-                `${m} (100%)`,
-                `${p} (${funnelPercent[1]})`,
-                `${a} (${funnelPercent[2]})`,
-                `${d} (${funnelPercent[3]})`
-            ],
-
-            backgroundColor:[
-                '#003f7f',
-                '#0d6efd',
-                '#ffc107',
-                '#198754'
-            ],
-
-            borderRadius:10
-
-        }]
-    },
-
-    options:{
-        responsive:true,
-        plugins:{
-            legend:{
-                display:false
+      const ctx2 = document.getElementById("divisionChart").getContext("2d");
+      if (divisionChartInstance) divisionChartInstance.destroy();
+      divisionChartInstance = new Chart(ctx2, {
+        type: "bar",
+        data: {
+          labels: sortedDivs,
+          datasets: [
+            {
+              label: "Telah Disahkan (5)",
+              data: sortedDivs.map(d => divMap[d].disahkan),
+              backgroundColor: "#10b981",
+              borderRadius: 3
+            },
+            {
+              label: "Belum Disahkan / Dalam Proses",
+              data: sortedDivs.map(d => divMap[d].sisa),
+              backgroundColor: "#cbd5e1",
+              borderRadius: 3
             }
+          ]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: "top", labels: { boxWidth: 12, font: { size: 11 } } } },
+          scales: {
+            x: { stacked: true, beginAtZero: true, ticks: { font: { size: 10 } } },
+            y: { stacked: true, grid: { display: false }, ticks: { font: { size: 10 }, autoSkip: false } }
+          }
         }
-    },
+      });
+    }
 
-    plugins:[chartLabelPlugin]
+    // =========================================================================
+    // 5. RENDER TABEL & INTERAKSI TAB
+    // =========================================================================
+    function switchTab(tab) {
+      activeTab = tab;
+      const btnSum = document.getElementById("tabBtnSummary");
+      const btnReg = document.getElementById("tabBtnRegister");
+      const panSum = document.getElementById("panelSummary");
+      const panReg = document.getElementById("panelRegister");
 
-});
+      if (tab === "summary") {
+        btnSum.className = "px-4 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-sky-600 text-sky-700 bg-white rounded-t-lg";
+        btnReg.className = "px-4 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 rounded-t-lg flex items-center gap-2";
+        panSum.classList.remove("hidden");
+        panReg.classList.add("hidden");
+      } else {
+        btnReg.className = "px-4 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-sky-600 text-sky-700 bg-white rounded-t-lg flex items-center gap-2";
+        btnSum.className = "px-4 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-800 rounded-t-lg";
+        panReg.classList.remove("hidden");
+        panSum.classList.add("hidden");
+      }
+    }
 
-const jenis={};
+    function jumpToStatusIM4(status) {
+      switchTab("register");
+      document.getElementById("filterStatusReview").value = "ALL";
+      setStatusIM4Filter(status);
+      document.getElementById("detailTableSection").scrollIntoView({ behavior: "smooth" });
+    }
 
-rawData.forEach(r=>{
-if(!jenis[r.jenisDokumen]) jenis[r.jenisDokumen]=0;
-jenis[r.jenisDokumen]+=Number(r.masterplan||0);
-});
+    function jumpToDueReview() {
+      switchTab("register");
+      setStatusIM4Filter("ALL");
+      document.getElementById("filterStatusReview").value = "DUE";
+      renderRegisterTable();
+      document.getElementById("detailTableSection").scrollIntoView({ behavior: "smooth" });
+    }
 
-new Chart(document.getElementById('jenisChart'),{
-type:'doughnut',
-data:{
-labels:Object.keys(jenis),
-datasets:[{data:Object.values(jenis)}]
-}
-});
+    function renderStatusIM4Badge(status) {
+      if (status === "Approval Kadiv") {
+        return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-violet-100 text-violet-800 border border-violet-200">Approval Kadiv</span>`;
+      }
+      if (status === "Batch (Direksi)") {
+        return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-orange-100 text-orange-800 border border-orange-200">Batch (Direksi)</span>`;
+      }
+      if (status === "Active") {
+        return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">Active</span>`;
+      }
+      if (status === "Review") {
+        return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-200">Review</span>`;
+      }
+      return `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">${status}</span>`;
+    }
 
-}
+    function renderRegisterTable() {
+      const baseDocs = getBaseDocsByDivAndType();
+      const rows = getFilteredDocuments();
+      document.getElementById("registerRowInfo").textContent = `Menampilkan ${rows.length} dokumen`;
+      document.getElementById("badgeRegisterCount").textContent = rows.length;
 
-function buildHeatmap(){
+      const diagBox = document.getElementById("apiDiagnosticBox");
+      const diagText = document.getElementById("apiDiagnosticText");
 
-const body=document.getElementById('heatmapBody');
+      if (rows.length === 0 && baseDocs.length > 0 && selectedStatusIM4 !== "ALL") {
+        const distinctStatuses = [...new Set(baseDocs.map(d => d.cleanStatusIM4))].join(", ");
+        diagBox.classList.remove("hidden");
+        diagText.textContent = `Filter "${selectedStatusIM4}" menghasilkan 0 baris. Nilai Status IM4 yang terbaca saat ini: [${distinctStatuses}].`;
+      } else {
+        diagBox.classList.add("hidden");
+      }
 
-body.innerHTML=divisiSummary.map(x=>{
+      const tbody = document.getElementById("tbodyRegister");
 
-let color='#dc3545';
+      if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="px-4 py-8 text-center text-slate-400">Tidak ada dokumen yang sesuai dengan filter saat ini.</td></tr>`;
+        return;
+      }
 
-if(x.progress>=90) color='#198754';
-else if(x.progress>=70) color='#ffc107';
+      tbody.innerHTML = rows.map(d => {
+        const badgeType = d.jenisDokumen === "BP"
+          ? "bg-sky-100 text-sky-800"
+          : d.jenisDokumen === "SOP"
+          ? "bg-indigo-100 text-indigo-800"
+          : "bg-amber-100 text-amber-800";
 
-return `<tr>
-<td>${x.divisi}</td>
-<td style="background:${color};font-weight:bold">${x.progress}%</td>
-</tr>`;
+        const isDue = isDueReview(d.statusReviewUlang);
+        const revBadge = isDue
+          ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-700 border border-rose-300">⚠ ${d.statusReviewUlang}</span>`
+          : `<span class="text-slate-300">-</span>`;
 
-}).join('');
+        return `
+          <tr class="hover:bg-slate-50 transition ${isDue ? 'bg-rose-50/30' : ''}">
+            <td class="px-3 py-2.5 font-mono font-bold text-slate-900 whitespace-nowrap">${d.nomerStandard}</td>
+            <td class="px-3 py-2.5 font-medium text-slate-800">${d.judulStandard}</td>
+            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded font-bold text-[11px] ${badgeType}">${d.jenisDokumen}</span></td>
+            <td class="px-3 py-2.5 text-slate-700 font-medium">${d.divisi}</td>
+            <td class="px-3 py-2.5 text-center whitespace-nowrap">${renderStatusIM4Badge(d.cleanStatusIM4)}</td>
+            <td class="px-3 py-2.5 text-center text-slate-600 whitespace-nowrap">${d.halaman || "-"} / Rev.${d.revisi || "0"}</td>
+            <td class="px-3 py-2.5 text-center whitespace-nowrap text-slate-700">${d.tanggalAktif || "-"}</td>
+            <td class="px-3 py-2.5 text-center font-medium whitespace-nowrap ${isDue ? 'text-rose-700 font-bold' : 'text-slate-600'}">${d.reviewUlang || "-"}</td>
+            <td class="px-3 py-2.5 text-center whitespace-nowrap">${revBadge}</td>
+          </tr>
+        `;
+      }).join("");
+    }
 
-}
+    function renderProgressCell(pct) {
+      if (pct === null || pct === undefined) {
+        return `<span class="text-slate-400 italic text-[11px]">N/A (0 Target)</span>`;
+      }
+      const color = pct >= 100 ? "bg-emerald-500" : pct >= 50 ? "bg-sky-500" : "bg-amber-500";
+      return `
+        <div class="flex items-center gap-2">
+          <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+            <div class="${color} h-1.5 rounded-full" style="width: ${Math.min(pct, 100)}%"></div>
+          </div>
+          <span class="font-semibold text-[11px] w-10 text-right">${pct}%</span>
+        </div>
+      `;
+    }
 
-function buildTopBottom(){
+    function renderSummaryTable() {
+      const q = document.getElementById("searchSummary").value.toLowerCase();
+      const rows = getFilteredSummary().filter(r =>
+        (r.divisi || "").toLowerCase().includes(q) || (r.jenisDokumen || "").toLowerCase().includes(q)
+      );
 
-const sort=[...divisiSummary].sort((a,b)=>b.progress-a.progress);
+      document.getElementById("summaryRowInfo").textContent = `Menampilkan ${rows.length} baris`;
+      const tbody = document.getElementById("tbodySummary");
 
-document.getElementById('topBody').innerHTML=sort.slice(0,5)
-.map(x=>`<tr><td>${x.divisi}</td><td>${x.progress}%</td></tr>`).join('');
+      if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="px-4 py-8 text-center text-slate-400">Tidak ada data live yang ditampilkan.</td></tr>`;
+        return;
+      }
 
-document.getElementById('bottomBody').innerHTML=sort.slice(-5).reverse()
-.map(x=>`<tr><td>${x.divisi}</td><td>${x.progress}%</td></tr>`).join('');
+      tbody.innerHTML = rows.map(r => {
+        const badgeType = r.jenisDokumen === "BP"
+          ? "bg-sky-100 text-sky-800"
+          : r.jenisDokumen === "SOP"
+          ? "bg-indigo-100 text-indigo-800"
+          : "bg-amber-100 text-amber-800";
 
-}
+        return `
+          <tr class="hover:bg-slate-50 transition">
+            <td class="px-3 py-2 font-medium text-slate-800">${r.divisi}</td>
+            <td class="px-3 py-2 text-center"><span class="px-2 py-0.5 rounded font-bold text-[11px] ${badgeType}">${r.jenisDokumen}</span></td>
+            <td class="px-3 py-2 text-right font-semibold">${r.rencana}</td>
+            <td class="px-3 py-2 text-right text-sky-700 font-medium">${r.diajukan}</td>
+            <td class="px-3 py-2 text-right text-violet-700 font-medium">${r.approvalKadiv}</td>
+            <td class="px-3 py-2 text-right text-slate-600">${r.approvalKeDireksi}</td>
+            <td class="px-3 py-2 text-right text-orange-700 font-medium">${r.prosesDireksi}</td>
+            <td class="px-3 py-2 text-right font-bold text-emerald-700 bg-emerald-50/50">${r.disahkan}</td>
+            <td class="px-3 py-2">${renderProgressCell(r.pctPengajuan)}</td>
+            <td class="px-3 py-2">${renderProgressCell(r.pctPengesahan)}</td>
+          </tr>
+        `;
+      }).join("");
+    }
 
-function buildFilter(){
+    // =========================================================================
+    // 6. EXPORT CSV & MODAL API CONFIG
+    // =========================================================================
+    function exportCurrentTableCSV() {
+      let csvContent = "data:text/csv;charset=utf-8,";
+      if (activeTab === "summary") {
+        const rows = getFilteredSummary();
+        csvContent += "Divisi,Jenis Dokumen,Rencana (1),Diajukan E-Letter (2),Disahkan (5),Approval Kadiv (3),Approval Ke Direksi,Proses Approval Direksi (4),% Pengesahan,% Pengajuan\n";
+        rows.forEach(r => {
+          csvContent += `"${r.divisi}","${r.jenisDokumen}",${r.rencana},${r.diajukan},${r.disahkan},${r.approvalKadiv},${r.approvalKeDireksi},${r.prosesDireksi},"${r.pctPengesahan ?? 'N/A'}","${r.pctPengajuan ?? 'N/A'}"\n`;
+        });
+      } else {
+        const rows = getFilteredDocuments();
+        csvContent += "Nomor Dokumen,Judul Dokumen,Jenis Dokumen,Divisi,Status IM4,Halaman,Revisi,Tanggal Aktif,Review Ulang,Status Review Ulang\n";
+        rows.forEach(d => {
+          csvContent += `"${d.nomerStandard}","${d.judulStandard}","${d.jenisDokumen}","${d.divisi}","${d.cleanStatusIM4}","${d.halaman}","${d.revisi}","${d.tanggalAktif}","${d.reviewUlang}","${d.statusReviewUlang}"\n`;
+        });
+      }
 
-const select=document.getElementById('filterDivisi');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `monitoring_dokumen_${activeTab}_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
 
-const divisi=[...new Set(rawData.map(x=>x.divisi))];
+    function openConfigModal() {
+      document.getElementById("inputApiUrl").value = APPS_SCRIPT_URL;
+      const modal = document.getElementById("configModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
 
-select.innerHTML='<option value="">Semua Divisi</option>';
+    function closeConfigModal() {
+      const modal = document.getElementById("configModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
 
-divisi.forEach(d=>{
-select.innerHTML+=`<option value="${d}">${d}</option>`;
-});
-
-select.onchange=renderTable;
-
-}
-
-function renderTable(){
-
-const filter=document.getElementById('filterDivisi').value;
-
-const data=filter
-? rawData.filter(x=>x.divisi===filter)
-: rawData;
-
-document.getElementById('tableBody').innerHTML=data.map(x=>`
-<tr>
-<td>${x.divisi}</td>
-<td>${x.jenisDokumen}</td>
-<td>${x.masterplan}</td>
-<td>${x.pengajuanApproval}</td>
-<td>${x.approvalDireksi}</td>
-<td>${x.disahkanDireksi}</td>
-<td>${x.persenPengajuan}%</td>
-</tr>
-`).join('');
-
-}
-
-loadData();
-setInterval(loadData,300000);
-
-</script>
-
+    function saveApiUrl() {
+      const url = document.getElementById("inputApiUrl").value.trim();
+      if (!url || !url.startsWith("http")) {
+        alert("Masukkan URL Web App Apps Script yang valid (diawali https://).");
+        return;
+      }
+      APPS_SCRIPT_URL = url;
+      localStorage.setItem(STORAGE_KEY_API, url);
+      closeConfigModal();
+      fetchLiveData();
+    }
+  </script>
 </body>
 </html>
