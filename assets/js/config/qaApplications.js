@@ -871,6 +871,15 @@ export const QA_APPLICATIONS = [
     // NON PROJECT
     // ==================================================
     {
+        id: "smartj",
+        title: "SMART-J Online",
+        description: "Sistem Manajemen Penerimaan Material",
+        category: "nonproject",
+        icon: "fa-chart-column",
+        type: "external",
+        url: "https://penerimaan-pal.github.io/smart-j/"
+    },
+    {
         id: "warranty",
         title: "WARRANTY",
         description: "Warranty Monitoring System",
